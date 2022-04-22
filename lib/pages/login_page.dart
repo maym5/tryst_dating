@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:rendezvous_beta_v3/cloud_functions/authentication.dart';
 import '../fields/text_input_field.dart';
 import '../layouts/gradient_button.dart';
 import '../layouts/page_background.dart';
@@ -47,9 +49,14 @@ class _LoginPageState extends State<LoginPage> {
     showError: loginInputs['password'] == null && showErrors,
   );
 
-  void _onPressed() {
+  void _onPressed() async {
     if (loginInputs['password'] != null && loginInputs['email'] != null) {
-      // log em in and navigate
+      dynamic result = await onEmailAndPasswordLogin(loginInputs['email']!, loginInputs['password']!);
+      if (result is User) {
+        // push discover
+      } else {
+        // set error message
+      }
     } else {
       setState(() => showErrors = true);
     }

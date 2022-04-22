@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../cloud_functions/users.dart';
 import '../layouts/page_background.dart';
 import '../widgets/profile_view/profile_view.dart';
 import '../widgets/user_edit_builder.dart';
@@ -21,10 +22,14 @@ class _UserEditPageState extends State<UserEditPage> {
   }
 
   void onButtonPress() {
-    Navigator.pushNamed(context, UserProfile.id);
-    setState(() {
-      showErrors = true;
-    });
+    if (UserData.canCreateUser()) {
+      UserData().uploadUserData();
+      Navigator.pushNamed(context, UserProfile.id);
+    } else {
+      setState(() {
+        showErrors = true;
+      });
+    }
   }
 
   @override

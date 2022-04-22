@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:rendezvous_beta_v3/cloud_functions/authentication.dart';
+import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
 
 import '../fields/text_input_field.dart';
 import '../layouts/gradient_button.dart';
@@ -37,6 +40,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   TextInputField get passwordField => TextInputField(
     title: "Password",
+    obscureText: true,
     onChanged: (password) {
       if (password == "") {
         userInputs['password'] = null;
@@ -49,6 +53,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   TextInputField get confirmField => TextInputField(
     title: "Confirm Password",
+    obscureText: true,
     onChanged: (confirm) {
       if (confirm == "") {
         userInputs['confirm'] = null;
@@ -60,7 +65,7 @@ class _SignUpPageState extends State<SignUpPage> {
     errorMessage: _confirmMessage,
   );
 
-  void _onPressed() {
+  void _onPressed() async {
     if (passwordsDontMatch) {
       setState(() {
         _confirmMessage = "Passwords don't match";
@@ -75,7 +80,12 @@ class _SignUpPageState extends State<SignUpPage> {
           });
         }
       }
-      // add user and navigate
+      var result = await onEmailAndPasswordSignUp(userInputs["email"]!, userInputs["password"]!);
+      if (result is User) {
+        Navigator.pushNamed(context, UserEditPage.id);
+      } else {
+        // show errors
+      }
     }
   }
 
@@ -88,24 +98,31 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return PageBackground(
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Container(
-              height: 100,
-              width: 100,
-              color: Colors.redAccent,
-            ),
-            Column(
-              mainAxisSize: MainAxisSize.min,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                emailField,
-                passwordField,
-                confirmField
+                const SizedBox(height: 25,),
+                Container(
+                  height: 100,
+                  width: 100,
+                  color: Colors.redAccent,
+                ),
+                const SizedBox(height: 75,),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    emailField,
+                    passwordField,
+                    confirmField
+                  ],
+                ),
+                const SizedBox(height: 25,),
+                GradientButton(title: "Sign Up", onPressed: _onPressed)
               ],
             ),
-            GradientButton(title: "Sign Up", onPressed: _onPressed)
-          ],
+          ),
         ),
     );
   }

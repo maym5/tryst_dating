@@ -21,6 +21,7 @@ Future onEmailAndPasswordSignUp(String email, String password) async {
     // await userCredential.user!.sendEmailVerification().whenComplete(() => null); // do some shit
     return Future.value(userCredential.user);
   } on FirebaseAuthException catch (e) {
+    // print(e.message);
     return Future.value(e.code);
   }
 }

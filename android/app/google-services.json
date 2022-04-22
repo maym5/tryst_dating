@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "569844317314",
+    "project_id": "rendezvous-beta-v3",
+    "storage_bucket": "rendezvous-beta-v3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:569844317314:android:a5cd145dc541fc82c4889b",
+        "android_client_info": {
+          "package_name": "com.michaelmay.rendezvous_beta_v3"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "569844317314-b7tptsldh9epgmruf0qa5va6d0vtmjs9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLqlQHfmRr4QxCe2TrMXy5dlcjU8jxBdo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "569844317314-b7tptsldh9epgmruf0qa5va6d0vtmjs9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "569844317314-b0tls7ejgf6lm6nr3tnuo6e2k1u8bpbo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.michaelmay.rendezvousBetaV3"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

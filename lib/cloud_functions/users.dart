@@ -2,6 +2,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:rendezvous_beta_v3/user_images.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserData with ChangeNotifier {
   static String? name;
@@ -20,7 +22,7 @@ class UserData with ChangeNotifier {
 
   UserData();
 
-  static Map<String, Object?> toJson() {
+  static Map<String, dynamic> toJson() {
     return {
       'name': name,
       'age': age,
@@ -36,6 +38,7 @@ class UserData with ChangeNotifier {
     };
   }
 
+  // why UserData.fromJson ?? shouldn't it be UserData fromJson()....
   UserData.fromJson(Map<String, Object?> json) {
     name = json['name']! as String;
     age = json['age']! as int;
@@ -51,46 +54,71 @@ class UserData with ChangeNotifier {
     imageURLs = json['imageURLs']! as List<String>;
   }
 
+  User? retrieveUser({FirebaseAuth? auth}) {
+    auth ??= FirebaseAuth.instance;
+    return auth.currentUser;
+  }
+
+  void uploadUserData() {
+    final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
+    User? _user = retrieveUser();
+    if (_user != null) {
+      UserImages.uploadImages(_user);
+      Map<String, dynamic> _userData = UserData.toJson();
+      // set this up in console
+      _fireStore.collection("userData").doc(_user.uid).set(_userData);
+    }
+  }
+
+  static bool canCreateUser() {
+    for (var value in UserData.toJson().values) {
+      if (value == null) {
+        return false;
+      }
+    } return true;
+  }
+
 }
 
-class UserPhotos {
-  User user;
-  static List<XFile?> images = [];
-  static List<XFile?> indexedUserPhotos = List.filled(9, null);
-
-  // pre: initialize images[] with all user's images
-  // post: userdata photo urls are updated
-  // void uploadPhotos() async {
-  //   UserData.imageURLs = [];
-  //   for (int i = 0; i < images.length; i++) {
-  //     String path = 'images/${user.uid}/$i';
-  //     Reference ref = FirebaseStorage.instance.ref(path);
-  //     await ref.putFile(File(images[i]!.path));
-  //     UserData.imageURLs.add(await ref.getDownloadURL());
-  //   }
-  //   for (int i = images.length; i < 9; i++) {
-  //     String path = 'images/${user.uid}/$i';
-  //     await FirebaseStorage.instance.ref(path).delete();
-  //   }
-  // }
-
-  UserPhotos(this.user);
-}
-
-void setUser(User user) {}
-
-User? retrieveUser({FirebaseAuth? auth}) {
-  auth ??= FirebaseAuth.instance;
-  return auth.currentUser;
-}
-
-// Future addUser({User? user}) {
-//   user ??= retrieveUser();
-//   if (user == null) {
-//     return Future.error("User could not be authenticated");
-//   }
-//   FirebaseFirestore firestore = FirebaseFirestore.instance;
+// class UserPhotos {
+//   User user;
+//   static List<XFile?> images = [];
+//   static List<XFile?> indexedUserPhotos = List.filled(9, null);
 //
-//   DocumentReference ref = firestore.collection('users').doc(user.uid);
-//   return ref.set(UserData.toJson());
+//   // pre: initialize images[] with all user's images
+//   // post: userdata photo urls are updated
+//   // void uploadPhotos() async {
+//   //   UserData.imageURLs = [];
+//   //   for (int i = 0; i < images.length; i++) {
+//   //     String path = 'images/${user.uid}/$i';
+//   //     Reference ref = FirebaseStorage.instance.ref(path);
+//   //     await ref.putFile(File(images[i]!.path));
+//   //     UserData.imageURLs.add(await ref.getDownloadURL());
+//   //   }
+//   //   for (int i = images.length; i < 9; i++) {
+//   //     String path = 'images/${user.uid}/$i';
+//   //     await FirebaseStorage.instance.ref(path).delete();
+//   //   }
+//   // }
+//
+//
+//   UserPhotos(this.user);
 // }
+//
+// void setUser(User user) {}
+//
+// // User? retrieveUser({FirebaseAuth? auth}) {
+// //   auth ??= FirebaseAuth.instance;
+// //   return auth.currentUser;
+// // }
+//
+// // Future addUser({User? user}) {
+// //   user ??= retrieveUser();
+// //   if (user == null) {
+// //     return Future.error("User could not be authenticated");
+// //   }
+// //   FirebaseFirestore firestore = FirebaseFirestore.instance;
+// //
+// //   DocumentReference ref = firestore.collection('users').doc(user.uid);
+// //   return ref.set(UserData.toJson());
+// // }
