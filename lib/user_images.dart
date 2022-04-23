@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import "dart:io";
 import 'cloud_functions/users.dart';
+import 'package:collection/collection.dart';
 
 class UserImages with ChangeNotifier {
   UserImages();
@@ -78,14 +79,27 @@ class UserImages with ChangeNotifier {
   }
 
   static Future<void> uploadImages(User user) async {
-    for (int i=0; i < userImages.length; i++) {
-      if (userImages[i] != null) {
-        String path = "images/${user.uid}/$i";
-        Reference ref = FirebaseStorage.instance.ref(path);
-        await ref.putFile(File(userImages[i]!.path));
-        UserData.imageURLs.add(await ref.getDownloadURL());
+    FirebaseStorage storage = FirebaseStorage.instance;
+    List<XFile> _userImages = userImages.whereNotNull().toList();
+    for (int i=0; i < _userImages.length; i++) {
+      String path = "images/${user.uid}/$i";
+      final file = File(_userImages[i].path);
+      TaskSnapshot snapshot = await storage.ref().child(path).putFile(file);
+      if (snapshot.state == TaskState.success) {
+        final String downloadUrl = await snapshot.ref.getDownloadURL();
+        UserData.imageURLs.add(downloadUrl);
+      } else {
+        throw("Something went wrong uploading those images");
       }
     }
   }
 
 }
+// for (int i=0; i < userImages.length; i++) {
+//   if (userImages[i] != null) {
+//     String path = "images/${user.uid}/$i";
+//     Reference ref = FirebaseStorage.instance.ref(path);
+//     await ref.putFile(File(userImages[i]!.path));
+//     UserData.imageURLs.add(await ref.getDownloadURL());
+//   }
+// }

@@ -1,7 +1,6 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:rendezvous_beta_v3/user_images.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -28,12 +27,13 @@ class UserData with ChangeNotifier {
       'age': age,
       'gender': gender.toString(),
       'bio': bio,
-      'dates': dates.toList().toString(),
+      'dates': dates.toList(),
       'prefGender': prefGender.toList(),
       'minAge': minAge,
       'maxAge': maxAge,
       'distance': maxDistance,
-      'price': minPrice,
+      'minPrice': minPrice,
+      "maxPrice" : maxPrice,
       'imageURLs': imageURLs,
     };
   }
@@ -59,13 +59,12 @@ class UserData with ChangeNotifier {
     return auth.currentUser;
   }
 
-  void uploadUserData() {
+  void uploadUserData() async {
     final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
     User? _user = retrieveUser();
     if (_user != null) {
-      UserImages.uploadImages(_user);
+      await UserImages.uploadImages(_user);
       Map<String, dynamic> _userData = UserData.toJson();
-      // set this up in console
       _fireStore.collection("userData").doc(_user.uid).set(_userData);
     }
   }
