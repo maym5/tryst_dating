@@ -4,8 +4,8 @@ import 'package:rendezvous_beta_v3/cloud_functions/authentication.dart';
 import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
 
 import '../fields/text_input_field.dart';
-import '../layouts/gradient_button.dart';
-import '../layouts/page_background.dart';
+import '../widgets/gradient_button.dart';
+import '../widgets/page_background.dart';
 
 class SignUpPage extends StatefulWidget {
   static const id = "sign_up_page";
@@ -16,7 +16,11 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  String? _confirmMessage;
+  Map<String, String?> errorMessages = {
+    "email" : null,
+    "password" : null,
+    "confirm" : "Passwords don't match"
+  };
   Map<String, String?> userInputs = {
     "email" : null,
     "password" : null,
@@ -35,7 +39,8 @@ class _SignUpPageState extends State<SignUpPage> {
         userInputs["email"] = email;
       }
     },
-    showError: userInputs['email'] == null && showErrors,
+    showError: (userInputs['email'] == null || errorMessages["email"] != null) && showErrors,
+    errorMessage: errorMessages["email"],
   );
 
   TextInputField get passwordField => TextInputField(
@@ -48,7 +53,8 @@ class _SignUpPageState extends State<SignUpPage> {
         userInputs["password"] = password;
       }
     },
-    showError: userInputs['password'] == null && showErrors,
+    showError: (userInputs['password'] == null || errorMessages['password'] != null) && showErrors,
+    errorMessage: errorMessages["password"],
   );
 
   TextInputField get confirmField => TextInputField(
@@ -62,13 +68,46 @@ class _SignUpPageState extends State<SignUpPage> {
       }
     },
     showError: (userInputs['confirm'] == null || passwordsDontMatch) && showErrors,
-    errorMessage: _confirmMessage,
+    errorMessage: errorMessages["confirm"],
   );
+
+  void _setErrorMessages(String result) {
+    // TODO: refactor
+    switch(result) {
+      case 'weak-password':
+        setState(() {
+          errorMessages["password"] = "This password is too weak";
+          errorMessages['email'] = null;
+          showErrors = true;
+        });
+        break;
+      case "email-already-in-use":
+        setState(() {
+          errorMessages['email'] = "That email is already in use";
+          errorMessages["password"] = null;
+          showErrors = true;
+        });
+        break;
+      case "invalid-email":
+        setState(() {
+          errorMessages["email"] = "Please enter a valid email";
+          errorMessages["password"] = null;
+          showErrors = true;
+        });
+        break;
+      default:
+        setState(() {
+          errorMessages["email"] = result;
+          errorMessages["password"] = null;
+          showErrors = true;
+        });
+        break;
+    }
+  }
 
   void _onPressed() async {
     if (passwordsDontMatch) {
       setState(() {
-        _confirmMessage = "Passwords don't match";
         showErrors = true;
       });
     } else {
@@ -84,10 +123,9 @@ class _SignUpPageState extends State<SignUpPage> {
       if (result is User) {
         Navigator.pushNamed(context, UserEditPage.id);
       } else {
-        // show errors
-      }
+        _setErrorMessages(result);
     }
-  }
+  }}
 
   @override
   void initState() {
@@ -127,3 +165,4 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 }
+

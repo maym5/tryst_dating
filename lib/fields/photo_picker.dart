@@ -5,7 +5,7 @@ import '../constants.dart';
 import 'package:reorderable_grid/reorderable_grid.dart';
 import 'package:provider/provider.dart';
 
-import '../layouts/field_title.dart';
+import '../widgets/field_title.dart';
 import '../cloud_functions/user_images.dart';
 import '../widgets/warning_widget.dart';
 

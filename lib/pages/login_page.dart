@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/cloud_functions/authentication.dart';
 import '../fields/text_input_field.dart';
-import '../layouts/gradient_button.dart';
-import '../layouts/page_background.dart';
+import '../widgets/gradient_button.dart';
+import '../widgets/page_background.dart';
 
 class LoginPage extends StatefulWidget {
   static const id = "login_page";
@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _onPressed() async {
     if (loginInputs['password'] != null && loginInputs['email'] != null) {
-      dynamic result = await onEmailAndPasswordLogin(loginInputs['email']!, loginInputs['password']!);
+      var result = await onEmailAndPasswordLogin(loginInputs['email']!, loginInputs['password']!);
       if (result is User) {
         // push discover
       } else {

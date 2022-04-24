@@ -5,8 +5,8 @@ import '../fields/photo_picker.dart';
 import '../fields/price_picker.dart';
 import '../fields/slider_field.dart';
 import '../fields/text_input_field.dart';
-import '../layouts/gradient_button.dart';
-import '../layouts/tile_card.dart';
+import 'gradient_button.dart';
+import 'tile_card.dart';
 
 class UserEditBuilder extends StatelessWidget {
   const UserEditBuilder({Key? key, required this.index, required this.showErrors, required this.onButtonPress}) : super(key: key);
