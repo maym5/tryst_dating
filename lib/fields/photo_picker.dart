@@ -6,7 +6,7 @@ import 'package:reorderable_grid/reorderable_grid.dart';
 import 'package:provider/provider.dart';
 
 import '../layouts/field_title.dart';
-import '../user_images.dart';
+import '../cloud_functions/user_images.dart';
 import '../widgets/warning_widget.dart';
 
 class GridBox extends StatefulWidget {

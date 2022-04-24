@@ -1,7 +1,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:rendezvous_beta_v3/user_images.dart';
+import 'package:rendezvous_beta_v3/cloud_functions/user_images.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserData with ChangeNotifier {
@@ -69,7 +69,7 @@ class UserData with ChangeNotifier {
     }
   }
 
-  static bool canCreateUser() {
+  static bool get canCreateUser {
     for (var value in UserData.toJson().values) {
       if (value == null) {
         return false;

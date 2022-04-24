@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rendezvous_beta_v3/user_images.dart';
 import '../cloud_functions/users.dart';
 import '../layouts/page_background.dart';
 import '../widgets/profile_view/profile_view.dart';
@@ -23,7 +22,7 @@ class _UserEditPageState extends State<UserEditPage> {
   }
 
   void onButtonPress() {
-    if (UserData.canCreateUser()) {
+    if (UserData.canCreateUser) {
       UserData().uploadUserData();
       Navigator.pushNamed(context, UserProfile.id);
     } else {

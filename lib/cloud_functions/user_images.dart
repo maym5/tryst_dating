@@ -3,7 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import "dart:io";
-import 'cloud_functions/users.dart';
+import 'users.dart';
 import 'package:collection/collection.dart';
 
 class UserImages with ChangeNotifier {
@@ -93,13 +93,4 @@ class UserImages with ChangeNotifier {
       }
     }
   }
-
 }
-// for (int i=0; i < userImages.length; i++) {
-//   if (userImages[i] != null) {
-//     String path = "images/${user.uid}/$i";
-//     Reference ref = FirebaseStorage.instance.ref(path);
-//     await ref.putFile(File(userImages[i]!.path));
-//     UserData.imageURLs.add(await ref.getDownloadURL());
-//   }
-// }
