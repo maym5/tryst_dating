@@ -1,13 +1,6 @@
-import 'dart:collection';
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/widgets/discover_view/discover_view.dart';
-
-import '../cloud/users.dart';
 import '../services/discover_service.dart';
 
 class DiscoverPage extends StatefulWidget {
@@ -19,6 +12,7 @@ class DiscoverPage extends StatefulWidget {
 }
 
 class _DiscoverPageState extends State<DiscoverPage> {
+  // TODO: build like widget
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,14 +25,11 @@ class _DiscoverPageState extends State<DiscoverPage> {
               final List<Map<String, dynamic>> documents = snapshot.data!.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
               final Map<String, dynamic> currentDoc = documents[index];
               return DiscoverView(
-                data: DiscoverData.getDiscoverData(
-                    currentDoc["name"],
-                    currentDoc["age"],
-                    currentDoc["dates"],
-                    currentDoc["imageURLs"],
-                    currentDoc["bio"]),
+                // TODO: 1) test this!!!
+                data: DiscoverData.getDiscoverData(currentDoc),
               );
             } else {
+              // TODO: add animation
               return const Center(
                 child: Text("Couldn't fetch any data"),
               );
@@ -66,10 +57,16 @@ class DiscoverData {
     } return aListOfStrings;
   }
 
-  factory DiscoverData.getDiscoverData(String name, int age, List dates, List images, String bio) {
-    final List<String> _dates = listToListOfStrings(dates);
-    final List<String> _images = listToListOfStrings(images);
-    return DiscoverData(name, age, _images, _dates, bio);
+  // factory DiscoverData.getDiscoverData(String name, int age, List dates, List images, String bio) {
+  //   final List<String> _dates = listToListOfStrings(dates);
+  //   final List<String> _images = listToListOfStrings(images);
+  //   return DiscoverData(name, age, _images, _dates, bio);
+  // }
+
+  factory DiscoverData.getDiscoverData(Map<String, dynamic> data) {
+    final List<String> _dates = listToListOfStrings(data["dates"]);
+    final List<String> _images = listToListOfStrings(data["images"]);
+    return DiscoverData(data["name"], data["age"], _images, _dates, data["bio"]);
   }
 
 }

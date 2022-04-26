@@ -20,13 +20,6 @@ class DiscoverService {
     return userData;
   }
 
-  static List<String> listToListOfStrings(List list) {
-    final List<String> aListOfStrings = [];
-    for (var item in list) {
-      aListOfStrings.add(item.toString());
-    } return aListOfStrings;
-  }
-
   Stream get discoverStream async* {
     FirebaseFirestore db = FirebaseFirestore.instance;
     yield* db.collection('userData').where(

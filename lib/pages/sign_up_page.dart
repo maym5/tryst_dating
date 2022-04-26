@@ -7,6 +7,7 @@ import '../widgets/gradient_button.dart';
 import '../widgets/page_background.dart';
 
 class SignUpPage extends StatefulWidget {
+  // TODO: add spinner when processing cloud stuff
   static const id = "sign_up_page";
   const SignUpPage({Key? key}) : super(key: key);
 
@@ -29,6 +30,8 @@ class _SignUpPageState extends State<SignUpPage> {
 
   bool get passwordsDontMatch => userInputs['password'] != userInputs["confirm"];
 
+
+  // TODO: look at refactoring these
   TextInputField get emailField => TextInputField(
     title: "Email",
     onChanged: (email) {
@@ -71,7 +74,6 @@ class _SignUpPageState extends State<SignUpPage> {
   );
 
   void _setErrorMessages(String result) {
-    // TODO: refactor
     switch(result) {
       case 'weak-password':
         setState(() {
