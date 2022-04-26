@@ -1,7 +1,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:rendezvous_beta_v3/cloud_functions/user_images.dart';
+import 'package:rendezvous_beta_v3/cloud/user_images.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserData with ChangeNotifier {
@@ -39,20 +39,10 @@ class UserData with ChangeNotifier {
   }
 
   // why UserData.fromJson ?? shouldn't it be UserData fromJson()....
-  UserData.fromJson(Map<String, Object?> json) {
-    name = json['name']! as String;
-    age = json['age']! as int;
-    gender = json['gender']! as String;
-    bio = json['bio']! as String;
-    dates = json['dates']! as Set<String>;
-    prefGender = json['prefGender']! as Set<String>;
-    minAge = json['minAge']! as int;
-    maxAge = json['maxAge']! as int;
-    maxDistance = json['distance']! as int;
-    minPrice = json['price']! as int;
-    maxPrice = json['price']! as int;
-    imageURLs = json['imageURLs']! as List<String>;
-  }
+
+  // Map<String, dynamic> convertFirebaseData(dynamic event) {
+  //
+  // }
 
   User? retrieveUser({FirebaseAuth? auth}) {
     auth ??= FirebaseAuth.instance;

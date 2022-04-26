@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:rendezvous_beta_v3/animations/bounce_animation.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
+import 'package:rendezvous_beta_v3/pages/discover_page.dart';
 import 'package:rendezvous_beta_v3/widgets/profile_view/profile_info.dart';
-import '../../cloud_functions/users.dart';
+import '../../cloud/users.dart';
 import '../page_background.dart';
-import '../../cloud_functions/user_images.dart';
+import '../../cloud/user_images.dart';
 import '../round_button.dart';
 import 'image_background.dart';
 
@@ -34,7 +34,7 @@ class UserProfile extends StatelessWidget {
         },),
         const SizedBox(height: 10,),
         RoundButton(icon: Icons.favorite, title: "Discover", gradient: kButtonGradient, onPressed: () {
-          // push to discover
+          Navigator.pushNamed(context, DiscoverPage.id);
         },),
       ],
     ),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../fields/date_type_picker.dart';
-import '../fields/gender_field.dart';
-import '../fields/photo_picker.dart';
-import '../fields/price_picker.dart';
-import '../fields/slider_field.dart';
-import '../fields/text_input_field.dart';
+import 'fields/date_type_picker.dart';
+import 'fields/gender_field.dart';
+import 'fields/photo_picker.dart';
+import 'fields/price_picker.dart';
+import 'fields/slider_field.dart';
+import 'fields/text_input_field.dart';
 import 'gradient_button.dart';
 import 'tile_card.dart';
 

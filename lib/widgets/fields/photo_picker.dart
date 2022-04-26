@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import '../constants.dart';
 import 'package:reorderable_grid/reorderable_grid.dart';
 import 'package:provider/provider.dart';
 
-import '../widgets/field_title.dart';
-import '../cloud_functions/user_images.dart';
-import '../widgets/warning_widget.dart';
+import '../../cloud/user_images.dart';
+import '../../constants.dart';
+import '../field_title.dart';
+import '../warning_widget.dart';
+
 
 class GridBox extends StatefulWidget {
   const GridBox({Key? key, required this.index, required this.images})

@@ -62,7 +62,7 @@ class _ImageBackgroundState extends State<ImageBackground> {
             )
           : Container();
     } else if (widget.userPhotos is List<String>) {
-      return Image.network(widget.userPhotos[widget.activeIndex]);
+      return Image.network(widget.userPhotos[widget.activeIndex], fit: BoxFit.cover);
     }
     return Container();
   }

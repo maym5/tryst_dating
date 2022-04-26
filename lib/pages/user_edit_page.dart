@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../cloud_functions/users.dart';
+import '../cloud/users.dart';
 import '../widgets/page_background.dart';
 import '../widgets/profile_view/profile_view.dart';
 import '../widgets/user_edit_builder.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../cloud_functions/users.dart';
-import '../constants.dart';
-import '../widgets/field_title.dart';
-import '../widgets/warning_widget.dart';
+import '../../cloud/users.dart';
+import '../../constants.dart';
+import '../field_title.dart';
+import '../warning_widget.dart';
 
 const kMaleGender = 'male';
 const kFemaleGender = 'female';

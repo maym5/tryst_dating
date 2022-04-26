@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../cloud_functions/users.dart';
-import '../constants.dart';
-import '../widgets/field_title.dart';
-import '../widgets/warning_widget.dart';
+import '../../cloud/users.dart';
+import '../../constants.dart';
+import '../field_title.dart';
+import '../warning_widget.dart';
+
 
 class PricePicker extends StatefulWidget {
   const PricePicker({Key? key, required this.showError}) : super(key: key);
