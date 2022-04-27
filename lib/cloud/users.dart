@@ -67,6 +67,22 @@ class UserData with ChangeNotifier {
     } return true;
   }
 
+  void updateUserData() async {
+    // TODO: test this
+    final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
+    User? _user = retrieveUser();
+    final Map<String, dynamic> _newUserData = UserData.toJson();
+    if (_user != null) {
+      final DocumentSnapshot _oldUserData = await _fireStore.collection("userData").doc(_user.uid).get();
+      final Map<String, dynamic> _data = _oldUserData.data() as Map<String, dynamic>;
+      for (String key in _data.keys) {
+        if (_newUserData[key] != _oldUserData[key]) {
+          _fireStore.collection("userData").doc(_user.uid).update(_newUserData);
+       }
+     }
+    }
+  }
+
 }
 
 // class UserPhotos {

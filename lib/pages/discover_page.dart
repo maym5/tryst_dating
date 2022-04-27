@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/widgets/discover_view/discover_view.dart';
+import 'package:rendezvous_beta_v3/widgets/like_widget.dart';
 import '../services/discover_service.dart';
 
 class DiscoverPage extends StatefulWidget {
@@ -12,6 +13,44 @@ class DiscoverPage extends StatefulWidget {
 }
 
 class _DiscoverPageState extends State<DiscoverPage> {
+  late double _userRating;
+  late int _previousPage;
+  late PageController _pageController;
+  late ValueNotifier<double> _animation;
+
+  void _onScroll() {
+    if (_pageController.page!.toInt() == _pageController.page) {
+      _previousPage = _pageController.page!.toInt();
+    }
+    _animation.value = (_pageController.page! - _previousPage);
+  }
+
+  @override
+  void initState() {
+    _animation = ValueNotifier(0);
+    _pageController = PageController(
+      initialPage: 0,
+      viewportFraction: 1,
+    )..addListener(_onScroll);
+    _animation.value = _pageController.initialPage.toDouble();
+    _previousPage = _pageController.initialPage;
+    _userRating = 5.0;
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pageController.removeListener(_onScroll);
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void setUserRating(double userRating) {
+    setState(() {
+      _userRating = userRating;
+    });
+  }
+
   // TODO: build like widget
   @override
   Widget build(BuildContext context) {
@@ -19,14 +58,26 @@ class _DiscoverPageState extends State<DiscoverPage> {
       body: FutureBuilder(
         future: DiscoverService().discoverData,
         builder: (context, AsyncSnapshot<QuerySnapshot<Map>> snapshot) => PageView.builder(
+          controller: _pageController,
           scrollDirection: Axis.vertical,
           itemBuilder: (BuildContext context, int index) {
             if (snapshot.hasData) {
               final List<Map<String, dynamic>> documents = snapshot.data!.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
               final Map<String, dynamic> currentDoc = documents[index];
-              return DiscoverView(
-                // TODO: 1) test this!!!
-                data: DiscoverData.getDiscoverData(currentDoc),
+              return Stack(
+                children: [
+                  DiscoverView(
+                    // TODO: 1) test this!!!
+                    data: DiscoverData.getDiscoverData(currentDoc),
+                    getUserRating: setUserRating,
+                  ),
+                  Center(
+                    child: LikeWidget(
+                      animation: _animation,
+                      userRating: _userRating,
+                    ),
+                  ),
+                ],
               );
             } else {
               // TODO: add animation

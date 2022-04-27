@@ -43,6 +43,7 @@ dependencies:
   expandable_text: ^2.3.0
   percent_indicator: ^4.0.0
   cloud_firestore: ^3.1.13
+  modal_progress_hud_nsn: ^0.1.0-nullsafety-1
 
 dev_dependencies:
   flutter_test:

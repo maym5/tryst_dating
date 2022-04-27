@@ -36,8 +36,9 @@ import '../profile_view/profile_view.dart';
 // }
 
 class DiscoverView extends StatefulWidget {
-  const DiscoverView({Key? key, required this.data}) : super(key: key);
+  const DiscoverView({Key? key, required this.data, required this.getUserRating}) : super(key: key);
   final DiscoverData data;
+  final void Function(double) getUserRating;
 
   @override
   _DiscoverViewState createState() => _DiscoverViewState();
@@ -71,6 +72,7 @@ class _DiscoverViewState extends State<DiscoverView> {
         (userDragDirection.sign * (userDragDistance / _dragRadius));
       });
     }
+    widget.getUserRating(_userRating);
   }
 
   void _onDragEnd(DragEndDetails details) {

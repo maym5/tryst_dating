@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 Future onEmailAndPasswordLogin(String email, String password) async {
   FirebaseAuth auth = FirebaseAuth.instance;
-  //auth.setPersistence(Persistence.LOCAL);
   try {
     UserCredential userCredential = await auth.signInWithEmailAndPassword(
         email: email, password: password);
@@ -14,14 +13,11 @@ Future onEmailAndPasswordLogin(String email, String password) async {
 
 Future onEmailAndPasswordSignUp(String email, String password) async {
   FirebaseAuth auth = FirebaseAuth.instance;
-  //auth.setPersistence(Persistence.LOCAL);
   try {
     UserCredential userCredential = await auth.createUserWithEmailAndPassword(
         email: email, password: password);
-    // await userCredential.user!.sendEmailVerification().whenComplete(() => null); // do some shit
     return Future.value(userCredential.user);
   } on FirebaseAuthException catch (e) {
-    // print(e.message);
     return Future.value(e.code);
   }
 }

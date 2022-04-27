@@ -1,13 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/cloud/authentication.dart';
+import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
 import '../widgets/fields/text_input_field.dart';
 import '../widgets/gradient_button.dart';
 import '../widgets/page_background.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'dart:collection';
 
 class SignUpPage extends StatefulWidget {
-  // TODO: add spinner when processing cloud stuff
   static const id = "sign_up_page";
   const SignUpPage({Key? key}) : super(key: key);
 
@@ -27,9 +29,9 @@ class _SignUpPageState extends State<SignUpPage> {
     "confirm" : null
   };
   late bool showErrors;
+  late bool _showSpinner;
 
   bool get passwordsDontMatch => userInputs['password'] != userInputs["confirm"];
-
 
   // TODO: look at refactoring these
   TextInputField get emailField => TextInputField(
@@ -106,60 +108,96 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
+  // void _onPressed() async {
+  //   setState(() => _showSpinner = true);
+  //   if (passwordsDontMatch) {
+  //     setState(() {
+  //       showErrors = true;
+  //       _showSpinner = false;
+  //     });
+  //   } else {
+  //     for (String? input in userInputs.values) {
+  //       if (input == null) {
+  //         setState(() {
+  //           showErrors = true;
+  //           _showSpinner = false;
+  //           return; // problem here
+  //         });
+  //       }
+  //     }
+  //     var result = await onEmailAndPasswordSignUp(userInputs["email"]!, userInputs["password"]!);
+  //     if (result is User) {
+  //       setState(() => _showSpinner = false);
+  //       Navigator.pushNamed(context, UserEditPage.id);
+  //     } else {
+  //       setState(() => _showSpinner = false);
+  //       _setErrorMessages(result);
+  //   }
+  // }}
+
   void _onPressed() async {
+    setState(() => _showSpinner = true);
     if (passwordsDontMatch) {
       setState(() {
+        _showSpinner = false;
+        showErrors = true;
+      });
+    } else if (userInputs.values.every((element) => element == null)) {
+      setState(() {
+        _showSpinner = false;
         showErrors = true;
       });
     } else {
-      for (String? input in userInputs.values) {
-        if (input == null) {
-          setState(() {
-            showErrors = true;
-            return;
-          });
-        }
-      }
       var result = await onEmailAndPasswordSignUp(userInputs["email"]!, userInputs["password"]!);
       if (result is User) {
-        Navigator.pushNamed(context, UserEditPage.id);
+        setState(() => _showSpinner = false);
+        Navigator.pushNamed(context, OnboardingUserEditPage.id);
       } else {
+        setState(() => _showSpinner = false);
         _setErrorMessages(result);
+      }
     }
-  }}
+  }
 
   @override
   void initState() {
     showErrors = false;
+    _showSpinner = false;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return PageBackground(
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                const SizedBox(height: 25,),
-                Container(
-                  height: 100,
-                  width: 100,
-                  color: Colors.redAccent,
-                ),
-                const SizedBox(height: 75,),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    emailField,
-                    passwordField,
-                    confirmField
-                  ],
-                ),
-                const SizedBox(height: 25,),
-                GradientButton(title: "Sign Up", onPressed: _onPressed)
-              ],
+        body: ModalProgressHUD(
+          inAsyncCall: _showSpinner,
+          color: kDarkTransparent,
+          progressIndicator:
+            const CircularProgressIndicator(color: Colors.redAccent),
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  const SizedBox(height: 25,),
+                  Container(
+                    height: 100,
+                    width: 100,
+                    color: Colors.redAccent,
+                  ),
+                  const SizedBox(height: 75,),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      emailField,
+                      passwordField,
+                      confirmField
+                    ],
+                  ),
+                  const SizedBox(height: 25,),
+                  GradientButton(title: "Sign Up", onPressed: _onPressed)
+                ],
+              ),
             ),
           ),
         ),
