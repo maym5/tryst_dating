@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/widgets/discover_view/discover_view.dart';
 import 'package:rendezvous_beta_v3/widgets/like_widget.dart';
+import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 import '../services/discover_service.dart';
 
 class DiscoverPage extends StatefulWidget {
@@ -54,20 +55,20 @@ class _DiscoverPageState extends State<DiscoverPage> {
   // TODO: build like widget
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PageBackground(
       body: FutureBuilder(
         future: DiscoverService().discoverData,
         builder: (context, AsyncSnapshot<QuerySnapshot<Map>> snapshot) => PageView.builder(
           controller: _pageController,
           scrollDirection: Axis.vertical,
+          itemCount: snapshot.data?.size, // <- bug fix here
           itemBuilder: (BuildContext context, int index) {
-            if (snapshot.hasData) {
+            if (snapshot.hasData && !snapshot.hasError) {
               final List<Map<String, dynamic>> documents = snapshot.data!.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
               final Map<String, dynamic> currentDoc = documents[index];
               return Stack(
                 children: [
                   DiscoverView(
-                    // TODO: 1) test this!!!
                     data: DiscoverData.getDiscoverData(currentDoc),
                     getUserRating: setUserRating,
                   ),
@@ -116,7 +117,7 @@ class DiscoverData {
 
   factory DiscoverData.getDiscoverData(Map<String, dynamic> data) {
     final List<String> _dates = listToListOfStrings(data["dates"]);
-    final List<String> _images = listToListOfStrings(data["images"]);
+    final List<String> _images = listToListOfStrings(data["imageURLs"]);
     return DiscoverData(data["name"], data["age"], _images, _dates, data["bio"]);
   }
 

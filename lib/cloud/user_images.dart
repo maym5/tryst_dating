@@ -81,6 +81,7 @@ class UserImages with ChangeNotifier {
   static Future<void> uploadImages(User user) async {
     FirebaseStorage storage = FirebaseStorage.instance;
     List<XFile> _userImages = userImages.whereNotNull().toList();
+    UserData.imageURLs.clear();
     for (int i=0; i < _userImages.length; i++) {
       String path = "images/${user.uid}/$i";
       final file = File(_userImages[i].path);

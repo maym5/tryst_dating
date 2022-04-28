@@ -151,7 +151,7 @@ class _SignUpPageState extends State<SignUpPage> {
       var result = await onEmailAndPasswordSignUp(userInputs["email"]!, userInputs["password"]!);
       if (result is User) {
         setState(() => _showSpinner = false);
-        Navigator.pushNamed(context, OnboardingUserEditPage.id);
+        Navigator.pushNamed(context, UserEditPage.id);
       } else {
         setState(() => _showSpinner = false);
         _setErrorMessages(result);

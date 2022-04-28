@@ -24,7 +24,7 @@ class Rendezvous extends StatelessWidget {
       theme: ThemeData.dark(),
       initialRoute: SignUpPage.id,
       routes: <String, WidgetBuilder> {
-        OnboardingUserEditPage.id : (BuildContext context) => const OnboardingUserEditPage(),
+        // OnboardingUserEditPage.id : (BuildContext context) => const OnboardingUserEditPage(),
         UserEditPage.id : (BuildContext context) => const UserEditPage(),
         UserProfile.id : (BuildContext context) => const UserProfile(),
         SignUpPage.id : (BuildContext context) => const SignUpPage(),
