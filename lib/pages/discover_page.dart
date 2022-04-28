@@ -20,10 +20,15 @@ class _DiscoverPageState extends State<DiscoverPage> {
   late ValueNotifier<double> _animation;
 
   void _onScroll() {
+    // made change must test
+    // works but not ideal
     if (_pageController.page!.toInt() == _pageController.page) {
       _previousPage = _pageController.page!.toInt();
+    } else if (_pageController.page! - _previousPage >= 0.3) {
+      _animation.value = 0;
+    } else {
+      _animation.value = (_pageController.page! - _previousPage);
     }
-    _animation.value = (_pageController.page! - _previousPage);
   }
 
   @override
@@ -56,8 +61,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
   @override
   Widget build(BuildContext context) {
     return PageBackground(
-      body: FutureBuilder(
-        future: DiscoverService().discoverData,
+      body: StreamBuilder(
+        stream: DiscoverService().discoverStream,
         builder: (context, AsyncSnapshot<QuerySnapshot<Map>> snapshot) => PageView.builder(
           controller: _pageController,
           scrollDirection: Axis.vertical,
@@ -122,3 +127,37 @@ class DiscoverData {
   }
 
 }
+
+// FutureBuilder(
+// future: DiscoverService().discoverData,
+// builder: (context, AsyncSnapshot<QuerySnapshot<Map>> snapshot) => PageView.builder(
+// controller: _pageController,
+// scrollDirection: Axis.vertical,
+// itemCount: snapshot.data?.size, // <- bug fix here
+// itemBuilder: (BuildContext context, int index) {
+// if (snapshot.hasData && !snapshot.hasError) {
+// final List<Map<String, dynamic>> documents = snapshot.data!.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+// final Map<String, dynamic> currentDoc = documents[index];
+// return Stack(
+// children: [
+// DiscoverView(
+// data: DiscoverData.getDiscoverData(currentDoc),
+// getUserRating: setUserRating,
+// ),
+// Center(
+// child: LikeWidget(
+// animation: _animation,
+// userRating: _userRating,
+// ),
+// ),
+// ],
+// );
+// } else {
+// // TODO: add animation
+// return const Center(
+// child: Text("Couldn't fetch any data"),
+// );
+// }
+// }
+// ),
+// ),

@@ -5,25 +5,36 @@ class DiscoverService {
   DiscoverService();
   final Map<String, dynamic> currentUserData = UserData.toJson();
 
-  Future<QuerySnapshot<Map>> get discoverData async {
-    FirebaseFirestore db = FirebaseFirestore.instance;
-    // final QuerySnapshot<Map<String, dynamic>> userData = await db.collection("userData").where(
-    //     "distance", isLessThanOrEqualTo: data["distance"]).where(
-    //     "gender", arrayContainsAny: data["prefGender"]).where(
-    //     "dates", arrayContainsAny: data["dates"]).where(
-    //     "age", isGreaterThanOrEqualTo: data["minAge"]).where(
-    //     "age", isLessThanOrEqualTo: data["maxAge"]).where(
-    //     "minPrice", isGreaterThanOrEqualTo: data["minPrice"]).where(
-    //     "maxPrice", isLessThanOrEqualTo: data["maxPrice"]).get();
-    final QuerySnapshot<Map<String,dynamic>> userData = await db.collection('userData').where(
-        "distance", isLessThanOrEqualTo: currentUserData["distance"]).get();
-    return userData;
-  }
+  // Future<QuerySnapshot<Map>> get discoverData async {
+  //   // TODO: #1 get this query done
+  //   FirebaseFirestore db = FirebaseFirestore.instance;
+  //   final QuerySnapshot<Map<String, dynamic>> userData = await db.collection("userData").where(
+  //       "distance", isLessThanOrEqualTo: currentUserData["distance"]).where(
+  //       "gender", arrayContainsAny: currentUserData["prefGender"]).where(
+  //       "dates", arrayContainsAny: currentUserData["dates"]).where(
+  //       "age", isGreaterThanOrEqualTo: currentUserData["minAge"]).where(
+  //       "age", isLessThanOrEqualTo: currentUserData["maxAge"]).where(
+  //       "minPrice", isGreaterThanOrEqualTo: currentUserData["minPrice"]).where(
+  //       "maxPrice", isLessThanOrEqualTo: currentUserData["maxPrice"]).get();
+  //   // final QuerySnapshot<Map<String,dynamic>> userData = await db.collection('userData').where(
+  //   //     "distance", isLessThanOrEqualTo: currentUserData["distance"]).get();
+  //   return userData;
+  // }
 
-  Stream get discoverStream async* {
+  Stream<QuerySnapshot<Map>> get discoverStream async* {
     FirebaseFirestore db = FirebaseFirestore.instance;
-    yield* db.collection('userData').where(
+    yield* db.collection("userData").where(
         "distance", isLessThanOrEqualTo: currentUserData["distance"]).get().asStream();
   }
+
+
+  // db.collection("userData").where(
+  // "distance", isLessThanOrEqualTo: currentUserData["distance"]).where(
+  // "gender", arrayContainsAny: currentUserData["prefGender"]).where(
+  // "dates", arrayContainsAny: currentUserData["dates"]).where(
+  // "age", isGreaterThanOrEqualTo: currentUserData["minAge"]).where(
+  // "age", isLessThanOrEqualTo: currentUserData["maxAge"]).where(
+  // "minPrice", isGreaterThanOrEqualTo: currentUserData["minPrice"]).where(
+  // "maxPrice", isLessThanOrEqualTo: currentUserData["maxPrice"]).get().asStream();
 
 }

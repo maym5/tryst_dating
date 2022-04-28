@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:rendezvous_beta_v3/widgets/profile_view/photo_bar.dart';
 import '../../constants.dart';
 
+
 class ImageBackground extends StatefulWidget {
   const ImageBackground(
       {Key? key,
@@ -81,6 +82,21 @@ class _ImageBackgroundState extends State<ImageBackground> {
           )
         ],
       );
+
+  void cacheImages() {
+    print("called");
+    for (String imagePath in widget.userPhotos) {
+      final image = Image.network(imagePath, fit: BoxFit.cover);
+      precacheImage(image.image, context);
+    }
+  }
+
+
+  @override
+  void didChangeDependencies() {
+    cacheImages();
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
