@@ -19,7 +19,7 @@ class ImageBackground extends StatefulWidget {
       this.onDragEnd})
       : super(key: key);
   final bool isExpanded;
-  final List userPhotos;
+  final List<String> userPhotos;
   final int activeIndex;
   final void Function(TapDownDetails) onTapDown;
   final void Function(TapUpDetails) onTapUp;
@@ -48,25 +48,7 @@ class _ImageBackgroundState extends State<ImageBackground> {
     child: child,
       );
 
-  Widget get images {
-    if (widget.userPhotos is List<XFile?>) {
-      List<XFile?> userImages = [];
-      for (XFile? image in widget.userPhotos) {
-        if (image != null) {
-          userImages.add(image);
-        }
-      }
-      return userImages.isNotEmpty
-          ? Image(
-              image: FileImage(File(userImages[widget.activeIndex]!.path)),
-              fit: BoxFit.cover,
-            )
-          : Container();
-    } else if (widget.userPhotos is List<String>) {
-      return Image.network(widget.userPhotos[widget.activeIndex], fit: BoxFit.cover);
-    }
-    return Container();
-  }
+  Widget get images => Image.network(widget.userPhotos[widget.activeIndex], fit: BoxFit.cover);
 
   Widget get imageStack => Stack(
     fit: StackFit.expand,
@@ -93,7 +75,7 @@ class _ImageBackgroundState extends State<ImageBackground> {
 
   @override
   void didChangeDependencies() {
-    if (widget.userPhotos[0] is String) {
+    if (widget.userPhotos.isNotEmpty) {
       cacheImages();
     }
     super.didChangeDependencies();
@@ -112,3 +94,18 @@ class _ImageBackgroundState extends State<ImageBackground> {
     );
   }
 }
+// old XFilecode
+// if (widget.userPhotos is List<XFile?>) {
+//   List<XFile?> userImages = [];
+//   for (XFile? image in widget.userPhotos) {
+//     if (image != null) {
+//       userImages.add(image);
+//     }
+//   }
+//   return userImages.isNotEmpty
+//       ? Image(
+//           image: FileImage(File(userImages[widget.activeIndex]!.path)),
+//           fit: BoxFit.cover,
+//         )
+//       : Container();
+// } else

@@ -95,10 +95,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   } else if (snapshot.connectionState ==
                       ConnectionState.waiting) {
                     return RippleAnimation(
-                      color: Colors.redAccent,
+                      color: Colors.orangeAccent,
                       child: const DiscoverLoadingAvatar(),
                       repeat: true,
-                      ripplesCount: 6,
+                      ripplesCount: 4,
                       minRadius: 80,
                     );
                   } else {
@@ -143,10 +143,18 @@ class DiscoverLoadingAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //TODO: Test the background container in the animation and play with the animation to get it right
     return Center(
-      child: CircleAvatar(
-        radius: 50,
-        backgroundImage: FileImage(File(UserImages.userImages[0]!.path)),
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          borderRadius: BorderRadius.circular(52),
+          gradient: kButtonGradient
+        ),
+        child: CircleAvatar(
+          radius: 50,
+          backgroundImage: FileImage(File(UserImages.userImages[0]!.path)),
+        ),
       ),
     );
   }

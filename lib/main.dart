@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/pages/discover_page.dart';
+import 'package:rendezvous_beta_v3/pages/home_page.dart';
+import 'package:rendezvous_beta_v3/pages/intro_page.dart';
 import 'package:rendezvous_beta_v3/pages/login_page.dart';
 import 'package:rendezvous_beta_v3/pages/sign_up_page.dart';
 import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
@@ -22,9 +24,10 @@ class Rendezvous extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.dark(),
-      initialRoute: SignUpPage.id,
+      initialRoute: IntroPage.id,
       routes: <String, WidgetBuilder> {
-        // OnboardingUserEditPage.id : (BuildContext context) => const OnboardingUserEditPage(),
+        IntroPage.id : (BuildContext context) => const IntroPage(),
+        HomePage.id :  (BuildContext context) => const HomePage(),
         UserEditPage.id : (BuildContext context) => const UserEditPage(),
         UserProfile.id : (BuildContext context) => const UserProfile(),
         SignUpPage.id : (BuildContext context) => const SignUpPage(),

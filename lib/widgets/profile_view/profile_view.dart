@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/pages/discover_page.dart';
+import 'package:rendezvous_beta_v3/pages/home_page.dart';
 import 'package:rendezvous_beta_v3/widgets/profile_view/profile_info.dart';
 import '../../models/user_images.dart';
 import '../../models/users.dart';
@@ -34,7 +35,7 @@ class UserProfile extends StatelessWidget {
         },),
         const SizedBox(height: 10,),
         RoundButton(icon: Icons.favorite, title: "Discover", gradient: kButtonGradient, onPressed: () {
-          Navigator.pushNamed(context, DiscoverPage.id);
+          Navigator.pushNamed(context, HomePage.id);
         },),
       ],
     ),
@@ -47,7 +48,7 @@ class UserProfile extends StatelessWidget {
       body: Stack(
         children: <Widget>[
           ProfileView(
-            userPhotos: _images,
+            userPhotos: UserData.imageURLs,
             bio: UserData.bio!,
             name: UserData.name!,
             age: UserData.age!,
@@ -73,7 +74,7 @@ class ProfileView extends StatefulWidget {
       this.onDragUpdate,
       this.onDragEnd})
       : super(key: key);
-  final List userPhotos;
+  final List<String> userPhotos;
   final String name;
   final int age;
   final String bio;
