@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../cloud/users.dart';
+
+import '../models/users.dart';
 
 class DiscoverService {
   DiscoverService();
   final Map<String, dynamic> currentUserData = UserData.toJson();
 
   // Future<QuerySnapshot<Map>> get discoverData async {
-  //   // TODO: #1 get this query done
   //   FirebaseFirestore db = FirebaseFirestore.instance;
   //   final QuerySnapshot<Map<String, dynamic>> userData = await db.collection("userData").where(
   //       "distance", isLessThanOrEqualTo: currentUserData["distance"]).where(

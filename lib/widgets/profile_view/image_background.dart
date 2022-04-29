@@ -84,7 +84,6 @@ class _ImageBackgroundState extends State<ImageBackground> {
       );
 
   void cacheImages() {
-    print("called");
     for (String imagePath in widget.userPhotos) {
       final image = Image.network(imagePath, fit: BoxFit.cover);
       precacheImage(image.image, context);
@@ -94,7 +93,9 @@ class _ImageBackgroundState extends State<ImageBackground> {
 
   @override
   void didChangeDependencies() {
-    cacheImages();
+    if (widget.userPhotos[0] is String) {
+      cacheImages();
+    }
     super.didChangeDependencies();
   }
 

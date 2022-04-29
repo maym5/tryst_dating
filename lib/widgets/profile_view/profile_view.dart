@@ -3,9 +3,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/pages/discover_page.dart';
 import 'package:rendezvous_beta_v3/widgets/profile_view/profile_info.dart';
-import '../../cloud/users.dart';
+import '../../models/user_images.dart';
+import '../../models/users.dart';
 import '../page_background.dart';
-import '../../cloud/user_images.dart';
 import '../round_button.dart';
 import 'image_background.dart';
 

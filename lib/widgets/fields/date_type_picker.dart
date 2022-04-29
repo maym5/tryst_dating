@@ -1,7 +1,6 @@
 import "package:flutter/material.dart";
-
-import '../../cloud/users.dart';
 import '../../constants.dart';
+import '../../models/users.dart';
 import '../field_title.dart';
 import '../warning_widget.dart';
 
