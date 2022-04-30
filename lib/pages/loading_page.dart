@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
@@ -6,28 +7,33 @@ import 'package:rendezvous_beta_v3/pages/home_page.dart';
 import 'package:rendezvous_beta_v3/pages/sign_up_page.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 
-class IntroPage extends StatefulWidget {
+import '../models/users.dart';
+
+class LoadingPage extends StatefulWidget {
   static const id = "intro_page";
-  const IntroPage({Key? key}) : super(key: key);
+  const LoadingPage({Key? key}) : super(key: key);
 
   @override
-  State<IntroPage> createState() => _IntroPageState();
+  State<LoadingPage> createState() => _LoadingPageState();
 }
 
-class _IntroPageState extends State<IntroPage> {
+class _LoadingPageState extends State<LoadingPage> {
   // TODO: initialize with UserData to avoid error grab location
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Future fakeDelay() async {
     // UserData.location = await _getPosition();
     await Future.delayed(const Duration(seconds: 4));
-    setState(() {
-      final User? currentUser = _auth.currentUser;
-      if (currentUser != null) {
-        Navigator.pushNamed(context, HomePage.id);
-      } else {
-        Navigator.pushNamed(context, SignUpPage.id);
-      }
-    });
+    final User? currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      final DocumentSnapshot<Map<String, dynamic>> _rawData =
+          await _firestore.collection("userData").doc(currentUser.uid).get();
+      final Map<String, dynamic> _data = _rawData.data()!;
+      UserData.fromJson(_data);
+      Navigator.pushNamed(context, HomePage.id);
+    } else {
+      Navigator.pushNamed(context, SignUpPage.id);
+    }
   }
 
   @override

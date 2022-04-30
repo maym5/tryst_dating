@@ -1,8 +1,10 @@
 
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rendezvous_beta_v3/models/user_images.dart';
+import 'package:rendezvous_beta_v3/pages/discover_page.dart';
 
 class UserData with ChangeNotifier {
   static String? name;
@@ -38,11 +40,28 @@ class UserData with ChangeNotifier {
     };
   }
 
-  // why UserData.fromJson ?? shouldn't it be UserData fromJson()....
+  static Set<String> toSetOfString(dynamic values) {
+    Set<String> result = {};
+    for (var item in values) {
+      result.add(item.toString());
+    } return result;
+  }
 
-  // Map<String, dynamic> convertFirebaseData(dynamic event) {
-  //
-  // }
+  static void fromJson(Map<String, dynamic> incomingData) {
+    name = incomingData["name"];
+    age = incomingData["age"];
+    gender = incomingData["gender"];
+    prefGender = toSetOfString(incomingData["prefGender"]);
+    bio = incomingData["bio"];
+    dates = toSetOfString(incomingData["dates"]);
+    maxPrice = incomingData["maxPrice"];
+    minPrice = incomingData["minPrice"];
+    maxDistance = incomingData["distance"];
+    maxAge = incomingData["maxAge"];
+    minAge = incomingData["minAge"];
+    imageURLs = DiscoverData.listToListOfStrings(incomingData["imageURLs"]); // refactor this now that youre using it here
+  }
+
 
   User? retrieveUser({FirebaseAuth? auth}) {
     auth ??= FirebaseAuth.instance;
@@ -50,7 +69,6 @@ class UserData with ChangeNotifier {
   }
 
   void uploadUserData() async {
-    // TODO: adding images, not replacing them on re-write
     final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
     User? _user = retrieveUser();
     if (_user != null) {

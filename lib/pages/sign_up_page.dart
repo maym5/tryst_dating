@@ -7,7 +7,6 @@ import '../widgets/fields/text_input_field.dart';
 import '../widgets/gradient_button.dart';
 import '../widgets/page_background.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'dart:collection';
 
 class SignUpPage extends StatefulWidget {
   static const id = "sign_up_page";

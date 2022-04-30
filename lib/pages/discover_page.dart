@@ -70,7 +70,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
             PageView.builder(
                 controller: _pageController,
                 scrollDirection: Axis.vertical,
-                itemCount: snapshot.data?.size, // <- bug fix here
+                itemCount: snapshot.data?.size,
                 itemBuilder: (BuildContext context, int index) {
                   if (snapshot.hasData && !snapshot.hasError) {
                     final List<Map<String, dynamic>> documents = snapshot
@@ -146,9 +146,8 @@ class DiscoverLoadingAvatar extends StatelessWidget {
     //TODO: Test the background container in the animation and play with the animation to get it right
     return Center(
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           shape: BoxShape.circle,
-          borderRadius: BorderRadius.circular(52),
           gradient: kButtonGradient
         ),
         child: CircleAvatar(
