@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class FadeInAnimation extends StatefulWidget {
@@ -8,7 +10,8 @@ class FadeInAnimation extends StatefulWidget {
       this.offsetCurve,
       this.fadeCurve,
       this.horizontalOffset,
-      this.verticalOffset})
+      this.verticalOffset,
+      this.delay})
       : super(key: key);
   final Widget child;
   final Duration? duration;
@@ -16,6 +19,7 @@ class FadeInAnimation extends StatefulWidget {
   final Curve? fadeCurve;
   final double? horizontalOffset;
   final double? verticalOffset;
+  final int? delay;
 
   @override
   _FadeInAnimationState createState() => _FadeInAnimationState();
@@ -50,8 +54,9 @@ class _FadeInAnimationState extends State<FadeInAnimation>
     ).animate(_offsetCurve);
 
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(_fadeCurve);
-
-    _animController.forward();
+    Timer(Duration(milliseconds: widget.delay ?? 0), () {
+      _animController.forward();
+    });
     super.initState();
   }
 

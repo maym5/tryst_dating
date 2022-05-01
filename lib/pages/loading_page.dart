@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:rendezvous_beta_v3/animations/text_fade_in.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/pages/discover_page.dart';
 import 'package:rendezvous_beta_v3/pages/home_page.dart';
@@ -18,7 +19,6 @@ class LoadingPage extends StatefulWidget {
 }
 
 class _LoadingPageState extends State<LoadingPage> {
-  // TODO: initialize with UserData to avoid error grab location
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Future fakeDelay() async {
@@ -50,7 +50,7 @@ class _LoadingPageState extends State<LoadingPage> {
           blendMode: BlendMode.srcIn,
           shaderCallback: (bounds) => kButtonGradient
               .createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-          child: Text("Rendezvous", style: kTextStyle.copyWith(fontSize: 50)),
+          child: TextFadeIn(text: "Rendezvous", style: kTextStyle.copyWith(fontSize: 50)),
         ),
       ),
     );
