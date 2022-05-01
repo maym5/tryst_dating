@@ -107,6 +107,13 @@ const kButtonGradient = LinearGradient(
 
 const kBioPadding = EdgeInsets.fromLTRB(10, 0, 0, 0);
 
+const kPopUpGradient = LinearGradient(
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+  colors: [Color(0xFF0A0E21), Colors.blueGrey],
+  //tileMode: TileMode.mirror
+);
+
 const kUserInfoAlignment = Alignment(-0.9, 0.78);
 
 const kDarkTransparent = Color(0x44000000);

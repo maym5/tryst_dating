@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:rendezvous_beta_v3/constants.dart';
+import '../dialogues/log_out_dialogue.dart';
 import '../models/users.dart';
 import '../widgets/page_background.dart';
 import '../widgets/profile_view/profile_view.dart';
 import '../widgets/user_edit_builder.dart';
+import 'dart:io';
 
 // class OnboardingUserEditPage extends StatefulWidget {
 //   static const id = "onboarding_user_edit_page";
@@ -80,9 +83,39 @@ class _UserEditPageState extends State<UserEditPage> {
     }
   }
 
+  IconData get _optionsIcon => Platform.isIOS ? Icons.more_horiz : Icons.more_vert;
+
   @override
   Widget build(BuildContext context) {
     return PageBackground(
+      appBar: PreferredSize(
+        preferredSize: const Size(double.infinity, 50),
+        child: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.black45,
+          title: Text("Rendezvous", style: kTextStyle.copyWith(color: Colors.redAccent)),
+          actions: [
+            IconButton(
+              icon: Icon(_optionsIcon),
+              color: Colors.redAccent,
+              onPressed: () {
+                showGeneralDialog(
+                  barrierColor: Colors.black.withOpacity(0.5),
+                  context: context,
+                  transitionBuilder: (ctx, _animation, _, child) =>
+                      LogOutDialogue(animation: _animation),
+                  pageBuilder: (BuildContext context, _animation, _) {
+                    return Container();
+                  },
+                  transitionDuration: const Duration(milliseconds: 200),
+                  barrierDismissible: true,
+                  barrierLabel: '',
+                );
+              },
+            )
+          ],
+        ),
+      ),
       body: ListView.builder(
         itemCount: UserEditBuilder.itemCount,
         itemBuilder: (context, index) => UserEditBuilder(
