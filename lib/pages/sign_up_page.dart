@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/services/authentication.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
@@ -17,6 +16,9 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  static late final TextEditingController _emailController = TextEditingController();
+  static late final TextEditingController _passwordController = TextEditingController();
+  static late final TextEditingController _confirmController = TextEditingController();
   Map<String, String?> errorMessages = {
     "email" : null,
     "password" : null,
@@ -35,6 +37,7 @@ class _SignUpPageState extends State<SignUpPage> {
   // TODO: look at refactoring these
   TextInputField get emailField => TextInputField(
     title: "Email",
+    controller: _emailController,
     onChanged: (email) {
       if (email == "") {
         userInputs['email'] = null;
@@ -48,6 +51,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   TextInputField get passwordField => TextInputField(
     title: "Password",
+    controller: _passwordController,
     obscureText: true,
     onChanged: (password) {
       if (password == "") {
@@ -62,6 +66,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   TextInputField get confirmField => TextInputField(
     title: "Confirm Password",
+    controller: _confirmController,
     obscureText: true,
     onChanged: (confirm) {
       if (confirm == "") {
@@ -74,87 +79,52 @@ class _SignUpPageState extends State<SignUpPage> {
     errorMessage: errorMessages["confirm"],
   );
 
-  void _setErrorMessages(String result) {
-    switch(result) {
-      case 'weak-password':
-        setState(() {
-          errorMessages["password"] = "This password is too weak";
-          errorMessages['email'] = null;
-          showErrors = true;
-        });
-        break;
-      case "email-already-in-use":
-        setState(() {
-          errorMessages['email'] = "That email is already in use";
-          errorMessages["password"] = null;
-          showErrors = true;
-        });
-        break;
-      case "invalid-email":
-        setState(() {
-          errorMessages["email"] = "Please enter a valid email";
-          errorMessages["password"] = null;
-          showErrors = true;
-        });
-        break;
-      default:
-        setState(() {
-          errorMessages["email"] = result;
-          errorMessages["password"] = null;
-          showErrors = true;
-        });
-        break;
-    }
-  }
-
-  // void _onPressed() async {
-  //   setState(() => _showSpinner = true);
-  //   if (passwordsDontMatch) {
-  //     setState(() {
-  //       showErrors = true;
-  //       _showSpinner = false;
-  //     });
-  //   } else {
-  //     for (String? input in userInputs.values) {
-  //       if (input == null) {
-  //         setState(() {
-  //           showErrors = true;
-  //           _showSpinner = false;
-  //           return; // problem here
-  //         });
-  //       }
-  //     }
-  //     var result = await onEmailAndPasswordSignUp(userInputs["email"]!, userInputs["password"]!);
-  //     if (result is User) {
-  //       setState(() => _showSpinner = false);
-  //       Navigator.pushNamed(context, UserEditPage.id);
-  //     } else {
-  //       setState(() => _showSpinner = false);
-  //       _setErrorMessages(result);
-  //   }
-  // }}
-
-  void _onPressed() async {
-    setState(() => _showSpinner = true);
-    if (passwordsDontMatch) {
+  void _handleRegistration() async {
+    if (!passwordsDontMatch) {
       setState(() {
-        _showSpinner = false;
-        showErrors = true;
+        _showSpinner = true;
       });
-    } else if (userInputs.values.every((element) => element == null)) {
-      setState(() {
-        _showSpinner = false;
-        showErrors = true;
-      });
-    } else {
-      var result = await onEmailAndPasswordSignUp(userInputs["email"]!, userInputs["password"]!);
-      if (result is User) {
+      if (userInputs["email"] != null && userInputs["password"] != null) {
+        var result = await onEmailAndPasswordSignUp(userInputs["email"]!, userInputs["password"]!);
         setState(() => _showSpinner = false);
-        Navigator.pushNamed(context, UserEditPage.id);
+        if (result is String) {
+          switch(result) {
+            case 'weak-password':
+              setState(() {
+                errorMessages["password"] = "This password is too weak";
+                showErrors = true;
+              });
+              break;
+            case "email-already-in-use":
+              setState(() {
+                errorMessages["email"] = "That email is already in use";
+                showErrors = true;
+              });
+              break;
+            case "invalid-email":
+              setState(() {
+                errorMessages["email"] = "Please enter a valid email";
+                showErrors = true;
+              });
+              break;
+            default:
+              setState(() {
+                errorMessages["email"] = result;
+                showErrors = true;
+              });
+              break;
+          }
+        } else {
+          Navigator.pushNamed(context, UserEditPage.id);
+        }
       } else {
-        setState(() => _showSpinner = false);
-        _setErrorMessages(result);
+        setState(() {
+          _showSpinner = false;
+          showErrors = true;
+        });
       }
+    } else {
+      setState(() => showErrors = true);
     }
   }
 
@@ -194,7 +164,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     ],
                   ),
                   const SizedBox(height: 25,),
-                  GradientButton(title: "Sign Up", onPressed: _onPressed)
+                  GradientButton(title: "Sign Up", onPressed: _handleRegistration)
                 ],
               ),
             ),
@@ -204,3 +174,86 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 }
 
+// void _setErrorMessages(String result) {
+//   switch(result) {
+//     case 'weak-password':
+//       setState(() {
+//         errorMessages["password"] = "This password is too weak";
+//         errorMessages['email'] = null;
+//         showErrors = true;
+//       });
+//       break;
+//     case "email-already-in-use":
+//       setState(() {
+//         errorMessages['email'] = "That email is already in use";
+//         errorMessages["password"] = null;
+//         showErrors = true;
+//       });
+//       break;
+//     case "invalid-email":
+//       setState(() {
+//         errorMessages["email"] = "Please enter a valid email";
+//         errorMessages["password"] = null;
+//         showErrors = true;
+//       });
+//       break;
+//     default:
+//       setState(() {
+//         errorMessages["email"] = result;
+//         errorMessages["password"] = null;
+//         showErrors = true;
+//       });
+//       break;
+//   }
+// }
+
+// void _onPressed() async {
+//   setState(() => _showSpinner = true);
+//   if (passwordsDontMatch) {
+//     setState(() {
+//       showErrors = true;
+//       _showSpinner = false;
+//     });
+//   } else {
+//     for (String? input in userInputs.values) {
+//       if (input == null) {
+//         setState(() {
+//           showErrors = true;
+//           _showSpinner = false;
+//           return; // problem here
+//         });
+//       }
+//     }
+//     var result = await onEmailAndPasswordSignUp(userInputs["email"]!, userInputs["password"]!);
+//     if (result is User) {
+//       setState(() => _showSpinner = false);
+//       Navigator.pushNamed(context, UserEditPage.id);
+//     } else {
+//       setState(() => _showSpinner = false);
+//       _setErrorMessages(result);
+//   }
+// }}
+
+// void _onPressed() async {
+//   setState(() => _showSpinner = true);
+//   if (passwordsDontMatch) {
+//     setState(() {
+//       _showSpinner = false;
+//       showErrors = true;
+//     });
+//   } else if (userInputs.values.every((element) => element == null)) {
+//     setState(() {
+//       _showSpinner = false;
+//       showErrors = true;
+//     });
+//   } else {
+//     var result = await onEmailAndPasswordSignUp(userInputs["email"]!, userInputs["password"]!);
+//     if (result is User) {
+//       setState(() => _showSpinner = false);
+//       Navigator.pushNamed(context, UserEditPage.id);
+//     } else {
+//       setState(() => _showSpinner = false);
+//       _setErrorMessages(result);
+//     }
+//   }
+// }

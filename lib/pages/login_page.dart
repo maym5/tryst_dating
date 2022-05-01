@@ -7,6 +7,7 @@ import '../constants.dart';
 import '../widgets/fields/text_input_field.dart';
 import '../widgets/gradient_button.dart';
 import '../widgets/page_background.dart';
+import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
   static const id = "login_page";
@@ -17,6 +18,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  static late final TextEditingController _emailController = TextEditingController();
+  static late final TextEditingController _passwordController = TextEditingController();
   Map<String, String?> loginInputs = {
     "email" : null,
     "password" : null
@@ -30,6 +33,7 @@ class _LoginPageState extends State<LoginPage> {
 
   TextInputField get _emailField => TextInputField(
         title: "Email",
+        controller: _emailController,
         onChanged: (email) {
           setState(() {
             if (email == "") {
@@ -45,6 +49,7 @@ class _LoginPageState extends State<LoginPage> {
 
   TextInputField get _passwordField => TextInputField(
     title: "Password",
+    controller: _passwordController,
     onChanged: (password) {
       setState(() {
         if (password == "") {
@@ -60,20 +65,62 @@ class _LoginPageState extends State<LoginPage> {
 
 
 
-  void _onPressed() async {
+  // void _onPressed() async {
+  //   setState(() => _showSpinner = true);
+  //   if (loginInputs['password'] != null && loginInputs['email'] != null) {
+  //     var result = await onEmailAndPasswordLogin(loginInputs['email']!, loginInputs['password']!);
+  //     if (result is User) {
+  //       setState(() => _showSpinner = false);
+  //       Navigator.pushNamed(context, DiscoverPage.id);
+  //     } else {
+  //       setState(() {
+  //         _showSpinner = false;
+  //         _showSpinner = false;
+  //       });
+  //     }
+  //   } else {
+  //     setState(() {
+  //       _showSpinner = false;
+  //       showErrors = true;
+  //     });
+  //   }
+  // }
+
+  void _handleSignIn() async {
     setState(() => _showSpinner = true);
     if (loginInputs['password'] != null && loginInputs['email'] != null) {
       var result = await onEmailAndPasswordLogin(loginInputs['email']!, loginInputs['password']!);
-      if (result is User) {
-        setState(() => _showSpinner = false);
-        Navigator.pushNamed(context, DiscoverPage.id);
-      } else {
-        setState(() => _showSpinner = false);
-        setState(() => showErrors = true);
-      }
-    } else {
       setState(() => _showSpinner = false);
-      setState(() => showErrors = true);
+      if (result is String) {
+        switch (result) {
+          case 'invalid-email':
+            setState(() {
+              errorMessages["email"] = "Enter a valid email";
+              showErrors = true;
+            });
+            break;
+          case 'user-not-found':
+            setState(() {
+              errorMessages["email"] = "Cannot find user with that email";
+              showErrors = true;
+            });
+            break;
+          case 'wrong-password':
+            setState(() {
+              errorMessages["password"] = "Please enter a valid email";
+              showErrors = true;
+            });
+            break;
+          case 'too-many-requests':
+            setState(() {
+              errorMessages["email"] = "Too many requests, try again later";
+              showErrors = true;
+            });
+            break;
+        }
+      } else {
+        Navigator.pushNamed(context, HomePage.id);
+      }
     }
   }
 
@@ -107,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             GradientButton(
                 title: "Login",
-                onPressed: _onPressed,
+                onPressed: _handleSignIn,
             ),
           ],
         ),

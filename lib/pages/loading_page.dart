@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/animations/text_fade_in.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
-import 'package:rendezvous_beta_v3/pages/discover_page.dart';
 import 'package:rendezvous_beta_v3/pages/home_page.dart';
 import 'package:rendezvous_beta_v3/pages/sign_up_page.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';

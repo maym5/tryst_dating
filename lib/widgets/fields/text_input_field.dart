@@ -16,6 +16,7 @@ class TextInputField extends StatefulWidget {
     this.obscureText = false,
     this.hintText,
     this.initialValue,
+    this.controller
   }) : super(key: key);
   final String title;
   final String? errorMessage;
@@ -26,6 +27,7 @@ class TextInputField extends StatefulWidget {
   final String? hintText;
   final bool obscureText;
   final String? initialValue;
+  final TextEditingController? controller;
 
   @override
   State<TextInputField> createState() => _TextInputFieldState();
@@ -44,7 +46,7 @@ class _TextInputFieldState extends State<TextInputField> {
         Padding(
           padding: kTileFieldPadding,
           child: TextField(
-            controller: _controller,
+            controller: widget.controller ?? _controller,
             cursorColor: kActiveColor,
             obscureText: widget.obscureText,
             maxLines: widget.maxLines,
