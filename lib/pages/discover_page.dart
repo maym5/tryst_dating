@@ -39,7 +39,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   void initState() {
     _animation = ValueNotifier(0);
     _pageController = PageController(
-      initialPage: 0,
+      initialPage: 1,
       viewportFraction: 1,
     )..addListener(_onScroll);
     _animation.value = _pageController.initialPage.toDouble();

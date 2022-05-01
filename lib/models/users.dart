@@ -68,7 +68,7 @@ class UserData with ChangeNotifier {
     return auth.currentUser;
   }
 
-  void uploadUserData() async {
+  Future<void> uploadUserData() async {
     final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
     User? _user = retrieveUser();
     if (_user != null) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import '../dialogues/log_out_dialogue.dart';
 import '../models/users.dart';
@@ -59,18 +60,22 @@ class UserEditPage extends StatefulWidget {
   _UserEditPageState createState() => _UserEditPageState();
 }
 
-class _UserEditPageState extends State<UserEditPage> {
+class _UserEditPageState extends State<UserEditPage> with AutomaticKeepAliveClientMixin {
   late bool showErrors;
+  late bool showSpinners;
 
   @override
   void initState() {
     showErrors = false;
+    showSpinners = false;
     super.initState();
   }
 
-  void onButtonPress() {
+  void onButtonPress() async {
     if (UserData.canCreateUser) {
-      UserData().uploadUserData();
+      setState(() => showSpinners = true);
+      await UserData().uploadUserData();
+      setState(() => showSpinners = false);
       if (widget.pop) {
         Navigator.pop(context);
       } else {
@@ -87,6 +92,7 @@ class _UserEditPageState extends State<UserEditPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return PageBackground(
       appBar: PreferredSize(
         preferredSize: const Size(double.infinity, 50),
@@ -95,6 +101,7 @@ class _UserEditPageState extends State<UserEditPage> {
           backgroundColor: Colors.black45,
           title: Text("Rendezvous", style: kTextStyle.copyWith(color: Colors.redAccent)),
           actions: [
+            // get current user and only show this if they're on discover
             IconButton(
               icon: Icon(_optionsIcon),
               color: Colors.redAccent,
@@ -116,15 +123,23 @@ class _UserEditPageState extends State<UserEditPage> {
           ],
         ),
       ),
-      body: ListView.builder(
-        itemCount: UserEditBuilder.itemCount,
-        itemBuilder: (context, index) => UserEditBuilder(
-            index: index,
-            showErrors: showErrors,
-            onButtonPress: onButtonPress
+      body: ModalProgressHUD(
+        inAsyncCall: showSpinners,
+        progressIndicator: const CircularProgressIndicator(color: Colors.redAccent),
+        color: kDarkTransparent,
+        child: ListView.builder(
+          itemCount: UserEditBuilder.itemCount,
+          itemBuilder: (context, index) => UserEditBuilder(
+              index: index,
+              showErrors: showErrors,
+              onButtonPress: onButtonPress
+          ),
         ),
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => showSpinners;
 }
 

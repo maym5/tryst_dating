@@ -6,6 +6,7 @@ import '../warning_widget.dart';
 
 
 class PricePicker extends StatefulWidget {
+  // TODO: add initial values retard
   const PricePicker({Key? key, required this.showError}) : super(key: key);
   final bool showError;
 

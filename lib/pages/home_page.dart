@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/pages/discover_page.dart';
-import 'package:rendezvous_beta_v3/pages/temp_sign_out.dart';
+import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
 
 class HomePage extends StatelessWidget {
   static const id = "home_page";
@@ -9,9 +9,9 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PageView(
-      children: <Widget>[
-        TempLogOut(),
-        const DiscoverPage()
+      children: const <Widget>[
+        UserEditPage(),
+        DiscoverPage()
       ],
     );
   }

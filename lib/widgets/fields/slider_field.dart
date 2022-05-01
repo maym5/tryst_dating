@@ -67,6 +67,7 @@ class PreferredAgeSlider extends StatelessWidget {
 }
 
 class SliderField extends StatefulWidget {
+  // TODO: if they have been moved they should be engaged
   const SliderField(
       {Key? key,
       required this.title,

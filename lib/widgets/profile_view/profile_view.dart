@@ -35,6 +35,7 @@ class UserProfile extends StatelessWidget {
         },),
         const SizedBox(height: 10,),
         RoundButton(icon: Icons.favorite, title: "Discover", gradient: kButtonGradient, onPressed: () {
+          print("we here");
           Navigator.pushNamed(context, HomePage.id);
         },),
       ],

@@ -16,6 +16,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  // TODO: these are showing up on push
   static late final TextEditingController _emailController = TextEditingController();
   static late final TextEditingController _passwordController = TextEditingController();
   static late final TextEditingController _confirmController = TextEditingController();

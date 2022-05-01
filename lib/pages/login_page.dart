@@ -127,6 +127,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     showErrors = false;
+    _showSpinner = false;
     super.initState();
   }
 

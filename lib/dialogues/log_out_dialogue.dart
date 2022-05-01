@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/widgets/gradient_button.dart';
 
 import '../constants.dart';
+import '../pages/sign_up_page.dart';
 
 Widget buildPopUpDialogue(Animation<double> animation, BuildContext context, {required List<Widget> children}) {
   final curvedValue = Curves.easeInOutBack.transform(animation.value) - 1.0;
@@ -18,7 +19,7 @@ Widget buildPopUpDialogue(Animation<double> animation, BuildContext context, {re
           height: 250,
           width: 120,
           decoration: const BoxDecoration(
-            color: Color(0xFF0A0E21),
+            color: kPopUpColor,
             borderRadius: BorderRadius.all(Radius.circular(20)),
           ),
           child: Center(
@@ -51,8 +52,9 @@ class LogOutDialogue extends StatelessWidget {
         Center(
           child: GradientButton(
             title: 'Yes',
-            onPressed: () {
-              auth.signOut();
+            onPressed: () async {
+              await auth.signOut();
+              Navigator.pushNamed(context, SignUpPage.id);
             },
           ),
         ),
@@ -62,7 +64,9 @@ class LogOutDialogue extends StatelessWidget {
         Center(
           child: GradientButton(
             title: 'No',
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
         ),
       ]
