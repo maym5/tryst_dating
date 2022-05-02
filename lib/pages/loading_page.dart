@@ -21,7 +21,7 @@ class _LoadingPageState extends State<LoadingPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Future fakeDelay() async {
-    // UserData.location = await _getPosition();
+    UserData.location = await UserData.userLocation;
     await Future.delayed(const Duration(seconds: 4));
     final User? currentUser = _auth.currentUser;
     if (currentUser != null) {
