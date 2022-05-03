@@ -5,6 +5,7 @@ import 'package:rendezvous_beta_v3/animations/text_fade_in.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/pages/home_page.dart';
 import 'package:rendezvous_beta_v3/pages/sign_up_page.dart';
+import 'package:rendezvous_beta_v3/services/google_places_service.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 
 import '../models/users.dart';
@@ -22,6 +23,7 @@ class _LoadingPageState extends State<LoadingPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Future fakeDelay() async {
     UserData.location = await UserData.userLocation;
+    // GooglePlacesService(venueType: "cafe").venues;
     await Future.delayed(const Duration(seconds: 4));
     final User? currentUser = _auth.currentUser;
     if (currentUser != null) {
