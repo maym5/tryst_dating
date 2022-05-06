@@ -2,14 +2,12 @@ import 'package:dio/dio.dart';
 import '../models/users.dart';
 
 class GooglePlacesService {
+  GooglePlacesService({required this.venueType});
   final String PLACES_API_KEY = "AIzaSyCl-kVxhkNP1ySziCMs8kdkMMMbOMLlg6k";
-  // final String basePath =
-  //     "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address%2Cname%2Crating%2Copening_hours";
   final String basePath =
       "https://maps.googleapis.com/maps/api/place/nearbysearch/json?";
-  GooglePlacesService({required this.venueType});
   final String venueType;
-  Dio dio = Dio();
+  final Dio dio = Dio();
 
   Future<List> get venues async {
     final double meters = UserData.maxDistance! * 1609.34;
@@ -21,13 +19,13 @@ class GooglePlacesService {
     try {
       final Response _venues = await dio.get(_path);
       final _venueData = _venues.data;
-      if (_venueData["results"] != null) {
-        return _venueData["results"]!;
-      }
-      throw ("could not find suitable venues");
+      final List results = _venueData["results"];
+      // test this change in control statement
+      if (results.isNotEmpty) {
+        return results;
+      } return [];
     } catch (e) {
       // TODO: error handing
-      print(e);
       return [];
     }
   }
@@ -39,8 +37,7 @@ class GooglePlacesService {
       if (venue["opening_hours"]["periods"] != null) {
         result.add(venue);
       }
-    }
-    return result;
+    } return result;
   }
 
   // maybe grab max rating after eliminating all requests without opening hours
@@ -52,16 +49,13 @@ class GooglePlacesService {
         resultVenue = venue;
         maxRating = venue["rating"];
       }
-    }
-    return resultVenue;
+    } return resultVenue;
   }
 
   Future<String> get address async {
     final _venue = await venue;
     return _venue["formatted_address"];
   }
-
-  // String get name => venue["name"];
 
   Future<String> get name async {
     final _venue = await venue;
@@ -72,4 +66,7 @@ class GooglePlacesService {
     final _venue = await venue;
     return _venue["opening_hours"]["periods"];
   }
+
+// final String basePath =
+//     "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address%2Cname%2Crating%2Copening_hours";
 }

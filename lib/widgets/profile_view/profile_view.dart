@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
-import 'package:rendezvous_beta_v3/pages/discover_page.dart';
 import 'package:rendezvous_beta_v3/pages/home_page.dart';
 import 'package:rendezvous_beta_v3/widgets/profile_view/profile_info.dart';
-import '../../models/user_images.dart';
 import '../../models/users.dart';
 import '../page_background.dart';
 import '../round_button.dart';
@@ -14,16 +11,16 @@ class UserProfile extends StatelessWidget {
   static const id = "profile";
   const UserProfile({Key? key}) : super(key: key);
 
-  // discuss this with pulkit
-  List<XFile> get _images {
-    List<XFile> images = [];
-    for (var image in UserImages.userImages) {
-      if (image != null) {
-        images.add(image);
-      }
-    }
-    return images;
-  }
+  // // discuss this with pulkit
+  // List<XFile> get _images {
+  //   List<XFile> images = [];
+  //   for (var image in UserImages.userImages) {
+  //     if (image != null) {
+  //       images.add(image);
+  //     }
+  //   }
+  //   return images;
+  // }
 
   Widget _buttons(BuildContext context) => Align(
     alignment: const Alignment(0.95, -0.8),
@@ -35,7 +32,6 @@ class UserProfile extends StatelessWidget {
         },),
         const SizedBox(height: 10,),
         RoundButton(icon: Icons.favorite, title: "Discover", gradient: kButtonGradient, onPressed: () {
-          print("we here");
           Navigator.pushNamed(context, HomePage.id);
         },),
       ],

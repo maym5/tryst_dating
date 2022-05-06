@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:rendezvous_beta_v3/widgets/profile_view/photo_bar.dart';
 import '../../constants.dart';
 

@@ -4,6 +4,7 @@ import 'package:rendezvous_beta_v3/pages/discover_page.dart';
 import 'package:rendezvous_beta_v3/pages/home_page.dart';
 import 'package:rendezvous_beta_v3/pages/loading_page.dart';
 import 'package:rendezvous_beta_v3/pages/login_page.dart';
+import 'package:rendezvous_beta_v3/pages/match_page.dart';
 import 'package:rendezvous_beta_v3/pages/sign_up_page.dart';
 import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
 import 'package:rendezvous_beta_v3/widgets/profile_view/profile_view.dart';
@@ -24,10 +25,11 @@ class Rendezvous extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.dark(),
-      initialRoute: LoadingPage.id,
+      initialRoute: MatchPage.id,
       routes: <String, WidgetBuilder> {
         LoadingPage.id : (BuildContext context) => const LoadingPage(),
         HomePage.id :  (BuildContext context) => const HomePage(),
+        MatchPage.id : (BuildContext context) => const MatchPage(),
         UserEditPage.id : (BuildContext context) => const UserEditPage(),
         UserProfile.id : (BuildContext context) => const UserProfile(),
         SignUpPage.id : (BuildContext context) => const SignUpPage(),
