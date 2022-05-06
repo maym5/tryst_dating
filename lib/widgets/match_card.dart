@@ -19,14 +19,6 @@ class _MatchCardState extends State<MatchCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late bool _beenTapped;
-  final DateFormat formatter = DateFormat('EEEE, dd MMMM, h:mm');
-
-  String? get displayDate {
-    if (widget.data.dateTime != null) {
-      return formatter.format(DateTime.parse(widget.data.dateTime.toString()));
-    }
-    return null;
-  }
 
   Widget get _circleAvatar => Align(
         alignment: const Alignment(.75, 0.25),
@@ -38,138 +30,33 @@ class _MatchCardState extends State<MatchCard>
         ),
       );
 
-  Widget get _name {
-    String nameString;
-    if (widget.data.dateType != null) {
-      nameString = widget.data.dateType! + "Date with" + widget.data.name;
-    } else {
-      nameString = widget.data.name;
-    }
-    return Text(nameString, style: kTextStyle);
-  }
-
-  Widget? get _venue => Text("at ${widget.data.venue}");
-
-  Widget get _dateTimeHeader => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(displayDate ?? "", style: kTextStyle),
-        ],
-      );
-
-  Widget get _optionsBar => Align(
-        alignment: Alignment.topRight,
-        child: IconButton(
-          onPressed: () {
-            // _showBottomSheet(context);
-          },
-          icon: Icon(
-            Platform.isIOS ? Icons.more_horiz : Icons.more_vert,
-            color: Colors.white,
-            size: 25,
-          ),
-        ),
-      );
-
-  // Widget get centerIcon => widget.data.rating >= 5
-  //     ? const Icon(
-  //   Icons.favorite,
-  //   color: Colors.redAccent,
-  //   size: 50.0,
-  // )
-  //     : const Icon(
-  //   Icons.clear,
-  //   color: Colors.orange,
-  //   size: 50.0,
-  // );
-  //
-  // Widget get centerTitle => const Padding(
-  //   padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-  //   child: Text(
-  //     'Your Rating:',
-  //     style: TextStyle(
-  //       color: Colors.white,
-  //       fontFamily: 'Raleway',
-  //       fontWeight: FontWeight.w400,
-  //       fontSize: 18,
-  //     ),
-  //   ),
-  // );
-  //
-  // Widget get centerText => Text(
-  //   widget.data.rating.toStringAsFixed(1),
-  //   style: const TextStyle(
-  //     color: Colors.white,
-  //     fontFamily: 'Raleway', // get techno font here
-  //     fontWeight: FontWeight.bold,
-  //     fontSize: 20,
-  //   ),
-  // );
-  //
-  // Widget get _rating => CircularPercentIndicator(
-  //   circularStrokeCap: CircularStrokeCap.butt,
-  //   radius: 50,
-  //   percent: widget.data.rating / 10,
-  //   progressColor:
-  //   widget.data.rating >= 5 ? Colors.green : Colors.redAccent,
-  //   lineWidth: 10.0,
-  //   reverse: true,
-  //   backgroundColor: Colors.transparent,
-  //   center: Column(
-  //     children: [
-  //       centerTitle,
-  //       centerText,
-  //       centerIcon
-  //     ],
-  //   ),
-  // );
-
   Widget get UI {
     if (widget.data.dateTime == null) {
       // standard layout
       return Stack(
         children: <Widget>[
           Align(
-            alignment: const Alignment(-0.9, -0.5),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _name,
-                const SizedBox(width: 10),
-              ],
-            ),
+            child: MatchName(
+                name: widget.data.name, dateType: widget.data.dateType),
+            alignment: const Alignment(-.9, -0.75),
           ),
-          _optionsBar,
+          const DateOptionsBar(hasUnreadMessages: true),
           _circleAvatar,
-          Container(
-              alignment: const Alignment(-0.9, 0.5),
-              decoration: BoxDecoration(
-                  color: !_beenTapped
-                      ? kDarkTransparent.withOpacity(0.3)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(25)),
-              child: !_beenTapped
-                  ? Text(
-                      "Tap to ask out",
-                      style: kTextStyle.copyWith(
-                          color: Colors.redAccent, fontSize: 20),
-                    )
-                  : null),
+          MatchCardOverlay(activeDate: _beenTapped)
         ],
       );
     } else {
       // data layout
       return Stack(
         children: <Widget>[
+          const DateOptionsBar(hasUnreadMessages: false),
+          _circleAvatar,
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _dateTimeHeader,
-              _optionsBar,
-              Row(
-                children: [_name, _venue!],
-              ),
-              _circleAvatar
+              MatchName(name: widget.data.name, dateType: widget.data.dateType),
+              DateInfo(
+                  venue: widget.data.venue!, dateTime: widget.data.dateTime!),
             ],
           ),
           // Container(color: _beenTapped ? Colors.grey : Colors.transparent)
@@ -234,4 +121,129 @@ class MatchCardData {
   final String? venue;
   final DateTime? dateTime;
   final String? dateType;
+}
+
+class MatchName extends StatelessWidget {
+  const MatchName({Key? key, required this.name, this.dateType})
+      : super(key: key);
+  final String name;
+  final String? dateType;
+
+  Widget get _name {
+    String? displayedName;
+    if (dateType != null) {
+      displayedName = "$dateType Date with $name";
+    }
+    return Text(displayedName ?? name,
+        style: kTextStyle.copyWith(fontSize: 35));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FittedBox(child: _name);
+  }
+}
+
+class DateInfo extends StatelessWidget {
+  DateInfo({Key? key, required this.venue, required this.dateTime})
+      : super(key: key);
+  final String venue;
+  final DateTime dateTime;
+  final DateFormat formatter = DateFormat('EEEE, dd MMMM, h:mm');
+
+  String? get displayDate {
+    return formatter.format(DateTime.parse(dateTime.toString()));
+  }
+
+  Widget get _dateDescription {
+    return Align(
+      alignment: const Alignment(-0.9, -0.5),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text("at $venue"),
+          const SizedBox(height: 10),
+          Text("on $displayDate")
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _dateDescription;
+  }
+}
+
+class DateOptionsBar extends StatelessWidget {
+  const DateOptionsBar({Key? key, required this.hasUnreadMessages})
+      : super(key: key);
+  final bool hasUnreadMessages;
+
+  void _onMessageTap() {}
+
+  void _onDetailsTap() {}
+
+  Widget get _messageButton {
+    return GestureDetector(
+      onTap: _onMessageTap,
+      child: Stack(
+        children: [
+          const Icon(Icons.message, color: Colors.white),
+          hasUnreadMessages
+              ? Container(
+                  height: 10,
+                  width: 10,
+                  decoration: const BoxDecoration(
+                      shape: BoxShape.circle, color: Colors.red),
+                )
+              : Container()
+        ],
+      ),
+    );
+  }
+
+  Widget get _detailsButton => IconButton(
+        onPressed: _onDetailsTap,
+        icon: Icon(
+          Platform.isIOS ? Icons.more_horiz : Icons.more_vert,
+          color: Colors.white,
+          size: 25,
+        ),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topRight,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[_messageButton, _detailsButton],
+      ),
+    );
+  }
+}
+
+class MatchCardOverlay extends StatelessWidget {
+  const MatchCardOverlay({Key? key, required this.activeDate})
+      : super(key: key);
+  final bool activeDate;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        alignment: const Alignment(-0.9, 0.5),
+        decoration: BoxDecoration(
+            color: !activeDate
+                ? kDarkTransparent.withOpacity(0.3)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(25)),
+        child: !activeDate
+            ? Text(
+                "Tap to ask out",
+                style:
+                    kTextStyle.copyWith(color: Colors.redAccent, fontSize: 20),
+              )
+            : null);
+  }
 }
