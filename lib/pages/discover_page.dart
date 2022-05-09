@@ -73,16 +73,25 @@ class _DiscoverPageState extends State<DiscoverPage> {
         builder: (context, AsyncSnapshot<QuerySnapshot<Map>> snapshot) =>
             PageView.builder(
                 onPageChanged: (page) async {
+                  // TODO: added match bools to matchData
                   if (_userRating > 5) {
                     QuerySnapshot matchSnapshot = await _firestore
                         .collection("matchData")
                         .where("matchUID", isEqualTo: UserData.userUID)
-                        .where("likeUID", isEqualTo: currentUID).get();
+                        .where("likeUID", isEqualTo: currentUID)
+                        .get();
                     if (matchSnapshot.size != 0) {
                       // alter the doc
                     } else {
-                      _firestore.collection("matchData").doc(UserData.userUID).set({"likeUID" : UserData.userUID});
-                  // .update({"likeUID" : UserData.userUID})
+                      _firestore
+                          .collection("matchData")
+                          .doc(UserData.userUID)
+                          .set({
+                        "likeUID": UserData.userUID,
+                        "matchUID": currentUID,
+                        "match": false
+                      });
+                      // .update({"likeUID" : UserData.userUID})
                     }
                   }
                 },
