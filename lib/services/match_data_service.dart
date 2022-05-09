@@ -1,12 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rendezvous_beta_v3/widgets/match_card.dart';
 
 import '../models/users.dart';
 
 class MatchDataService {
-  late List<Map<String, dynamic>> _matches;
-  late List<Map<String, dynamic>> _upcomingDates;
-  late List<Map<String, dynamic>> _pastDates;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   Stream<QuerySnapshot> get _likesStream async* {

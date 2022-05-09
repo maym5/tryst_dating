@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:rendezvous_beta_v3/services/match_data_service.dart';
 import 'package:rendezvous_beta_v3/widgets/match_card.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 
@@ -12,14 +13,6 @@ class MatchPage extends StatefulWidget {
 }
 
 class _MatchPageState extends State<MatchPage> {
-  late List<Map<String, dynamic>> _matches;
-  late List<Map<String, dynamic>> _upcomingDates;
-  late List<Map<String, dynamic>> _pastDates;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  void _getMatchData() {
-
-  }
 
   @override
   void initState() {
@@ -28,12 +21,14 @@ class _MatchPageState extends State<MatchPage> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: test this, probably many bugs
     return PageBackground(
-        body: ListView.builder(
-            itemBuilder: (context, index) => Container(),
+        body: FutureBuilder(
+          future: MatchDataService().matchData,
+          builder: (BuildContext context, AsyncSnapshot<List<MatchCardData>> snapshot) => ListView.builder(
+              itemBuilder: (context, index) => MatchCard(data: snapshot.data![index]),
+          ),
         )
     );
   }
 }
-
-// dateTime: DateTime(2022, 6, 6, 6), dateType: "Dinner", venue: "Mike's Fake Restaurant"
