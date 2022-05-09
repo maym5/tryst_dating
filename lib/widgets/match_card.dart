@@ -5,6 +5,8 @@ import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/widgets/tile_card.dart';
 import 'package:intl/intl.dart';
 
+import '../services/match_data_service.dart';
+
 class MatchCard extends StatefulWidget {
   // TODO: figure out how to check if they have unread messages
   const MatchCard({Key? key, required this.data}) : super(key: key);
@@ -98,21 +100,6 @@ class _MatchCardState extends State<MatchCard>
   }
 }
 
-class MatchCardData {
-  // gonna need a factory
-  MatchCardData({
-    required this.name,
-    this.image,
-    this.dateTime,
-    this.venue,
-    this.dateType,
-  });
-  final String name;
-  final String? image;
-  final String? venue;
-  final DateTime? dateTime;
-  final String? dateType;
-}
 
 class MatchName extends StatelessWidget {
   const MatchName({Key? key, required this.name, this.dateType})
