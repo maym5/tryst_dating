@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/models/user_images.dart';
+import 'package:rendezvous_beta_v3/services/google_places_service.dart';
 import 'package:rendezvous_beta_v3/widgets/discover_view/discover_view.dart';
 import 'package:rendezvous_beta_v3/widgets/like_widget.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
+import '../models/users.dart';
 import '../services/discover_service.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
 import "dart:io";
@@ -22,6 +24,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
   late int _previousPage;
   late PageController _pageController;
   late ValueNotifier<double> _animation;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String? currentUID;
 
   void _onScroll() {
     // made change must test
@@ -68,6 +72,20 @@ class _DiscoverPageState extends State<DiscoverPage> {
         stream: DiscoverService().discoverStream,
         builder: (context, AsyncSnapshot<QuerySnapshot<Map>> snapshot) =>
             PageView.builder(
+                onPageChanged: (page) async {
+                  if (_userRating > 5) {
+                    QuerySnapshot matchSnapshot = await _firestore
+                        .collection("matchData")
+                        .where("matchUID", isEqualTo: UserData.userUID)
+                        .where("likeUID", isEqualTo: currentUID).get();
+                    if (matchSnapshot.size != 0) {
+                      // alter the doc
+                    } else {
+                      _firestore.collection("matchData").doc(UserData.userUID).set({"likeUID" : UserData.userUID});
+                  // .update({"likeUID" : UserData.userUID})
+                    }
+                  }
+                },
                 controller: _pageController,
                 scrollDirection: Axis.vertical,
                 itemCount: snapshot.data?.size,
@@ -78,10 +96,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
                         .map((doc) => doc.data() as Map<String, dynamic>)
                         .toList();
                     final Map<String, dynamic> currentDoc = documents[index];
+                    final DiscoverData data =
+                        DiscoverData.getDiscoverData(currentDoc);
+                    setState(() => currentUID = data.uid);
                     return Stack(
                       children: [
                         DiscoverView(
-                          data: DiscoverData.getDiscoverData(currentDoc),
+                          data: data,
                           onDragUpdate: setUserRating,
                         ),
                         Center(
@@ -104,7 +125,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   } else {
                     return Center(
                       child: Text(
-                          "There has been an error try restarting the app",
+                          "There has been an error, try restarting the app",
                           style: kTextStyle),
                     );
                   }
@@ -115,12 +136,14 @@ class _DiscoverPageState extends State<DiscoverPage> {
 }
 
 class DiscoverData {
-  DiscoverData(this.name, this.age, this.images, this.dates, this.bio);
+  DiscoverData(
+      this.name, this.age, this.images, this.dates, this.bio, this.uid);
   final String name;
   final int age;
   final List<String> dates;
   final List<String> images;
   final String bio;
+  final String uid;
 
   static List<String> listToListOfStrings(List list) {
     final List<String> aListOfStrings = [];
@@ -134,7 +157,7 @@ class DiscoverData {
     final List<String> _dates = listToListOfStrings(data["dates"]);
     final List<String> _images = listToListOfStrings(data["imageURLs"]);
     return DiscoverData(
-        data["name"], data["age"], _images, _dates, data["bio"]);
+        data["name"], data["age"], _images, _dates, data["bio"], data["uid"]);
   }
 }
 
@@ -147,9 +170,7 @@ class DiscoverLoadingAvatar extends StatelessWidget {
     return Center(
       child: Container(
         decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: kButtonGradient
-        ),
+            shape: BoxShape.circle, gradient: kButtonGradient),
         child: CircleAvatar(
           radius: 50,
           backgroundImage: FileImage(File(UserImages.userImages[0]!.path)),

@@ -20,6 +20,7 @@ class UserData with ChangeNotifier {
   static int? maxPrice;
   static List<String> imageURLs = [];
   static Position? location;
+  static String? userUID;
 
   UserData();
 
@@ -37,6 +38,7 @@ class UserData with ChangeNotifier {
       'minPrice': minPrice,
       "maxPrice" : maxPrice,
       'imageURLs': imageURLs,
+      "uid" : userUID
     };
   }
 
