@@ -16,8 +16,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  static late final TextEditingController _emailController = TextEditingController();
-  static late final TextEditingController _passwordController = TextEditingController();
+  // static late final TextEditingController _emailController = TextEditingController();
+  // static late final TextEditingController _passwordController = TextEditingController();
   Map<String, String?> loginInputs = {
     "email" : null,
     "password" : null
@@ -31,7 +31,6 @@ class _LoginPageState extends State<LoginPage> {
 
   TextInputField get _emailField => TextInputField(
         title: "Email",
-        controller: _emailController,
         onChanged: (email) {
           setState(() {
             if (email == "") {
@@ -47,7 +46,6 @@ class _LoginPageState extends State<LoginPage> {
 
   TextInputField get _passwordField => TextInputField(
     title: "Password",
-    controller: _passwordController,
     onChanged: (password) {
       setState(() {
         if (password == "") {

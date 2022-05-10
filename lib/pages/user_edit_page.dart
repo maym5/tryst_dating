@@ -60,7 +60,7 @@ class UserEditPage extends StatefulWidget {
   _UserEditPageState createState() => _UserEditPageState();
 }
 
-class _UserEditPageState extends State<UserEditPage> with AutomaticKeepAliveClientMixin {
+class _UserEditPageState extends State<UserEditPage>{
   late bool showErrors;
   late bool showSpinners;
 
@@ -92,7 +92,6 @@ class _UserEditPageState extends State<UserEditPage> with AutomaticKeepAliveClie
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return PageBackground(
       appBar: PreferredSize(
         preferredSize: const Size(double.infinity, 50),
@@ -139,7 +138,5 @@ class _UserEditPageState extends State<UserEditPage> with AutomaticKeepAliveClie
     );
   }
 
-  @override
-  bool get wantKeepAlive => showSpinners;
 }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/pages/discover_page.dart';
+import 'package:rendezvous_beta_v3/pages/match_page.dart';
 import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -11,7 +12,8 @@ class HomePage extends StatelessWidget {
     return PageView(
       children: const <Widget>[
         UserEditPage(),
-        DiscoverPage()
+        DiscoverPage(),
+        MatchPage(),
       ],
     );
   }

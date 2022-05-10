@@ -94,4 +94,12 @@ class UserImages with ChangeNotifier {
       }
     }
   }
+
+  static void clearPhotos() {
+    for (int i=0; i<9; i++) {
+      if (userImages[i] != null) {
+        userImages[i] = null;
+      }
+    }
+  }
 }

@@ -9,7 +9,7 @@ import 'gradient_button.dart';
 import 'tile_card.dart';
 
 class UserEditBuilder extends StatelessWidget {
-  const UserEditBuilder({Key? key, required this.index, required this.showErrors, required this.onButtonPress}) : super(key: key);
+  const  UserEditBuilder({Key? key, required this.index, required this.showErrors, required this.onButtonPress}) : super(key: key);
   final int index;
   final bool showErrors;
   final void Function() onButtonPress;

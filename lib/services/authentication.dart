@@ -34,3 +34,8 @@ Future verifyEmail() {
     return Future.error('invalid user');
   }
 }
+
+Future<void> logOut() async {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  await auth.signOut();
+}

@@ -25,7 +25,7 @@ class Rendezvous extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.dark(),
-      initialRoute: MatchPage.id,
+      initialRoute: LoadingPage.id,
       routes: <String, WidgetBuilder> {
         LoadingPage.id : (BuildContext context) => const LoadingPage(),
         HomePage.id :  (BuildContext context) => const HomePage(),

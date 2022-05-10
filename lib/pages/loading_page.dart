@@ -8,6 +8,7 @@ import 'package:rendezvous_beta_v3/pages/sign_up_page.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 
 import '../models/users.dart';
+import '../services/authentication.dart';
 
 class LoadingPage extends StatefulWidget {
   static const id = "intro_page";

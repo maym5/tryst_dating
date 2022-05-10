@@ -61,7 +61,8 @@ class UserData with ChangeNotifier {
     maxDistance = incomingData["distance"];
     maxAge = incomingData["maxAge"];
     minAge = incomingData["minAge"];
-    imageURLs = DiscoverData.listToListOfStrings(incomingData["imageURLs"]); // refactor this now that youre using it here
+    imageURLs = DiscoverData.listToListOfStrings(incomingData["imageURLs"]);
+    userUID = incomingData["userUID"];
   }
 
 
@@ -75,6 +76,7 @@ class UserData with ChangeNotifier {
     User? _user = retrieveUser();
     if (_user != null) {
       await UserImages.uploadImages(_user);
+      UserData.userUID = _user.uid;
       Map<String, dynamic> _userData = UserData.toJson();
       _fireStore.collection("userData").doc(_user.uid).set(_userData);
     }
@@ -88,21 +90,6 @@ class UserData with ChangeNotifier {
     } return true;
   }
 
-  // void updateUserData() async {
-  //   // TODO: test this
-  //   final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
-  //   User? _user = retrieveUser();
-  //   final Map<String, dynamic> _newUserData = UserData.toJson();
-  //   if (_user != null) {
-  //     final DocumentSnapshot _oldUserData = await _fireStore.collection("userData").doc(_user.uid).get();
-  //     final Map<String, dynamic> _data = _oldUserData.data() as Map<String, dynamic>;
-  //     for (String key in _data.keys) {
-  //       if (_newUserData[key] != _oldUserData[key]) {
-  //         _fireStore.collection("userData").doc(_user.uid).update(_newUserData);
-  //      }
-  //    }
-  //   }
-  // }
 
   static Future<Position> get userLocation async {
     bool serviceEnabled;
@@ -125,47 +112,22 @@ class UserData with ChangeNotifier {
     return await Geolocator.getCurrentPosition();
   }
 
-}
+  static void resetUserData() {
+    name = null;
+    age = null;
+    gender = null;
+    bio = null;
+    dates = {};
+    prefGender = {};
+    minAge = null;
+    maxAge = null;
+    maxDistance = null;
+    minPrice = null;
+    maxPrice = null;
+    imageURLs = [];
+    location = null;
+    userUID = null;
+    UserImages.clearPhotos();
+  }
 
-// class UserPhotos {
-//   User user;
-//   static List<XFile?> images = [];
-//   static List<XFile?> indexedUserPhotos = List.filled(9, null);
-//
-//   // pre: initialize images[] with all user's images
-//   // post: userdata photo urls are updated
-//   // void uploadPhotos() async {
-//   //   UserData.imageURLs = [];
-//   //   for (int i = 0; i < images.length; i++) {
-//   //     String path = 'images/${user.uid}/$i';
-//   //     Reference ref = FirebaseStorage.instance.ref(path);
-//   //     await ref.putFile(File(images[i]!.path));
-//   //     UserData.imageURLs.add(await ref.getDownloadURL());
-//   //   }
-//   //   for (int i = images.length; i < 9; i++) {
-//   //     String path = 'images/${user.uid}/$i';
-//   //     await FirebaseStorage.instance.ref(path).delete();
-//   //   }
-//   // }
-//
-//
-//   UserPhotos(this.user);
-// }
-//
-// void setUser(User user) {}
-//
-// // User? retrieveUser({FirebaseAuth? auth}) {
-// //   auth ??= FirebaseAuth.instance;
-// //   return auth.currentUser;
-// // }
-//
-// // Future addUser({User? user}) {
-// //   user ??= retrieveUser();
-// //   if (user == null) {
-// //     return Future.error("User could not be authenticated");
-// //   }
-// //   FirebaseFirestore firestore = FirebaseFirestore.instance;
-// //
-// //   DocumentReference ref = firestore.collection('users').doc(user.uid);
-// //   return ref.set(UserData.toJson());
-// // }
+}

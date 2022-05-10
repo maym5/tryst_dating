@@ -18,9 +18,9 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   // TODO: these are showing up on push
-  static late final TextEditingController _emailController = TextEditingController();
-  static late final TextEditingController _passwordController = TextEditingController();
-  static late final TextEditingController _confirmController = TextEditingController();
+  // static late final TextEditingController _emailController = TextEditingController();
+  // static late final TextEditingController _passwordController = TextEditingController();
+  // static late final TextEditingController _confirmController = TextEditingController();
   Map<String, String?> errorMessages = {
     "email" : null,
     "password" : null,
@@ -39,7 +39,6 @@ class _SignUpPageState extends State<SignUpPage> {
   // TODO: look at refactoring these
   TextInputField get emailField => TextInputField(
     title: "Email",
-    controller: _emailController,
     onChanged: (email) {
       if (email == "") {
         userInputs['email'] = null;
@@ -53,7 +52,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
   TextInputField get passwordField => TextInputField(
     title: "Password",
-    controller: _passwordController,
     obscureText: true,
     onChanged: (password) {
       if (password == "") {
@@ -68,7 +66,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
   TextInputField get confirmField => TextInputField(
     title: "Confirm Password",
-    controller: _confirmController,
     obscureText: true,
     onChanged: (confirm) {
       if (confirm == "") {
