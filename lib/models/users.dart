@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rendezvous_beta_v3/models/user_images.dart';
 import 'package:rendezvous_beta_v3/pages/discover_page.dart';
+import 'package:rendezvous_beta_v3/services/authentication.dart';
 
 class UserData with ChangeNotifier {
   static String? name;
@@ -20,7 +21,6 @@ class UserData with ChangeNotifier {
   static int? maxPrice;
   static List<String> imageURLs = [];
   static Position? location;
-  static String? userUID;
 
   UserData();
 
@@ -38,7 +38,6 @@ class UserData with ChangeNotifier {
       'minPrice': minPrice,
       "maxPrice" : maxPrice,
       'imageURLs': imageURLs,
-      "uid" : userUID
     };
   }
 
@@ -62,7 +61,6 @@ class UserData with ChangeNotifier {
     maxAge = incomingData["maxAge"];
     minAge = incomingData["minAge"];
     imageURLs = DiscoverData.listToListOfStrings(incomingData["imageURLs"]);
-    userUID = incomingData["userUID"];
   }
 
 
@@ -76,7 +74,6 @@ class UserData with ChangeNotifier {
     User? _user = retrieveUser();
     if (_user != null) {
       await UserImages.uploadImages(_user);
-      UserData.userUID = _user.uid;
       Map<String, dynamic> _userData = UserData.toJson();
       _fireStore.collection("userData").doc(_user.uid).set(_userData);
     }
@@ -126,7 +123,6 @@ class UserData with ChangeNotifier {
     maxPrice = null;
     imageURLs = [];
     location = null;
-    userUID = null;
     UserImages.clearPhotos();
   }
 

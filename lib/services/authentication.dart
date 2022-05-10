@@ -7,7 +7,6 @@ Future onEmailAndPasswordLogin(String email, String password) async {
   try {
     UserCredential userCredential = await auth.signInWithEmailAndPassword(
         email: email, password: password);
-    UserData.userUID = userCredential.user?.uid;
     return Future.value(userCredential.user);
   } on FirebaseAuthException catch (e) {
     return Future.value(e.code);
@@ -19,11 +18,15 @@ Future onEmailAndPasswordSignUp(String email, String password) async {
   try {
     UserCredential userCredential = await auth.createUserWithEmailAndPassword(
         email: email, password: password);
-    UserData.userUID = userCredential.user?.uid;
     return Future.value(userCredential.user);
   } on FirebaseAuthException catch (e) {
     return Future.value(e.code);
   }
+}
+
+String?  get currentUserUID {
+  FirebaseAuth auth = FirebaseAuth.instance;
+  return auth.currentUser?.uid;
 }
 
 Future verifyEmail() {

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/models/user_images.dart';
+import 'package:rendezvous_beta_v3/services/authentication.dart';
 import 'package:rendezvous_beta_v3/services/google_places_service.dart';
 import 'package:rendezvous_beta_v3/widgets/discover_view/discover_view.dart';
 import 'package:rendezvous_beta_v3/widgets/like_widget.dart';
@@ -43,7 +44,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
   void initState() {
     _animation = ValueNotifier(0);
     _pageController = PageController(
-      initialPage: 1,
       viewportFraction: 1,
     )..addListener(_onScroll);
     _animation.value = _pageController.initialPage.toDouble();
@@ -73,10 +73,11 @@ class _DiscoverPageState extends State<DiscoverPage> {
         builder: (context, AsyncSnapshot<QuerySnapshot<Map>> snapshot) =>
             PageView.builder(
                 onPageChanged: (page) async {
+                  print(currentUserUID);
                   if (_userRating > 5) {
                     QuerySnapshot matchSnapshot = await _firestore
                         .collection("matchData")
-                        .where("matchUID", isEqualTo: UserData.userUID)
+                        .where("matchUID", isEqualTo: currentUserUID)
                         .where("likeUID", isEqualTo: currentUID)
                         .get();
                     if (matchSnapshot.size != 0) {
@@ -84,9 +85,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     } else {
                       _firestore
                           .collection("matchData")
-                          .doc(UserData.userUID)
+                          .doc(currentUserUID)
                           .set({
-                        "likeUID": UserData.userUID,
+                        "likeUID": currentUserUID,
                         "matchUID": currentUID,
                         "match": false
                       });
@@ -181,7 +182,7 @@ class DiscoverLoadingAvatar extends StatelessWidget {
         child: CircleAvatar(
           radius: 50,
           // TODO: loading bug ->
-          backgroundImage: FileImage(File(UserImages.userImages[0]!.path)),
+          backgroundImage: NetworkImage(UserData.imageURLs[0]),
         ),
       ),
     );
