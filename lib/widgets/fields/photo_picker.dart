@@ -182,6 +182,7 @@ class PhotoPickerBottomSheet extends StatelessWidget {
 }
 
 class PhotoPicker extends StatefulWidget {
+  // TODO: fix it to take network images as well for when the user logs back in
   const PhotoPicker(
       {Key? key,
       this.physics = const NeverScrollableScrollPhysics(),

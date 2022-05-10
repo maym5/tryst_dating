@@ -180,6 +180,7 @@ class DiscoverLoadingAvatar extends StatelessWidget {
             shape: BoxShape.circle, gradient: kButtonGradient),
         child: CircleAvatar(
           radius: 50,
+          // TODO: loading bug ->
           backgroundImage: FileImage(File(UserImages.userImages[0]!.path)),
         ),
       ),

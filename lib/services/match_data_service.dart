@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import "package:async/async.dart";
 import '../models/users.dart';
 
 class MatchDataService {
@@ -34,25 +34,9 @@ class MatchDataService {
         .asStream();
   }
 
-  Future<List<MatchCardData>> get matchData async {
-    List<MatchCardData> result = [];
-    await for (QuerySnapshot like in  _likesStream) {
-      for (var doc in like.docs) {
-        result.add(await MatchCardData.getData(doc.data() as Map<String, dynamic>));
-      }
-    }
-    await for (QuerySnapshot match in _matchStream) {
-      for (var doc in match.docs) {
-        result.add(await MatchCardData.getData(doc.data() as Map<String, dynamic>));
-      }
-    }
-    await for (QuerySnapshot pending in _pendingStream) {
-      for (var doc in pending.docs) {
-        result.add(await MatchCardData.getData(doc.data() as Map<String, dynamic>));
-      }
-    } return result;
+  Stream<QuerySnapshot> get matchDataStream async* {
+    yield* StreamGroup.merge([_likesStream, _pendingStream, _matchStream]);
   }
-
 }
 
 class MatchCardData {
@@ -71,13 +55,19 @@ class MatchCardData {
 
   static Future<MatchCardData> getData(Map<String, dynamic> data) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
-    final String uid = data["likeUID"] == UserData.userUID ? data["matchUID"] : data["likeUID"];
+    final String uid = data["likeUID"] == UserData.userUID
+        ? data["matchUID"]
+        : data["likeUID"];
     final _data = await db.collection("userData").doc(uid).get();
     final match = _data.data();
     if (data["match"] == true) {
-      return MatchCardData(name: match!["name"], venue: data["venue"], dateType: data["dateType"], dateTime: data["dateTime"], image: match["imageURLs"][0]);
+      return MatchCardData(
+          name: match!["name"],
+          venue: data["venue"],
+          dateType: data["dateType"],
+          dateTime: data["dateTime"],
+          image: match["imageURLs"][0]);
     }
     return MatchCardData(name: match!["name"], image: match["imageURLs"][0]);
   }
-
 }

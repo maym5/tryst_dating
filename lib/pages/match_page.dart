@@ -23,10 +23,24 @@ class _MatchPageState extends State<MatchPage> {
   Widget build(BuildContext context) {
     // TODO: test this, probably many bugs
     return PageBackground(
-        body: FutureBuilder(
-          future: MatchDataService().matchData,
-          builder: (BuildContext context, AsyncSnapshot<List<MatchCardData>> snapshot) => ListView.builder(
-              itemBuilder: (context, index) => MatchCard(data: snapshot.data![index]),
+        body: StreamBuilder(
+          stream: MatchDataService().matchDataStream,
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Object?>> snapshot) => ListView.builder(
+            itemCount: snapshot.data?.size == 0 ? 1 : snapshot.data?.size,
+              itemBuilder: (context, index) {
+                if (snapshot.hasData) {
+                  final List<Map<String, dynamic>> documents = snapshot
+                      .data!.docs
+                      .map((doc) => doc.data() as Map<String, dynamic>)
+                      .toList();
+                  if (documents.isNotEmpty) {
+                    final data = MatchCardData.getData(documents[index]);
+                    return MatchCard(data: data);
+                  } else {
+                    return const Center(child: Text("Such empty, get swiping!"));
+                  }
+                } return const Center(child: Text("Such empty, get swiping!"));
+              }
           ),
         )
     );
