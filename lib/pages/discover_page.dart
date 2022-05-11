@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
-import 'package:rendezvous_beta_v3/models/user_images.dart';
 import 'package:rendezvous_beta_v3/services/authentication.dart';
 import 'package:rendezvous_beta_v3/services/google_places_service.dart';
 import 'package:rendezvous_beta_v3/widgets/discover_view/discover_view.dart';
@@ -10,7 +9,6 @@ import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 import '../models/users.dart';
 import '../services/discover_service.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
-import "dart:io";
 
 class DiscoverPage extends StatefulWidget {
   static const id = "discover_page";
@@ -134,9 +132,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                       minRadius: 80,
                     );
                   } else {
-                    print("data:" + snapshot.hasData.toString());
-                    print("error:" + snapshot.hasError.toString());
-                    print(snapshot.error);
+                    // print("data:" + snapshot.hasData.toString());
+                    // print("error:" + snapshot.hasError.toString());
+                    // print(snapshot.error);
                     return Center(
                       child: Text(
                           "There has been an error, try restarting the app",

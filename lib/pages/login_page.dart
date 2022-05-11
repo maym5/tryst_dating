@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:rendezvous_beta_v3/services/authentication.dart';
 import '../constants.dart';
+import '../models/users.dart';
 import '../widgets/fields/text_input_field.dart';
 import '../widgets/gradient_button.dart';
 import '../widgets/page_background.dart';
@@ -115,6 +116,7 @@ class _LoginPageState extends State<LoginPage> {
             break;
         }
       } else {
+        await UserData().getUserData();
         Navigator.pushNamed(context, HomePage.id);
       }
     }

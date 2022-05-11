@@ -127,4 +127,12 @@ class UserData with ChangeNotifier {
     UserImages.clearPhotos();
   }
 
+  Future<void> getUserData() async {
+    final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
+    User? _user = retrieveUser();
+    final DocumentSnapshot snapshot = await _fireStore.collection("userData").doc(_user?.uid).get();
+    final Map<String, dynamic> _data = snapshot.data() as Map<String, dynamic>;
+    fromJson(_data);
+  }
+
 }

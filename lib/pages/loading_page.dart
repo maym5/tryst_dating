@@ -4,14 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/animations/text_fade_in.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/pages/home_page.dart';
-import 'package:rendezvous_beta_v3/pages/sign_up_page.dart';
+import 'package:rendezvous_beta_v3/pages/intro_page.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 
 import '../models/users.dart';
-import '../services/authentication.dart';
 
 class LoadingPage extends StatefulWidget {
-  static const id = "intro_page";
+  static const id = "loading_page";
   const LoadingPage({Key? key}) : super(key: key);
 
   @override
@@ -33,7 +32,7 @@ class _LoadingPageState extends State<LoadingPage> {
       UserData.fromJson(_data);
       Navigator.pushNamed(context, HomePage.id);
     } else {
-      Navigator.pushNamed(context, SignUpPage.id);
+      Navigator.pushNamed(context, IntroPage.id);
     }
   }
 

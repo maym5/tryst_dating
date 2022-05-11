@@ -6,6 +6,7 @@ import 'package:rendezvous_beta_v3/widgets/gradient_button.dart';
 
 import '../constants.dart';
 import '../models/users.dart';
+import '../pages/intro_page.dart';
 import '../pages/sign_up_page.dart';
 import '../services/authentication.dart';
 
@@ -57,7 +58,7 @@ class LogOutDialogue extends StatelessWidget {
             onPressed: () async {
               await logOut();
               UserData.resetUserData();
-              Navigator.pushNamed(context, SignUpPage.id);
+              Navigator.pushNamed(context, IntroPage.id);
             },
           ),
         ),
