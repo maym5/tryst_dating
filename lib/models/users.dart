@@ -38,6 +38,7 @@ class UserData with ChangeNotifier {
       'minPrice': minPrice,
       "maxPrice" : maxPrice,
       'imageURLs': imageURLs,
+      "uid" : currentUserUID
     };
   }
 

@@ -28,7 +28,7 @@ class _MatchPageState extends State<MatchPage> {
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Object?>> snapshot) => ListView.builder(
             itemCount: snapshot.data?.size == 0 ? 1 : snapshot.data?.size,
               itemBuilder: (context, index) {
-                if (snapshot.hasData) {
+                if (snapshot.hasData && !snapshot.hasError) {
                   final List<Map<String, dynamic>> documents = snapshot
                       .data!.docs
                       .map((doc) => doc.data() as Map<String, dynamic>)

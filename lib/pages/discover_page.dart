@@ -73,15 +73,18 @@ class _DiscoverPageState extends State<DiscoverPage> {
         builder: (context, AsyncSnapshot<QuerySnapshot<Map>> snapshot) =>
             PageView.builder(
                 onPageChanged: (page) async {
-                  print(currentUserUID);
                   if (_userRating > 5) {
+                    print(currentUserUID);
                     QuerySnapshot matchSnapshot = await _firestore
                         .collection("matchData")
                         .where("matchUID", isEqualTo: currentUserUID)
                         .where("likeUID", isEqualTo: currentUID)
                         .get();
                     if (matchSnapshot.size != 0) {
-                      // alter the doc
+                      // (1) get overlapping dateTypes between both users (userData pull)
+                      // do this in the build someplace and save to local varaible
+                      // (2) select one of said dateTypes and feed it to the google places service
+                      // (3) use returned data to alter matchData document in the cloud.
                     } else {
                       _firestore
                           .collection("matchData")
@@ -131,9 +134,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
                       minRadius: 80,
                     );
                   } else {
+                    print("data:" + snapshot.hasData.toString());
+                    print("error:" + snapshot.hasError.toString());
+                    print(snapshot.error);
                     return Center(
                       child: Text(
                           "There has been an error, try restarting the app",
+                          textAlign: TextAlign.center,
                           style: kTextStyle),
                     );
                   }
@@ -181,7 +188,6 @@ class DiscoverLoadingAvatar extends StatelessWidget {
             shape: BoxShape.circle, gradient: kButtonGradient),
         child: CircleAvatar(
           radius: 50,
-          // TODO: loading bug ->
           backgroundImage: NetworkImage(UserData.imageURLs[0]),
         ),
       ),

@@ -22,8 +22,9 @@ class DiscoverService {
   // }
 
   Stream<QuerySnapshot<Map>> get discoverStream async* {
+    // TODO: write real code here
     FirebaseFirestore db = FirebaseFirestore.instance;
     yield* db.collection("userData").where(
-        "distance", isLessThanOrEqualTo: currentUserData["distance"]).where("uid", isNotEqualTo: currentUserData).get().asStream();
+        "distance", isLessThanOrEqualTo: currentUserData["distance"]).get().asStream();
   }
 }

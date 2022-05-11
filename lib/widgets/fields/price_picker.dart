@@ -4,11 +4,11 @@ import '../../models/users.dart';
 import '../field_title.dart';
 import '../warning_widget.dart';
 
-
 class PricePicker extends StatefulWidget {
-  // TODO: add initial values retard
-  const PricePicker({Key? key, required this.showError}) : super(key: key);
+  const PricePicker({Key? key, required this.showError, this.initialValues})
+      : super(key: key);
   final bool showError;
+  final RangeValues? initialValues;
 
   @override
   State<PricePicker> createState() => _PricePickerState();
@@ -18,11 +18,15 @@ class _PricePickerState extends State<PricePicker>
     with AutomaticKeepAliveClientMixin {
   late bool _hasMoved;
   Color get _activeColor => _hasMoved ? kActiveColor : kInactiveColor;
-  RangeValues _values = const RangeValues(2, 3);
+  late RangeValues _values;
 
   @override
   void initState() {
-    _hasMoved = false;
+    _hasMoved = UserData.minPrice != null && UserData.maxPrice != null;
+    _values = UserData.minPrice != null && UserData.maxPrice != null
+        ? RangeValues(
+            UserData.minPrice!.toDouble(), UserData.maxPrice!.toDouble())
+        : const RangeValues(2, 3);
     super.initState();
   }
 

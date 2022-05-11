@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../models/users.dart';
 import 'fields/date_type_picker.dart';
 import 'fields/gender_field.dart';
 import 'fields/photo_picker.dart';

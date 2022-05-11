@@ -12,9 +12,10 @@ class AgeSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliderField(
       title: "Age",
+      defaultValue: 21,
       max: 40,
       min: 18,
-      initialValue: UserData.age ?? 21,
+      initialValue: UserData.age,
       showError: showError && UserData.age == null,
       onChangeEnd: (age) {
         UserData.age = age.toInt();
@@ -30,10 +31,10 @@ class DistanceSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliderField(
+        defaultValue: 5,
         title: "Distance",
         units: "Miles",
-        initialValue:
-            UserData.maxDistance != null ? UserData.maxDistance!.toInt() : 5,
+        initialValue: UserData.maxDistance,
         showError: showError && UserData.maxDistance == null,
         onChangeEnd: (distance) {
           UserData.maxDistance = distance.toInt();
@@ -48,15 +49,22 @@ class PreferredAgeSlider extends StatelessWidget {
       : super(key: key);
   final bool showError;
 
-  int get _min => UserData.minAge ?? 22;
-  int get _max => UserData.maxAge ?? 25;
+  // int get _min => UserData.minAge ?? 22;
+  // int get _max => UserData.maxAge ?? 25;
+
+  RangeValues? get _initialValues => UserData.minAge != null &&
+          UserData.maxAge != null
+      ? RangeValues(UserData.minAge!.toDouble(), UserData.maxAge!.toDouble())
+      : null;
 
   @override
   Widget build(BuildContext context) {
     return RangeSliderField(
         title: "Preferred Age",
-        showError: showError && UserData.minAge == null && UserData.maxAge == null,
-        initialValues: RangeValues(_min.toDouble(), _max.toDouble()),
+        defaultValues: const RangeValues(22, 25),
+        showError:
+            showError && UserData.minAge == null && UserData.maxAge == null,
+        initialValues: _initialValues,
         onChangeEnd: (preferredAges) {
           UserData.minAge = preferredAges.start.toInt();
           UserData.maxAge = preferredAges.end.toInt();
@@ -67,20 +75,22 @@ class PreferredAgeSlider extends StatelessWidget {
 }
 
 class SliderField extends StatefulWidget {
-  // TODO: if they have been moved they should be engaged
+  // TODO: if initial values make them show up red
   const SliderField(
       {Key? key,
       required this.title,
-      required this.initialValue,
+      this.initialValue,
+      required this.defaultValue,
       required this.onChangeEnd,
       required this.showError,
       required this.max,
       required this.min,
-        this.onChanged,
+      this.onChanged,
       this.units = ""})
       : super(key: key);
   final String title;
-  final int initialValue;
+  final int? initialValue;
+  final int defaultValue;
   final void Function(double) onChangeEnd;
   final bool showError;
   final int min;
@@ -99,12 +109,15 @@ class _SliderFieldState extends State<SliderField>
 
   Color get _activeColor => _hasMoved ? kActiveColor : kInactiveColor;
 
-  String get _displayedValue => _sliderValue.round().toString() + ' ' + widget.units;
+  String get _displayedValue =>
+      _sliderValue.round().toString() + ' ' + widget.units;
 
   @override
   void initState() {
-    _sliderValue = widget.initialValue.toDouble();
-    _hasMoved = false;
+    _sliderValue = (widget.initialValue != null
+        ? widget.initialValue?.toDouble()
+        : widget.defaultValue.toDouble())!;
+    _hasMoved = widget.initialValue != null;
     super.initState();
   }
 
@@ -138,7 +151,8 @@ class _SliderFieldState extends State<SliderField>
             onChangeEnd: widget.onChangeEnd,
           ),
         ),
-        WarningWidget(showError: widget.showError && !_hasMoved, name: widget.title),
+        WarningWidget(
+            showError: widget.showError && !_hasMoved, name: widget.title),
       ],
     );
   }
@@ -157,14 +171,16 @@ class RangeSliderField extends StatefulWidget {
   const RangeSliderField({
     Key? key,
     required this.title,
-    required this.initialValues,
+    this.initialValues,
+    required this.defaultValues,
     required this.showError,
     required this.onChangeEnd,
     required this.min,
     required this.max,
   }) : super(key: key);
   final String title;
-  final RangeValues initialValues;
+  final RangeValues? initialValues;
+  final RangeValues defaultValues;
   final bool showError;
   final void Function(RangeValues) onChangeEnd;
   final int min;
@@ -181,12 +197,13 @@ class _RangeSliderFieldState extends State<RangeSliderField>
 
   Color get _activeColor => _hasMoved ? kActiveColor : kInactiveColor;
 
-  String get _displayedValue => _values.start.round().toString() + "-" + _values.end.round().toString();
+  String get _displayedValue =>
+      _values.start.round().toString() + "-" + _values.end.round().toString();
 
   @override
   void initState() {
-    _values = widget.initialValues;
-    _hasMoved = false;
+    _values = widget.initialValues ?? widget.defaultValues;
+    _hasMoved = widget.initialValues != null;
     super.initState();
   }
 
