@@ -61,28 +61,6 @@ class _LoginPageState extends State<LoginPage> {
   );
 
 
-
-  // void _onPressed() async {
-  //   setState(() => _showSpinner = true);
-  //   if (loginInputs['password'] != null && loginInputs['email'] != null) {
-  //     var result = await onEmailAndPasswordLogin(loginInputs['email']!, loginInputs['password']!);
-  //     if (result is User) {
-  //       setState(() => _showSpinner = false);
-  //       Navigator.pushNamed(context, DiscoverPage.id);
-  //     } else {
-  //       setState(() {
-  //         _showSpinner = false;
-  //         _showSpinner = false;
-  //       });
-  //     }
-  //   } else {
-  //     setState(() {
-  //       _showSpinner = false;
-  //       showErrors = true;
-  //     });
-  //   }
-  // }
-
   void _handleSignIn() async {
     setState(() => _showSpinner = true);
     if (loginInputs['password'] != null && loginInputs['email'] != null) {

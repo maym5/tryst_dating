@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:async/async.dart";
 import 'package:rendezvous_beta_v3/services/authentication.dart';
 import '../models/users.dart';
+import 'package:uuid/uuid.dart';
 
 class MatchDataService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -38,6 +39,19 @@ class MatchDataService {
   Stream<QuerySnapshot> get matchDataStream async* {
     yield* StreamGroup.merge([_likesStream, _pendingStream, _matchStream]);
   }
+
+  static void setMatchData(
+      {required String currentDiscoverUID}) {
+    final FirebaseFirestore db = FirebaseFirestore.instance;
+    db.collection("matchData").doc(currentUserUID! + currentDiscoverUID).set({
+      "likeUID": currentUserUID,
+      "matchUID": currentDiscoverUID,
+      "match": false
+    }).then((value) => print("pushed to: " + currentUserUID! + currentDiscoverUID));
+  }
+
+
+
 }
 
 class MatchCardData {
@@ -56,9 +70,8 @@ class MatchCardData {
 
   static Future<MatchCardData> getData(Map<String, dynamic> data) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
-    final String uid = data["likeUID"] == currentUserUID
-        ? data["matchUID"]
-        : data["likeUID"];
+    final String uid =
+        data["likeUID"] == currentUserUID ? data["matchUID"] : data["likeUID"];
     final _data = await db.collection("userData").doc(uid).get();
     final match = _data.data();
     if (data["match"] == true) {

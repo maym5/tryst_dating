@@ -24,7 +24,7 @@ Future onEmailAndPasswordSignUp(String email, String password) async {
   }
 }
 
-String?  get currentUserUID {
+String? get currentUserUID {
   FirebaseAuth auth = FirebaseAuth.instance;
   return auth.currentUser?.uid;
 }

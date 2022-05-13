@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/services/authentication.dart';
 import 'package:rendezvous_beta_v3/services/google_places_service.dart';
+import 'package:rendezvous_beta_v3/services/match_data_service.dart';
 import 'package:rendezvous_beta_v3/widgets/discover_view/discover_view.dart';
 import 'package:rendezvous_beta_v3/widgets/like_widget.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
+import '../dialogues/date_time_dialogue.dart';
 import '../models/users.dart';
 import '../services/discover_service.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
+import 'dart:math';
 
 class DiscoverPage extends StatefulWidget {
   static const id = "discover_page";
@@ -24,7 +27,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
   late PageController _pageController;
   late ValueNotifier<double> _animation;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String? currentUID;
+  late String currentUID;
+  late DiscoverData _currentDiscoverData;
+  DateTime? _dateTime;
+  bool _dragging = false;
 
   void _onScroll() {
     // made change must test
@@ -63,6 +69,35 @@ class _DiscoverPageState extends State<DiscoverPage> {
     });
   }
 
+  void setDateTime(DateTime date, TimeOfDay time) {
+    setState(() {
+      _dateTime =
+          DateTime(date.year, date.month, date.day, time.hour, time.minute);
+    });
+  }
+
+  Widget get _waitingAnimation => RippleAnimation(
+        color: Colors.orangeAccent,
+        child: const DiscoverLoadingAvatar(),
+        repeat: true,
+        ripplesCount: 4,
+        minRadius: 80,
+      );
+
+  Widget get _noDataMessage => Center(
+        child: Text(
+          "There's no one in your area, try increasing your search distance to keep rating",
+          textAlign: TextAlign.center,
+          style: kTextStyle,
+          softWrap: true,
+        ),
+      );
+
+  Widget get _errorMessage => Center(
+        child: Text("There has been an error, try restarting the app",
+            textAlign: TextAlign.center, style: kTextStyle),
+      );
+
   @override
   Widget build(BuildContext context) {
     return PageBackground(
@@ -71,27 +106,47 @@ class _DiscoverPageState extends State<DiscoverPage> {
         builder: (context, AsyncSnapshot<QuerySnapshot<Map>> snapshot) =>
             PageView.builder(
                 onPageChanged: (page) async {
+                  print(currentUserUID);
                   if (_userRating > 5) {
-                    print(currentUserUID);
                     QuerySnapshot matchSnapshot = await _firestore
                         .collection("matchData")
                         .where("matchUID", isEqualTo: currentUserUID)
                         .where("likeUID", isEqualTo: currentUID)
                         .get();
                     if (matchSnapshot.size != 0) {
+                      // TODO: trigger a dialogue
                       // (1) get overlapping dateTypes between both users (userData pull)
                       // do this in the build someplace and save to local varaible
                       // (2) select one of said dateTypes and feed it to the google places service
                       // (3) use returned data to alter matchData document in the cloud.
+                      // dates they share in common
+                      List<String> commonDateTypes = _currentDiscoverData.dates
+                          .where((element) => UserData.dates.contains(element))
+                          .toList();
+                      final String _dateType = commonDateTypes[
+                          Random().nextInt(commonDateTypes.length)];
+                      final List _venues =
+                          await GooglePlacesService(venueType: _dateType)
+                              .venues;
+                      print("made it");
+                      var _venue = _venues[Random().nextInt(_venues.length)];
+                      DateTimeDialogue(setDateTime: setDateTime)
+                          .buildCalendarDialogue(context)
+                          .then((value) => Navigator.pop(context));
+                      if (_dateTime != null) {
+                        _firestore
+                            .collection("matchData")
+                            .doc(currentUID)
+                            .update({
+                          "venue": _venue,
+                          "match": true,
+                          "dateType": _dateType,
+                          "dateTime": _dateTime
+                        });
+                      }
                     } else {
-                      _firestore
-                          .collection("matchData")
-                          .doc(currentUserUID)
-                          .set({
-                        "likeUID": currentUserUID,
-                        "matchUID": currentUID,
-                        "match": false
-                      });
+                      MatchDataService.setMatchData(
+                          currentDiscoverUID: currentUID);
                     }
                   }
                 },
@@ -99,19 +154,20 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 scrollDirection: Axis.vertical,
                 itemCount: snapshot.data?.size,
                 itemBuilder: (BuildContext context, int index) {
-                  if (snapshot.hasData && !snapshot.hasError) {
+                  if (snapshot.hasData &&
+                      !snapshot.hasError) {
                     final List<Map<String, dynamic>> documents = snapshot
                         .data!.docs
                         .map((doc) => doc.data() as Map<String, dynamic>)
                         .toList();
                     final Map<String, dynamic> currentDoc = documents[index];
-                    final DiscoverData data =
+                    _currentDiscoverData =
                         DiscoverData.getDiscoverData(currentDoc);
-                    currentUID = data.uid;
+                    currentUID = _currentDiscoverData.uid;
                     return Stack(
                       children: [
                         DiscoverView(
-                          data: data,
+                          data: _currentDiscoverData,
                           onDragUpdate: setUserRating,
                         ),
                         Center(
@@ -124,23 +180,11 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     );
                   } else if (snapshot.connectionState ==
                       ConnectionState.waiting) {
-                    return RippleAnimation(
-                      color: Colors.orangeAccent,
-                      child: const DiscoverLoadingAvatar(),
-                      repeat: true,
-                      ripplesCount: 4,
-                      minRadius: 80,
-                    );
+                    return _waitingAnimation;
+                  } else if (!snapshot.hasData) {
+                    return _noDataMessage;
                   } else {
-                    // print("data:" + snapshot.hasData.toString());
-                    // print("error:" + snapshot.hasError.toString());
-                    // print(snapshot.error);
-                    return Center(
-                      child: Text(
-                          "There has been an error, try restarting the app",
-                          textAlign: TextAlign.center,
-                          style: kTextStyle),
-                    );
+                    return _errorMessage;
                   }
                 }),
       ),
