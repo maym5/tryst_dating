@@ -35,11 +35,14 @@ class _MatchPageState extends State<MatchPage> {
                       .toList();
                   if (documents.isNotEmpty) {
                     final data = MatchCardData.getData(documents[index]);
+                    // TODO: try to get the future out of this
                     return MatchCard(data: data);
-                  } else {
-                    return const Center(child: Text("Such empty, get swiping!"));
                   }
-                } return const Center(child: Text("Such empty, get swiping!"));
+                } return Container(
+                  alignment: Alignment.center,
+                  height: MediaQuery.of(context).size.height,
+                    child: const Text("Such empty, get swiping!"),
+                );
               }
           ),
         )

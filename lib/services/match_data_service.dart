@@ -40,8 +40,7 @@ class MatchDataService {
     yield* StreamGroup.merge([_likesStream, _pendingStream, _matchStream]);
   }
 
-  static void setMatchData(
-      {required String currentDiscoverUID}) {
+  static void setMatchData({required String currentDiscoverUID}) {
     final FirebaseFirestore db = FirebaseFirestore.instance;
     db.collection("matchData").doc(currentUserUID! + currentDiscoverUID).set({
       "likeUID": currentUserUID,
@@ -50,8 +49,19 @@ class MatchDataService {
     });
   }
 
-
-
+  static void updateMatchData(
+      {required currentDiscoverUID,
+      required String dateType,
+      required DateTime dateTime,
+      required String venue}) {
+    final FirebaseFirestore db = FirebaseFirestore.instance;
+    db.collection("matchData").doc(currentDiscoverUID).update({
+      "venue": venue,
+      "match": true,
+      "dateType": dateType,
+      "dateTime": dateTime
+    });
+  }
 }
 
 class MatchCardData {
@@ -70,9 +80,9 @@ class MatchCardData {
 
   static Future<MatchCardData> getData(Map<String, dynamic> data) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
-    final String uid =
+    final String matchUID =
         data["likeUID"] == currentUserUID ? data["matchUID"] : data["likeUID"];
-    final _data = await db.collection("userData").doc(uid).get();
+    final _data = await db.collection("userData").doc(matchUID).get();
     final match = _data.data();
     if (data["match"] == true) {
       return MatchCardData(

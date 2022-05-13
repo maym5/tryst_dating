@@ -132,15 +132,11 @@ class _DiscoverPageState extends State<DiscoverPage> {
                           .buildCalendarDialogue(context)
                           .then((value) => Navigator.pop(context));
                       if (_dateTime != null) {
-                        _firestore
-                            .collection("matchData")
-                            .doc(currentUID)
-                            .update({
-                          "venue": _venue,
-                          "match": true,
-                          "dateType": _dateType,
-                          "dateTime": _dateTime
-                        });
+                        MatchDataService.updateMatchData(
+                            currentDiscoverUID: currentUID,
+                            dateType: _dateType,
+                            dateTime: _dateTime!,
+                            venue: _venue);
                       }
                     } else {
                       MatchDataService.setMatchData(

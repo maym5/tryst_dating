@@ -23,7 +23,7 @@ class _GridBoxState extends State<GridBox> {
   bool get _containsUserImage => UserImages.userImages[widget.index] != null;
 
   Widget? get _image {
-    XFile? image = UserImages.userImages[widget.index];
+    var image = UserImages.userImages[widget.index];
     if (image != null) {
       return ClipRRect(
         borderRadius: kBorderRadius,
