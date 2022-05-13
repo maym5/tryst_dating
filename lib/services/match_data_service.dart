@@ -47,7 +47,7 @@ class MatchDataService {
       "likeUID": currentUserUID,
       "matchUID": currentDiscoverUID,
       "match": false
-    }).then((value) => print("pushed to: " + currentUserUID! + currentDiscoverUID));
+    });
   }
 
 

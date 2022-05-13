@@ -20,6 +20,7 @@ class GooglePlacesService {
       final Response _venues = await dio.get(_path);
       final _venueData = _venues.data;
       final List results = _venueData["results"];
+      // type this shit brah//////
       // test this change in control statement
       if (results.isNotEmpty) {
         return results;

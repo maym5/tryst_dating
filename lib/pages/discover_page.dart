@@ -30,7 +30,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
   late String currentUID;
   late DiscoverData _currentDiscoverData;
   DateTime? _dateTime;
-  bool _dragging = false;
 
   void _onScroll() {
     // made change must test
@@ -106,7 +105,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
         builder: (context, AsyncSnapshot<QuerySnapshot<Map>> snapshot) =>
             PageView.builder(
                 onPageChanged: (page) async {
-                  print(currentUserUID);
                   if (_userRating > 5) {
                     QuerySnapshot matchSnapshot = await _firestore
                         .collection("matchData")
