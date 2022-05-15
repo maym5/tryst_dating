@@ -9,14 +9,18 @@ class HomePage extends StatelessWidget {
 
   PageController get _controller => PageController(initialPage: 1);
 
+  void _userEditButtonPress() {
+    _controller.animateToPage(1, duration: const Duration(milliseconds: 200), curve: Curves.easeInSine);
+  }
+
   @override
   Widget build(BuildContext context) {
     return PageView(
       controller: _controller,
-      children: const <Widget>[
-        UserEditPage(),
-        DiscoverPage(),
-        MatchPage(),
+      children: <Widget>[
+        UserEditPage(onHomePageButtonPress: _userEditButtonPress),
+        const DiscoverPage(),
+        const MatchPage(),
       ],
     );
   }

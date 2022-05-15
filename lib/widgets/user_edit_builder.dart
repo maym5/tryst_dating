@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../models/users.dart';
 import 'fields/date_type_picker.dart';
 import 'fields/gender_field.dart';
 import 'fields/photo_picker.dart';
@@ -10,10 +9,11 @@ import 'gradient_button.dart';
 import 'tile_card.dart';
 
 class UserEditBuilder extends StatelessWidget {
-  const  UserEditBuilder({Key? key, required this.index, required this.showErrors, required this.onButtonPress}) : super(key: key);
+  const  UserEditBuilder({Key? key, required this.index, required this.showErrors, required this.onButtonPress, this.homePage = false}) : super(key: key);
   final int index;
   final bool showErrors;
   final void Function() onButtonPress;
+  final bool homePage;
   static int itemCount = 11;
 
 
@@ -43,7 +43,7 @@ class UserEditBuilder extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(35),
         child: GradientButton(
-            title: "Check out your profile",
+            title: homePage ? "Back to rating" : "Check out your profile",
             onPressed: onButtonPress
         ),
       ),

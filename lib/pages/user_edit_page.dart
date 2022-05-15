@@ -10,8 +10,8 @@ import 'dart:io';
 
 class UserEditPage extends StatefulWidget {
   static const id = "user_edit_page";
-  const UserEditPage({Key? key, this.pop = false}) : super(key: key);
-  final bool pop;
+  const UserEditPage({Key? key, this.onHomePageButtonPress}) : super(key: key);
+  final void Function()? onHomePageButtonPress;
 
   @override
   _UserEditPageState createState() => _UserEditPageState();
@@ -33,8 +33,8 @@ class _UserEditPageState extends State<UserEditPage>{
       setState(() => showSpinners = true);
       await UserData().uploadUserData();
       setState(() => showSpinners = false);
-      if (widget.pop) {
-        Navigator.pop(context);
+      if (widget.onHomePageButtonPress != null) {
+        widget.onHomePageButtonPress!();
       } else {
         Navigator.pushNamed(context, UserProfile.id);
       }
@@ -87,6 +87,7 @@ class _UserEditPageState extends State<UserEditPage>{
           itemCount: UserEditBuilder.itemCount,
           itemBuilder: (context, index) => UserEditBuilder(
               index: index,
+              homePage: widget.onHomePageButtonPress != null,
               showErrors: showErrors,
               onButtonPress: onButtonPress
           ),
