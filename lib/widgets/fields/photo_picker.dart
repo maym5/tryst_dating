@@ -25,13 +25,20 @@ class _GridBoxState extends State<GridBox> {
   Widget? get _image {
     var image = UserImages.userImages[widget.index];
     if (image != null) {
-      return ClipRRect(
-        borderRadius: kBorderRadius,
-        child: Image(
-          image: FileImage(File(image.path)),
-          fit: BoxFit.fill,
-        ),
-      );
+      if (image.runtimeType == String) {
+        return ClipRRect(
+          borderRadius: kBorderRadius,
+          child: Image.network(image, fit: BoxFit.cover),
+        );
+      } else if (image.runtimeType == XFile) {
+        return ClipRRect(
+          borderRadius: kBorderRadius,
+          child: Image(
+            image: FileImage(File(image.path)),
+            fit: BoxFit.fill,
+          ),
+        );
+      }
     }
     return null;
   }

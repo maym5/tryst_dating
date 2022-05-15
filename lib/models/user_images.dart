@@ -7,9 +7,11 @@ import 'users.dart';
 import 'package:collection/collection.dart';
 
 class UserImages with ChangeNotifier {
+  // TODO: fix this model to incorporate ref URL's from storage bucket so we can have initial values
+  // maybe just make the cloud the model
   UserImages();
 
-  static List<XFile?> userImages = List.filled(9, null);
+  static List userImages = List.filled(9, null);
 
   static bool showImageError() {
     int nonNullImages = 0;
@@ -17,10 +19,13 @@ class UserImages with ChangeNotifier {
       if (image != null) {
         nonNullImages++;
       }
-    } return !(nonNullImages >= 1);
+    }
+    return !(nonNullImages >= 1);
   }
 
   Future<void> addImages(int index) async {
+    // maybe try to just maintain the cloud in these functions instead of having seperate ones
+    // make the cloud a model basically
     List<XFile>? images = await ImagePicker().pickMultiImage(imageQuality: 50);
     if (images != null) {
       for (XFile image in images) {
@@ -36,8 +41,10 @@ class UserImages with ChangeNotifier {
   }
 
   Future<void> addImageFromCamera(int index) async {
-    XFile? image = await ImagePicker()
-        .pickImage(source: ImageSource.camera, imageQuality: 50);
+    XFile? image = await ImagePicker().pickImage(
+        source: ImageSource.camera,
+        imageQuality: 50,
+        preferredCameraDevice: CameraDevice.front);
     userImages[index] = image;
     notifyListeners();
   }
@@ -78,28 +85,47 @@ class UserImages with ChangeNotifier {
     notifyListeners();
   }
 
+
+  static String get _storageUUID {
+    final now = DateTime.now();
+    return now.microsecondsSinceEpoch.toString();
+  }
+
   static Future<void> uploadImages(User user) async {
+    // made the path independent of ordering by creating storage uid
+    // wont write over files now, should work with initial values
     FirebaseStorage storage = FirebaseStorage.instance;
-    List<XFile> _userImages = userImages.whereNotNull().toList();
+    List _userImages = userImages.whereNotNull().toList();
     UserData.imageURLs.clear();
-    for (int i=0; i < _userImages.length; i++) {
-      String path = "images/${user.uid}/$i";
-      final file = File(_userImages[i].path);
-      TaskSnapshot snapshot = await storage.ref().child(path).putFile(file);
-      if (snapshot.state == TaskState.success) {
-        final String downloadUrl = await snapshot.ref.getDownloadURL();
-        UserData.imageURLs.add(downloadUrl);
+    for (int i = 0; i < _userImages.length; i++) {
+      if (_userImages[i].runtimeType != String) {
+        String id = _storageUUID + i.toString();
+        String path = "images/${user.uid}/$id";
+        final file = File(_userImages[i].path);
+        TaskSnapshot snapshot = await storage.ref().child(path).putFile(file);
+        if (snapshot.state == TaskState.success) {
+          final String downloadUrl = await snapshot.ref.getDownloadURL();
+          UserData.imageURLs.add(downloadUrl);
+        } else {
+          throw ("Something went wrong uploading those images");
+        }
       } else {
-        throw("Something went wrong uploading those images");
+        UserData.imageURLs.add(_userImages[i]);
       }
     }
   }
 
   static void clearPhotos() {
-    for (int i=0; i<9; i++) {
+    for (int i = 0; i < 9; i++) {
       if (userImages[i] != null) {
         userImages[i] = null;
       }
+    }
+  }
+
+  static void getImagesFromUserData() {
+    for (int i=0; i<UserData.imageURLs.length; i++) {
+      UserImages.userImages[i] = UserData.imageURLs[i];
     }
   }
 }

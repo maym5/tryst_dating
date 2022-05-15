@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/animations/text_fade_in.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
+import 'package:rendezvous_beta_v3/models/user_images.dart';
 import 'package:rendezvous_beta_v3/pages/home_page.dart';
 import 'package:rendezvous_beta_v3/pages/intro_page.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
@@ -30,6 +31,7 @@ class _LoadingPageState extends State<LoadingPage> {
           await _firestore.collection("userData").doc(currentUser.uid).get();
       final Map<String, dynamic> _data = _rawData.data()!;
       UserData.fromJson(_data);
+      UserImages.getImagesFromUserData();
       Navigator.pushNamed(context, HomePage.id);
     } else {
       Navigator.pushNamed(context, IntroPage.id);
