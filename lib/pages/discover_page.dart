@@ -112,7 +112,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
                         .where("likeUID", isEqualTo: currentUID)
                         .get();
                     if (matchSnapshot.size != 0) {
-                      // TODO: trigger a dialogue
                       // (1) get overlapping dateTypes between both users (userData pull)
                       // do this in the build someplace and save to local varaible
                       // (2) select one of said dateTypes and feed it to the google places service
@@ -126,11 +125,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                       final List _venues =
                           await GooglePlacesService(venueType: _dateType)
                               .venues;
-                      print("made it");
                       var _venue = _venues[Random().nextInt(_venues.length)];
                       DateTimeDialogue(setDateTime: setDateTime)
-                          .buildCalendarDialogue(context)
-                          .then((value) => Navigator.pop(context));
+                          .buildCalendarDialogue(context);
                       if (_dateTime != null) {
                         MatchDataService.updateMatchData(
                             currentDiscoverUID: currentUID,
@@ -217,7 +214,6 @@ class DiscoverLoadingAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //TODO: Test the background container in the animation and play with the animation to get it right
     return Center(
       child: Container(
         decoration: const BoxDecoration(

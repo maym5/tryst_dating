@@ -23,7 +23,7 @@ class _MatchPageState extends State<MatchPage> {
     // TODO: test this, probably many bugs
     return PageBackground(
         body: StreamBuilder(
-      stream: MatchDataService().pendingStream,
+      stream: MatchDataService().matchDataStream,
       builder: (BuildContext context,
               AsyncSnapshot<QuerySnapshot<Object?>> snapshot) =>
           ListView.builder(
@@ -37,7 +37,7 @@ class _MatchPageState extends State<MatchPage> {
                   if (documents.isNotEmpty) {
                     final Future<MatchCardData> data =
                         MatchCardData.getData(documents[index]);
-                    // TODO: try to get the future out of this
+                    // TODO: add null check in here
                     return FutureBuilder(
                       future: data,
                       builder:

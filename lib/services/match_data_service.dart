@@ -5,39 +5,37 @@ import 'package:rendezvous_beta_v3/services/authentication.dart';
 class MatchDataService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  Stream<QuerySnapshot> get _likesStream async* {
+  Future<QuerySnapshot> get datesData async {
     // this grabs dates with people you liked
-    yield* _db
+    return await _db
         .collection("matchData")
         .where("likeUID", isEqualTo: currentUserUID)
         .where("match", isEqualTo: true)
-        .get()
-        .asStream();
+        .get();
   }
 
-  Stream<QuerySnapshot> get pendingStream async* {
-    // this grabs people who have liked you but you haven't said yes to
-    yield* _db
-        .collection("matchData")
-        .where("matchUID", isEqualTo: currentUserUID)
-        .where("match", isEqualTo: false)
-        .get()
-        .asStream();
-  }
+  // Stream<QuerySnapshot> get pendingStream async* {
+  //   // this grabs people who have liked you but you haven't said yes to
+  //   yield* _db
+  //       .collection("matchData")
+  //       .where("matchUID", isEqualTo: currentUserUID)
+  //       .where("match", isEqualTo: false)
+  //       .get()
+  //       .asStream();
+  // }
 
-  Stream<QuerySnapshot> get matchStream async* {
-    yield* _db
+  Future<QuerySnapshot> get matchData async {
+    return await _db
         .collection("matchData")
         .where("matchUID", isEqualTo: currentUserUID)
-        .where("match", isEqualTo: true)
-        .get()
-        .asStream();
+        .get();
   }
 
   Stream<QuerySnapshot> get matchDataStream async* {
-    // the problem is merging these shits
-    yield* StreamGroup.merge([_likesStream, pendingStream, matchStream]);
+    final Iterable<QuerySnapshot> _data = [await datesData, await matchData];
+    yield* Stream.fromIterable(_data);
   }
+
 
   static void setMatchData({required String currentDiscoverUID}) {
     final FirebaseFirestore db = FirebaseFirestore.instance;
