@@ -10,7 +10,7 @@ import '../services/match_data_service.dart';
 class MatchCard extends StatefulWidget {
   // TODO: figure out how to check if they have unread messages
   const MatchCard({Key? key, required this.data}) : super(key: key);
-  final Future<MatchCardData> data;
+  final MatchCardData data;
 
   @override
   State<MatchCard> createState() => _MatchCardState();
@@ -20,14 +20,13 @@ class _MatchCardState extends State<MatchCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late bool _beenTapped;
-  late MatchCardData _data;
 
   Widget get _circleAvatar => Align(
         alignment: const Alignment(.75, 0.25),
         child: CircleAvatar(
-          backgroundImage: _data.image == null
+          backgroundImage: widget.data.image == null
               ? null
-              : NetworkImage(_data.image!),
+              : NetworkImage(widget.data.image!),
           radius: 45,
         ),
       );
@@ -35,11 +34,11 @@ class _MatchCardState extends State<MatchCard>
 
   Widget get UI {
     // TODO: beautify the standard layout
-    if (_data.dateTime == null) {
+    if (widget.data.dateTime == null) {
       // standard layout
       return Stack(
         children: <Widget>[
-          MatchName(name: _data.name, dateType: _data.dateType),
+          MatchName(name: widget.data.name, dateType: widget.data.dateType),
           const DateOptionsBar(hasUnreadMessages: false),
           _circleAvatar,
           MatchCardOverlay(activeDate: _beenTapped)
@@ -51,17 +50,16 @@ class _MatchCardState extends State<MatchCard>
         children: <Widget>[
           const DateOptionsBar(hasUnreadMessages: false),
           _circleAvatar,
-          MatchName(name: _data.name, dateType: _data.dateType),
+          MatchName(name: widget.data.name, dateType: widget.data.dateType),
           DateInfo(
-              venue: _data.venue!, dateTime: _data.dateTime!),
+              venue: widget.data.venue!, dateTime: widget.data.dateTime!),
         ],
       );
     }
   }
 
   @override
-  void initState() async {
-    _data = await widget.data;
+  void initState() {
     _controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 200));
     _beenTapped = false;
@@ -80,13 +78,13 @@ class _MatchCardState extends State<MatchCard>
       controller: _controller,
       child: GestureDetector(
         onTapDown: (details) {
-          if (_data.dateTime == null) {
+          if (widget.data.dateTime == null) {
             _controller.forward();
           }
         },
         onTapUp: (details) {
           setState(() => _beenTapped = true);
-          if (_data.dateTime == null) {
+          if (widget.data.dateTime == null) {
             _controller.reverse();
           }
         },

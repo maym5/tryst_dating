@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:async/async.dart";
 import 'package:rendezvous_beta_v3/services/authentication.dart';
-import '../models/users.dart';
-import 'package:uuid/uuid.dart';
 
 class MatchDataService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -17,7 +15,7 @@ class MatchDataService {
         .asStream();
   }
 
-  Stream<QuerySnapshot> get _pendingStream async* {
+  Stream<QuerySnapshot> get pendingStream async* {
     // this grabs people who have liked you but you haven't said yes to
     yield* _db
         .collection("matchData")
@@ -27,7 +25,7 @@ class MatchDataService {
         .asStream();
   }
 
-  Stream<QuerySnapshot> get _matchStream async* {
+  Stream<QuerySnapshot> get matchStream async* {
     yield* _db
         .collection("matchData")
         .where("matchUID", isEqualTo: currentUserUID)
@@ -37,7 +35,7 @@ class MatchDataService {
   }
 
   Stream<QuerySnapshot> get matchDataStream async* {
-    yield* StreamGroup.merge([_likesStream, _pendingStream, _matchStream]);
+    yield* StreamGroup.merge([_likesStream, pendingStream, matchStream]);
   }
 
   static void setMatchData({required String currentDiscoverUID}) {
@@ -77,6 +75,13 @@ class MatchCardData {
   final String? venue;
   final DateTime? dateTime;
   final String? dateType;
+
+  static Future _matchUserData(String matchUID) async {
+    final FirebaseFirestore db = FirebaseFirestore.instance;
+    final _data = await db.collection("userData").doc(matchUID).get();
+    final match = _data.data();
+    return match;
+  }
 
   static Future<MatchCardData> getData(Map<String, dynamic> data) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
