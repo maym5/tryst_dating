@@ -35,6 +35,7 @@ class MatchDataService {
   }
 
   Stream<QuerySnapshot> get matchDataStream async* {
+    // the problem is merging these shits
     yield* StreamGroup.merge([_likesStream, pendingStream, matchStream]);
   }
 
@@ -76,12 +77,6 @@ class MatchCardData {
   final DateTime? dateTime;
   final String? dateType;
 
-  static Future _matchUserData(String matchUID) async {
-    final FirebaseFirestore db = FirebaseFirestore.instance;
-    final _data = await db.collection("userData").doc(matchUID).get();
-    final match = _data.data();
-    return match;
-  }
 
   static Future<MatchCardData> getData(Map<String, dynamic> data) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
