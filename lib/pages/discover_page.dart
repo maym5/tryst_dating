@@ -122,18 +122,23 @@ class _DiscoverPageState extends State<DiscoverPage> {
                           .toList();
                       final String _dateType = commonDateTypes[
                           Random().nextInt(commonDateTypes.length)];
-                      final List _venues =
-                          await GooglePlacesService(venueType: _dateType)
-                              .venues;
-                      var _venue = _venues[Random().nextInt(_venues.length)];
-                      DateTimeDialogue(setDateTime: setDateTime)
-                          .buildCalendarDialogue(context);
+                      final Map _venueData = await GooglePlacesService(
+                              venueType:
+                                  _dateType) // might be empty handle that case
+                          .venue;
+                      CongratsDialogue(
+                        setDateTime: setDateTime,
+                        matchName: _currentDiscoverData.name,
+                        venueName: _venueData["name"],
+                      );
+                      // DateTimeDialogue(setDateTime: setDateTime)
+                      //     .buildCalendarDialogue(context);
                       if (_dateTime != null) {
                         MatchDataService.updateMatchData(
                             currentDiscoverUID: currentUID,
                             dateType: _dateType,
                             dateTime: _dateTime!,
-                            venue: _venue);
+                            venue: _venueData["name"]);
                       }
                     } else {
                       MatchDataService.setMatchData(
@@ -145,8 +150,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 scrollDirection: Axis.vertical,
                 itemCount: snapshot.data?.size,
                 itemBuilder: (BuildContext context, int index) {
-                  if (snapshot.hasData &&
-                      !snapshot.hasError) {
+                  if (snapshot.hasData && !snapshot.hasError) {
                     final List<Map<String, dynamic>> documents = snapshot
                         .data!.docs
                         .map((doc) => doc.data() as Map<String, dynamic>)
