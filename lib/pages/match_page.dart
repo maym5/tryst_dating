@@ -17,19 +17,6 @@ class MatchPage extends StatefulWidget {
 
 class _MatchPageState extends State<MatchPage> {
 
-  void checkThing() async {
-    final value = await MatchDataService().newDatesData;
-    final anotherValue = await MatchDataService().newMatchData;
-    print(value.length);
-    print(anotherValue.length);
-  }
-
-  @override
-  void initState() {
-    checkThing();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     // TODO: test this, probably many bugs
@@ -38,9 +25,12 @@ class _MatchPageState extends State<MatchPage> {
         child: StreamBuilder(
             stream: MatchDataService().newMatchDataStream,
             builder:
-                (BuildContext context, AsyncSnapshot<MatchCardData> snapshot) {
+                (BuildContext context, AsyncSnapshot<List<MatchCardData>> snapshot) {
               if (snapshot.hasData && !snapshot.hasError) {
-                return MatchCard(data: snapshot.data!);
+                return ListView.builder(
+                  itemCount: snapshot.data?.length,
+                    itemBuilder: (context, index) => MatchCard(data: snapshot.data![index])
+                );
               } else if (!snapshot.hasData) {
                 return Container(
                   alignment: Alignment.center,

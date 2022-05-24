@@ -40,7 +40,7 @@ class _MatchCardState extends State<MatchCard>
         children: <Widget>[
           MatchName(name: widget.data.name, dateType: widget.data.dateType),
           const DateOptionsBar(hasUnreadMessages: false),
-          // MatchDateType(dateTypes: widget.data.dateTypes!),
+          MatchDateType(dateTypes: widget.data.dateTypes!),
           _circleAvatar,
           MatchCardOverlay(activeDate: _beenTapped)
         ],
@@ -239,8 +239,8 @@ class DateTypeIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 10,
-      width: 10,
+      height: 40,
+      width: 40,
       decoration: const BoxDecoration(
         shape: BoxShape.circle,
         color: Colors.black45
@@ -249,7 +249,7 @@ class DateTypeIcon extends StatelessWidget {
         child: Icon(
           icon,
           color: Colors.white,
-          size: 8,
+          size: 20,
         ),
       ),
     );
@@ -258,7 +258,7 @@ class DateTypeIcon extends StatelessWidget {
 
 class MatchDateType extends StatelessWidget { 
   MatchDateType({Key? key, required this.dateTypes}) : super(key: key);
-  final List<String> dateTypes;
+  final List dateTypes;
   final Map<String, IconData> _icons = {
     "restaurant" : Icons.restaurant,
     "cafe" : Icons.local_cafe_sharp,
@@ -273,7 +273,7 @@ class MatchDateType extends StatelessWidget {
   
   List<DateTypeIcon> get children {
     List<DateTypeIcon> result = [];
-    for (String dateType in dateTypes) {
+    for (var dateType in dateTypes) {
       result.add(DateTypeIcon(icon: _icons[dateType]!));
     } return result;
   }
@@ -281,10 +281,9 @@ class MatchDateType extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: const Alignment(-0.85, -0.7),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      alignment: const Alignment(-0.85, -0.3),
+      child: Wrap(
+        runSpacing: 10.0,
         children: children,
       ),
     );
