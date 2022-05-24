@@ -55,7 +55,6 @@ class GooglePlacesService {
         "openHours" : _data["opening_hours"]["periods"]
       };
     } catch (e) {
-      print(e);
       return {};
     }
   }

@@ -27,7 +27,7 @@ class _MatchCardState extends State<MatchCard>
           backgroundImage: widget.data.image == null
               ? null
               : NetworkImage(widget.data.image!),
-          radius: 45,
+          radius: 40,
         ),
       );
 
@@ -40,6 +40,7 @@ class _MatchCardState extends State<MatchCard>
         children: <Widget>[
           MatchName(name: widget.data.name, dateType: widget.data.dateType),
           const DateOptionsBar(hasUnreadMessages: false),
+          // MatchDateType(dateTypes: widget.data.dateTypes!),
           _circleAvatar,
           MatchCardOverlay(activeDate: _beenTapped)
         ],
@@ -230,4 +231,65 @@ class MatchCardOverlay extends StatelessWidget {
             : null);
   }
 }
+
+class DateTypeIcon extends StatelessWidget { 
+  const DateTypeIcon({Key? key, required this.icon}) : super(key: key);
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 10,
+      width: 10,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.black45
+      ),
+      child: Center(
+        child: Icon(
+          icon,
+          color: Colors.white,
+          size: 8,
+        ),
+      ),
+    );
+  }
+}
+
+class MatchDateType extends StatelessWidget { 
+  MatchDateType({Key? key, required this.dateTypes}) : super(key: key);
+  final List<String> dateTypes;
+  final Map<String, IconData> _icons = {
+    "restaurant" : Icons.restaurant,
+    "cafe" : Icons.local_cafe_sharp,
+    "museum" : Icons.museum_rounded,
+    "bowlingAlley" : Icons.album_rounded,
+    "bar" : Icons.local_bar,
+    "bakery" : Icons.bakery_dining,
+    "nightClub" : Icons.music_note_outlined,
+    "artGallery" : Icons.brush,
+    "park" : Icons.park
+};
+  
+  List<DateTypeIcon> get children {
+    List<DateTypeIcon> result = [];
+    for (String dateType in dateTypes) {
+      result.add(DateTypeIcon(icon: _icons[dateType]!));
+    } return result;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: const Alignment(-0.85, -0.7),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: children,
+      ),
+    );
+  }
+}
+
+
 

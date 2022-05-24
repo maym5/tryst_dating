@@ -22,6 +22,7 @@ class DiscoverPage extends StatefulWidget {
 }
 
 class _DiscoverPageState extends State<DiscoverPage> {
+  // TODO: handle open hours
   late double _userRating;
   late int _previousPage;
   late PageController _pageController;
@@ -96,6 +97,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
         child: Text("There has been an error, try restarting the app",
             textAlign: TextAlign.center, style: kTextStyle),
       );
+
 
   @override
   Widget build(BuildContext context) {
@@ -175,6 +177,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     );
                   } else if (snapshot.connectionState ==
                       ConnectionState.waiting) {
+                    // problem here
                     return _waitingAnimation;
                   } else if (!snapshot.hasData) {
                     return _noDataMessage;
