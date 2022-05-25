@@ -23,7 +23,16 @@ class DateTimeDialogue extends StatelessWidget {
     return false;
   }
 
-  Future<void> buildCalendarDialogue(BuildContext context) async {
+  Future<void> buildCalendarDialogue(BuildContext context, {required String venueName, required String matchName}) async {
+
+    await showGeneralDialog(
+        context: context, pageBuilder: (context, animation, _) => CongratsDialogue(
+        animation: animation,
+        venueName: venueName,
+        matchName: matchName,
+        setDateTime: setDateTime)
+    );
+
     final DateTime now = DateTime.now();
     final DateTime? picked = await showDatePicker(
         selectableDayPredicate: _decideWhichDaysToEnable,
@@ -43,7 +52,6 @@ class DateTimeDialogue extends StatelessWidget {
         firstDate: DateTime(now.year - 1),
         lastDate: DateTime(now.year + 1));
 
-    // TODO: find a way to keep user from selecting hour the place isnt open
     final TimeOfDay? pickedTime = await showTimePicker(
         context: context,
         initialEntryMode: TimePickerEntryMode.input,
@@ -73,43 +81,8 @@ class DateTimeDialogue extends StatelessWidget {
   }
 }
 
-// class CongratsDialogue extends StatelessWidget {
-//   const CongratsDialogue(
-//       {Key? key, required this.matchName, required this.setDateTime, required this.venueName})
-//       : super(key: key);
-//   final String matchName;
-//   final void Function(DateTime date, TimeOfDay time) setDateTime;
-//   final String venueName;
-//
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return AlertDialog(
-//       title: Text("Congrats you've got a date with $matchName at $venueName!",
-//           softWrap: true,
-//           style: kTextStyle.copyWith(fontSize: 20),
-//       ),
-//       actions: [
-//         GradientButton(
-//           title: "Pick a time!",
-//           onPressed: () {
-//             DateTimeDialogue(setDateTime: setDateTime)
-//                 .buildCalendarDialogue(context);
-//           },
-//         ),
-//         GradientButton(
-//             title: "Nah, I'll pass",
-//             onPressed: () {
-//               Navigator.pop(context);
-//             },
-//         )
-//       ],
-//     );
-//   }
-// }
-
-class CongratsDialogue2 extends StatelessWidget {
-  const CongratsDialogue2({Key? key, required this.animation, required this.venueName, required this.matchName, required this.setDateTime}) : super(key: key);
+class CongratsDialogue extends StatelessWidget {
+  const CongratsDialogue({Key? key, required this.animation, required this.venueName, required this.matchName, required this.setDateTime}) : super(key: key);
   final Animation<double> animation;
   final String matchName;
   final String venueName;
@@ -117,18 +90,18 @@ class CongratsDialogue2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => buildPopUpDialogue(animation, context,
+      height: 400,
       children: [
         Text("Congrats you've got a date with $matchName at $venueName!",
           softWrap: true,
+          textAlign: TextAlign.center,
           style: kTextStyle.copyWith(fontSize: 20),
         ),
         const SizedBox(height: 10),
         GradientButton(
           title: "Pick a time!",
           onPressed: () {
-            Navigator.pop(context);
-            DateTimeDialogue(setDateTime: setDateTime)
-                .buildCalendarDialogue(context);
+            Navigator.of(context).pop();
           },
         ),
         const SizedBox(height: 10),

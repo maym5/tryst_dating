@@ -106,23 +106,21 @@ class _MatchCardState extends State<MatchCard>
               final Map _venue =
                   await GooglePlacesService(venueType: _dateType).venue;
               // deal with google places edge cases
-              showGeneralDialog(
-                  context: context, pageBuilder: (context, animation, _) => CongratsDialogue2(
-                matchName: widget.data.name,
-                venueName: _venue["name"],
-                setDateTime: _setDateTime,
-                animation: animation,
-              ));
-              if (_dateTime != null) {
-                MatchDataService.updateMatchData(
-                    otherUserUID: widget.data.matchID,
-                    dateType: _dateType,
-                    dateTime: _dateTime!,
-                    venue: _venue["name"]);
+              if (_venue["status"] == "OK") {
+                DateTimeDialogue(setDateTime: _setDateTime)
+                    .buildCalendarDialogue(context,
+                        venueName: _venue["name"], matchName: widget.data.name);
+                if (_dateTime != null) {
+                  MatchDataService.updateMatchData(
+                      otherUserUID: widget.data.matchID,
+                      dateType: _dateType,
+                      dateTime: _dateTime!,
+                      venue: _venue["name"]);
+                } else {
+                  setState(() => _beenTapped = false);
+                }
               }
             }
-            // DateTimeDialogue(setDateTime: (DateTime date, TimeOfDay time) {  }).buildCalendarDialogue(context);
-            // get dateVenue yay baby
           }
         },
         child: SizedBox(
@@ -198,9 +196,13 @@ class DateOptionsBar extends StatelessWidget {
       : super(key: key);
   final bool hasUnreadMessages;
 
-  void _onMessageTap() {}
+  void _onMessageTap() {
+    // TODO: add messaging tap
+  }
 
-  void _onDetailsTap() {}
+  void _onDetailsTap() {
+    // TODO: add details tap
+  }
 
   Widget get _messageButton {
     return GestureDetector(

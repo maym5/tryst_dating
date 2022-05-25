@@ -10,7 +10,7 @@ import '../pages/intro_page.dart';
 import '../pages/sign_up_page.dart';
 import '../services/authentication.dart';
 
-Widget buildPopUpDialogue(Animation<double> animation, BuildContext context, {required List<Widget> children}) {
+Widget buildPopUpDialogue(Animation<double> animation, BuildContext context, {required List<Widget> children, double? height}) {
   final curvedValue = Curves.easeInOutBack.transform(animation.value) - 1.0;
   return Transform(
     transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
@@ -19,7 +19,7 @@ Widget buildPopUpDialogue(Animation<double> animation, BuildContext context, {re
       child: AlertDialog(
         contentPadding: const EdgeInsets.all(0),
         content: Container(
-          height: 250,
+          height: height ?? 250,
           width: 120,
           decoration: const BoxDecoration(
             color: kPopUpColor,

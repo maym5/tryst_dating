@@ -55,11 +55,12 @@ class GooglePlacesService {
       print("Data: $_data");
       return {
         "name" : _data["result"]["name"],
-        "openHours" : _data["result"]["opening_hours"]["periods"]
+        "openHours" : _data["result"]["opening_hours"]["periods"],
+        "status" : _data["status"]
       };
     } catch (e) {
       print(e);
-      return {};
+      return {"status" : "not ok"};
     }
   }
 
