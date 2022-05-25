@@ -107,7 +107,7 @@ class _MatchCardState extends State<MatchCard>
                   await GooglePlacesService(venueType: _dateType).venue;
               // deal with google places edge cases
               if (_venue["status"] == "OK") {
-                DateTimeDialogue(setDateTime: _setDateTime)
+                await DateTimeDialogue(setDateTime: _setDateTime)
                     .buildCalendarDialogue(context,
                         venueName: _venue["name"], matchName: widget.data.name);
                 if (_dateTime != null) {
@@ -116,6 +116,7 @@ class _MatchCardState extends State<MatchCard>
                       dateType: _dateType,
                       dateTime: _dateTime!,
                       venue: _venue["name"]);
+                  print("added data to firebase");
                 } else {
                   setState(() => _beenTapped = false);
                 }

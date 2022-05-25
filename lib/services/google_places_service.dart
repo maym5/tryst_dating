@@ -52,7 +52,7 @@ class GooglePlacesService {
     try {
       final Response result = await dio.get(_path);
       final _data = result.data;
-      print("Data: $_data");
+      // print("Data: $_data");
       return {
         "name" : _data["result"]["name"],
         "openHours" : _data["result"]["opening_hours"]["periods"],
