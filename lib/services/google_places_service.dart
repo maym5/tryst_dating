@@ -31,7 +31,7 @@ class GooglePlacesService {
         return results;
       } return [];
     } catch (e) {
-      // TODO: error handing
+      print(e);
       return [];
     }
   }
@@ -39,22 +39,26 @@ class GooglePlacesService {
 
   Future<String> get venueId async {
     List _venues = await venues;
-    int randInt = Random().nextInt(_venues.length);
-    return _venues[randInt]["place_id"];
+    if (_venues.isNotEmpty) {
+      int randInt = Random().nextInt(_venues.length);
+      return _venues[randInt]["place_id"];
+    } return "No venues found";
   }
 
   Future<Map> get venue async {
     String _id = await venueId;
-    String _fields = "fields=name%2Copen_hours";
+    String _fields = "fields=name%2Copening_hours";
     String _path = detailsBasePath + _fields + "&place_id=$_id" + "&key=$PLACES_API_KEY";
     try {
       final Response result = await dio.get(_path);
       final _data = result.data;
+      print("Data: $_data");
       return {
-        "name" : _data["name"],
-        "openHours" : _data["opening_hours"]["periods"]
+        "name" : _data["result"]["name"],
+        "openHours" : _data["result"]["opening_hours"]["periods"]
       };
     } catch (e) {
+      print(e);
       return {};
     }
   }

@@ -1,10 +1,14 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/animations/bounce_animation.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
+import 'package:rendezvous_beta_v3/dialogues/date_time_dialogue.dart';
+import 'package:rendezvous_beta_v3/services/google_places_service.dart';
 import 'package:rendezvous_beta_v3/widgets/tile_card.dart';
 import 'package:intl/intl.dart';
 
+import '../models/users.dart';
 import '../services/match_data_service.dart';
 
 class MatchCard extends StatefulWidget {
@@ -20,6 +24,7 @@ class _MatchCardState extends State<MatchCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late bool _beenTapped;
+  DateTime? _dateTime;
 
   Widget get _circleAvatar => Align(
         alignment: const Alignment(.75, 0.25),
@@ -31,9 +36,7 @@ class _MatchCardState extends State<MatchCard>
         ),
       );
 
-
   Widget get UI {
-    // TODO: beautify the standard layout
     if (widget.data.dateTime == null) {
       // standard layout
       return Stack(
@@ -52,8 +55,7 @@ class _MatchCardState extends State<MatchCard>
           const DateOptionsBar(hasUnreadMessages: false),
           _circleAvatar,
           MatchName(name: widget.data.name, dateType: widget.data.dateType),
-          DateInfo(
-              venue: widget.data.venue!, dateTime: widget.data.dateTime!),
+          DateInfo(venue: widget.data.venue!, dateTime: widget.data.dateTime!),
         ],
       );
     }
@@ -63,7 +65,7 @@ class _MatchCardState extends State<MatchCard>
   void initState() {
     _controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 200));
-    _beenTapped = false;
+    _beenTapped = widget.data.dateTime != null;
     super.initState();
   }
 
@@ -73,20 +75,54 @@ class _MatchCardState extends State<MatchCard>
     super.dispose();
   }
 
+  void _setDateTime(DateTime date, TimeOfDay time) {
+    setState(() {
+      _dateTime =
+          DateTime(date.year, date.month, date.day, time.hour, time.minute);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BounceAnimation(
       controller: _controller,
       child: GestureDetector(
         onTapDown: (details) {
-          if (widget.data.dateTime == null) {
+          if (!_beenTapped) {
             _controller.forward();
           }
         },
-        onTapUp: (details) {
-          setState(() => _beenTapped = true);
-          if (widget.data.dateTime == null) {
+        onTapUp: (details) async {
+          if (!_beenTapped) {
             _controller.reverse();
+            setState(() => _beenTapped = true);
+            // maybe just use sets instead here, could be more efficient
+            List? _commonDates = widget.data.dateTypes
+                ?.where((element) => UserData.dates.contains(element))
+                .toList();
+            if (_commonDates != null) {
+              final _dateType =
+                  _commonDates[Random().nextInt(_commonDates.length)];
+              final Map _venue =
+                  await GooglePlacesService(venueType: _dateType).venue;
+              // deal with google places edge cases
+              showGeneralDialog(
+                  context: context, pageBuilder: (context, animation, _) => CongratsDialogue2(
+                matchName: widget.data.name,
+                venueName: _venue["name"],
+                setDateTime: _setDateTime,
+                animation: animation,
+              ));
+              if (_dateTime != null) {
+                MatchDataService.updateMatchData(
+                    otherUserUID: widget.data.matchID,
+                    dateType: _dateType,
+                    dateTime: _dateTime!,
+                    venue: _venue["name"]);
+              }
+            }
+            // DateTimeDialogue(setDateTime: (DateTime date, TimeOfDay time) {  }).buildCalendarDialogue(context);
+            // get dateVenue yay baby
           }
         },
         child: SizedBox(
@@ -100,7 +136,6 @@ class _MatchCardState extends State<MatchCard>
     );
   }
 }
-
 
 class MatchName extends StatelessWidget {
   const MatchName({Key? key, required this.name, this.dateType})
@@ -120,7 +155,7 @@ class MatchName extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: const Alignment(-0.85, -.9),
-        child: FittedBox(child: _name, fit: BoxFit.scaleDown),
+      child: FittedBox(child: _name, fit: BoxFit.scaleDown),
     );
   }
 }
@@ -159,7 +194,8 @@ class DateInfo extends StatelessWidget {
 }
 
 class DateOptionsBar extends StatelessWidget {
-  const DateOptionsBar({Key? key, required this.hasUnreadMessages}) : super(key: key);
+  const DateOptionsBar({Key? key, required this.hasUnreadMessages})
+      : super(key: key);
   final bool hasUnreadMessages;
 
   void _onMessageTap() {}
@@ -170,29 +206,28 @@ class DateOptionsBar extends StatelessWidget {
     return GestureDetector(
       onTap: _onMessageTap,
       child: Stack(
-          children: [
-            const Icon(Icons.message, color: Colors.white),
-            Container(
-              height: 10,
-              width: 10,
-              decoration: BoxDecoration(
+        children: [
+          const Icon(Icons.message, color: Colors.white),
+          Container(
+            height: 10,
+            width: 10,
+            decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: hasUnreadMessages ? Colors.red : Colors.transparent
-              ),
-            )
-          ],
-        ),
+                color: hasUnreadMessages ? Colors.red : Colors.transparent),
+          )
+        ],
+      ),
     );
   }
 
   Widget get _detailsButton => IconButton(
-    onPressed: _onDetailsTap,
-    icon: Icon(
-      Platform.isIOS ? Icons.more_horiz : Icons.more_vert,
-      color: Colors.white,
-      size: 25,
-    ),
-  );
+        onPressed: _onDetailsTap,
+        icon: Icon(
+          Platform.isIOS ? Icons.more_horiz : Icons.more_vert,
+          color: Colors.white,
+          size: 25,
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -200,17 +235,15 @@ class DateOptionsBar extends StatelessWidget {
       alignment: Alignment.topRight,
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          _messageButton,
-          _detailsButton
-        ],
+        children: <Widget>[_messageButton, _detailsButton],
       ),
     );
   }
 }
 
 class MatchCardOverlay extends StatelessWidget {
-  const MatchCardOverlay({Key? key, required this.activeDate}) : super(key: key);
+  const MatchCardOverlay({Key? key, required this.activeDate})
+      : super(key: key);
   final bool activeDate;
 
   @override
@@ -224,15 +257,15 @@ class MatchCardOverlay extends StatelessWidget {
             borderRadius: BorderRadius.circular(25)),
         child: !activeDate
             ? Text(
-          "Tap to ask out",
-          style: kTextStyle.copyWith(
-              color: Colors.redAccent, fontSize: 20),
-        )
+                "Tap to ask out",
+                style:
+                    kTextStyle.copyWith(color: Colors.redAccent, fontSize: 20),
+              )
             : null);
   }
 }
 
-class DateTypeIcon extends StatelessWidget { 
+class DateTypeIcon extends StatelessWidget {
   const DateTypeIcon({Key? key, required this.icon}) : super(key: key);
   final IconData icon;
 
@@ -241,10 +274,8 @@ class DateTypeIcon extends StatelessWidget {
     return Container(
       height: 40,
       width: 40,
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.black45
-      ),
+      decoration:
+          const BoxDecoration(shape: BoxShape.circle, color: Colors.black45),
       child: Center(
         child: Icon(
           icon,
@@ -256,26 +287,27 @@ class DateTypeIcon extends StatelessWidget {
   }
 }
 
-class MatchDateType extends StatelessWidget { 
+class MatchDateType extends StatelessWidget {
   MatchDateType({Key? key, required this.dateTypes}) : super(key: key);
   final List dateTypes;
   final Map<String, IconData> _icons = {
-    "restaurant" : Icons.restaurant,
-    "cafe" : Icons.local_cafe_sharp,
-    "museum" : Icons.museum_rounded,
-    "bowlingAlley" : Icons.album_rounded,
-    "bar" : Icons.local_bar,
-    "bakery" : Icons.bakery_dining,
-    "nightClub" : Icons.music_note_outlined,
-    "artGallery" : Icons.brush,
-    "park" : Icons.park
-};
-  
+    "restaurant": Icons.restaurant,
+    "cafe": Icons.local_cafe_sharp,
+    "museum": Icons.museum_rounded,
+    "bowlingAlley": Icons.album_rounded,
+    "bar": Icons.local_bar,
+    "bakery": Icons.bakery_dining,
+    "nightClub": Icons.music_note_outlined,
+    "artGallery": Icons.brush,
+    "park": Icons.park
+  };
+
   List<DateTypeIcon> get children {
     List<DateTypeIcon> result = [];
     for (var dateType in dateTypes) {
       result.add(DateTypeIcon(icon: _icons[dateType]!));
-    } return result;
+    }
+    return result;
   }
 
   @override
@@ -289,6 +321,3 @@ class MatchDateType extends StatelessWidget {
     );
   }
 }
-
-
-

@@ -23,7 +23,7 @@ class _MatchPageState extends State<MatchPage> {
     return PageBackground(
       body: SafeArea(
         child: StreamBuilder(
-            stream: MatchDataService().newMatchDataStream,
+            stream: MatchDataService().matchDataStream,
             builder:
                 (BuildContext context, AsyncSnapshot<List<MatchCardData>> snapshot) {
               if (snapshot.hasData && !snapshot.hasError) {
@@ -50,42 +50,3 @@ class _MatchPageState extends State<MatchPage> {
     );
   }
 }
-// StreamBuilder(
-// stream: MatchDataService().matchDataStream,
-// builder: (BuildContext context,
-//     AsyncSnapshot<QuerySnapshot<Object?>> snapshot) =>
-// ListView.builder(
-// itemCount: snapshot.data?.size == 0 ? 1 : snapshot.data?.size,
-// itemBuilder: (context, index) {
-// if (snapshot.hasData && !snapshot.hasError) {
-// final List<Map<String, dynamic>> documents = snapshot
-//     .data!.docs
-//     .map((doc) => doc.data() as Map<String, dynamic>)
-//     .toList();
-// if (documents.isNotEmpty) {
-// final Future<MatchCardData> data =
-// MatchCardData.getData(documents[index]);
-// return FutureBuilder(
-// future: data,
-// builder: (context,
-// AsyncSnapshot<MatchCardData> futureSnap) {
-// if (futureSnap.hasData) {
-// if (futureSnap.connectionState ==
-// ConnectionState.done) {
-// return MatchCard(data: futureSnap.data!);
-// } else {
-// return Container();
-// }
-// } else {
-// return Container();
-// }
-// });
-// }
-// }
-// return Container(
-// alignment: Alignment.center,
-// height: MediaQuery.of(context).size.height,
-// child: const Text("Such empty, get swiping!"),
-// );
-// }),
-// )

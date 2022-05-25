@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rendezvous_beta_v3/dialogues/log_out_dialogue.dart';
 import 'package:rendezvous_beta_v3/widgets/gradient_button.dart';
 
 import '../constants.dart';
@@ -62,6 +63,8 @@ class DateTimeDialogue extends StatelessWidget {
     if (pickedTime != null && picked != null) {
       setDateTime(picked, pickedTime);
     }
+
+
   }
 
   @override
@@ -70,30 +73,72 @@ class DateTimeDialogue extends StatelessWidget {
   }
 }
 
-class CongratsDialogue extends StatelessWidget {
-  const CongratsDialogue(
-      {Key? key, required this.matchName, required this.setDateTime, required this.venueName})
-      : super(key: key);
+// class CongratsDialogue extends StatelessWidget {
+//   const CongratsDialogue(
+//       {Key? key, required this.matchName, required this.setDateTime, required this.venueName})
+//       : super(key: key);
+//   final String matchName;
+//   final void Function(DateTime date, TimeOfDay time) setDateTime;
+//   final String venueName;
+//
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return AlertDialog(
+//       title: Text("Congrats you've got a date with $matchName at $venueName!",
+//           softWrap: true,
+//           style: kTextStyle.copyWith(fontSize: 20),
+//       ),
+//       actions: [
+//         GradientButton(
+//           title: "Pick a time!",
+//           onPressed: () {
+//             DateTimeDialogue(setDateTime: setDateTime)
+//                 .buildCalendarDialogue(context);
+//           },
+//         ),
+//         GradientButton(
+//             title: "Nah, I'll pass",
+//             onPressed: () {
+//               Navigator.pop(context);
+//             },
+//         )
+//       ],
+//     );
+//   }
+// }
+
+class CongratsDialogue2 extends StatelessWidget {
+  const CongratsDialogue2({Key? key, required this.animation, required this.venueName, required this.matchName, required this.setDateTime}) : super(key: key);
+  final Animation<double> animation;
   final String matchName;
-  final void Function(DateTime date, TimeOfDay time) setDateTime;
   final String venueName;
+  final void Function(DateTime date, TimeOfDay time) setDateTime;
 
   @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text("Congrats you've got a date with $matchName at $venueName!",
+  Widget build(BuildContext context) => buildPopUpDialogue(animation, context,
+      children: [
+        Text("Congrats you've got a date with $matchName at $venueName!",
           softWrap: true,
           style: kTextStyle.copyWith(fontSize: 20),
-      ),
-      actions: [
+        ),
+        const SizedBox(height: 10),
         GradientButton(
           title: "Pick a time!",
           onPressed: () {
+            Navigator.pop(context);
             DateTimeDialogue(setDateTime: setDateTime)
                 .buildCalendarDialogue(context);
           },
+        ),
+        const SizedBox(height: 10),
+        GradientButton(
+          title: "Nah, I'll pass",
+          onPressed: () {
+            Navigator.pop(context);
+          },
         )
       ],
-    );
-  }
+  );
 }
+

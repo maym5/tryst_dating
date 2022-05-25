@@ -5,7 +5,7 @@ class MatchDataService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
 
-  Future<List<MatchCardData>> get newMatchData async {
+  Future<List<MatchCardData>> get matchData async {
     List<MatchCardData> result = [];
     final QuerySnapshot _matchSnapshot = await _db
         .collection("matchData")
@@ -21,6 +21,7 @@ class MatchDataService {
       if (_matchData["match"] == true) {
         result.add(MatchCardData(
             name: _userData["name"],
+            matchID: _likeUID,
             venue: _matchData["venue"],
             dateType: _matchData["dateType"],
             dateTime: _matchData["dateTime"],
@@ -28,12 +29,13 @@ class MatchDataService {
       }
       result.add(MatchCardData(
           name: _userData["name"],
+          matchID: _likeUID,
           image: _userData["imageURLs"][0],
           dateTypes: _userData["dates"]));
     } return result;
   }
 
-  Future<List<MatchCardData>> get newDatesData async {
+  Future<List<MatchCardData>> get datesData async {
     List<MatchCardData> result = [];
     final QuerySnapshot _matchSnapshot = await _db
         .collection("matchData")
@@ -43,13 +45,14 @@ class MatchDataService {
     final _docs = _matchSnapshot.docs;
     for (var doc in _docs) {
       final Map _matchData = doc.data() as Map;
-      final String _likeUID = _matchData["likeUID"];
+      final String _matchUID = _matchData["matchUID"];
       final DocumentSnapshot _likeUserData =
-          await _db.collection("userData").doc(_likeUID).get();
+          await _db.collection("userData").doc(_matchUID).get();
       final Map _userData = _likeUserData.data() as Map;
       if (_matchData["match"] == true) {
         result.add(MatchCardData(
             name: _userData["name"],
+            matchID: _matchUID,
             venue: _matchData["venue"],
             dateType: _matchData["dateType"],
             dateTime: _matchData["dateTime"],
@@ -57,14 +60,15 @@ class MatchDataService {
       }
       result.add(MatchCardData(
           name: _userData["name"],
+          matchID: _matchUID,
           image: _userData["imageURLs"][0],
           dateTypes: _userData["dates"]));
     }
     return result;
   }
 
-  Stream<List<MatchCardData>> get newMatchDataStream async* {
-    final List<MatchCardData> result = await newMatchData + await newDatesData;
+  Stream<List<MatchCardData>> get matchDataStream async* {
+    final List<MatchCardData> result = await matchData + await datesData;
     yield* Stream.value(result);
   }
 
@@ -78,12 +82,12 @@ class MatchDataService {
   }
 
   static void updateMatchData(
-      {required currentDiscoverUID,
+      {required otherUserUID,
       required String dateType,
       required DateTime dateTime,
       required String venue}) {
     final FirebaseFirestore db = FirebaseFirestore.instance;
-    db.collection("matchData").doc(currentDiscoverUID).update({
+    db.collection("matchData").doc(otherUserUID).update({
       "venue": venue,
       "match": true,
       "dateType": dateType,
@@ -95,6 +99,7 @@ class MatchDataService {
 class MatchCardData {
   MatchCardData(
       {required this.name,
+        required this.matchID,
       this.image,
       this.dateTime,
       this.venue,
@@ -106,4 +111,5 @@ class MatchCardData {
   final DateTime? dateTime;
   final String? dateType;
   final List? dateTypes;
+  final String matchID;
 }
