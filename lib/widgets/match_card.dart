@@ -41,8 +41,7 @@ class _MatchCardState extends State<MatchCard>
       // standard layout
       return Stack(
         children: <Widget>[
-          MatchName(name: widget.data.name, dateType: widget.data.dateType),
-          const DateOptionsBar(hasUnreadMessages: false),
+          NameAndButtons(name: widget.data.name, hasUnreadMessages: false, dateType: widget.data.dateType),
           MatchDateType(dateTypes: widget.data.dateTypes!),
           _circleAvatar,
           MatchCardOverlay(activeDate: _beenTapped)
@@ -52,9 +51,8 @@ class _MatchCardState extends State<MatchCard>
       // date layout
       return Stack(
         children: <Widget>[
-          const DateOptionsBar(hasUnreadMessages: false),
+          NameAndButtons(name: widget.data.name, hasUnreadMessages: false, dateType: widget.data.dateType),
           _circleAvatar,
-          MatchName(name: widget.data.name, dateType: widget.data.dateType),
           DateInfo(venue: widget.data.venue!, dateTime: widget.data.dateTime!),
         ],
       );
@@ -145,18 +143,16 @@ class MatchName extends StatelessWidget {
   Widget get _name {
     String? displayedName;
     if (dateType != null) {
-      // TODO: split word into two if neccessary and format
+      // TODO: split word into two if necessary and format
       displayedName = "$dateType Date with $name";
     }
-    return Text(displayedName ?? name, style: kTextStyle, softWrap: true);
+    return Text(displayedName ?? name, style: kTextStyle, softWrap: true, textAlign: TextAlign.start);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: const Alignment(-0.85, -.9),
-      child: FittedBox(child: _name, fit: BoxFit.scaleDown),
-    );
+    // TODO: put this in a column with the buttons
+    return FittedBox(child: _name, fit: BoxFit.scaleDown, alignment: Alignment.centerLeft);
   }
 }
 
@@ -235,12 +231,9 @@ class DateOptionsBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topRight,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[_messageButton, _detailsButton],
-      ),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[_messageButton, _detailsButton],
     );
   }
 }
@@ -325,3 +318,26 @@ class MatchDateType extends StatelessWidget {
     );
   }
 }
+
+class NameAndButtons extends StatelessWidget {
+  const NameAndButtons({Key? key, required this.name, required this.hasUnreadMessages, this.dateType}) : super(key: key);
+  final String name;
+  final bool hasUnreadMessages;
+  final String? dateType;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Row(
+        children: <Widget>[
+          const SizedBox(width: 10,),
+          Flexible(child: MatchName(name: name, dateType: dateType), flex: 4, fit: FlexFit.tight),
+          const SizedBox(width: 10,),
+          Flexible(child: DateOptionsBar(hasUnreadMessages: hasUnreadMessages), flex: 1,)
+        ],
+      ),
+    );
+  }
+}
+
