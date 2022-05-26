@@ -145,9 +145,10 @@ class MatchName extends StatelessWidget {
   Widget get _name {
     String? displayedName;
     if (dateType != null) {
+      // TODO: split word into two if neccessary and format
       displayedName = "$dateType Date with $name";
     }
-    return Text(displayedName ?? name, style: kTextStyle);
+    return Text(displayedName ?? name, style: kTextStyle, softWrap: true);
   }
 
   @override
@@ -316,7 +317,7 @@ class MatchDateType extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: const Alignment(-0.85, -0.3),
+      alignment: const Alignment(-0.85, -0.25),
       child: Wrap(
         runSpacing: 10.0,
         children: children,

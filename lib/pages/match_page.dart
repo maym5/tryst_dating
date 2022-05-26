@@ -16,7 +16,6 @@ class _MatchPageState extends State<MatchPage> {
 
   @override
   void initState() {
-    print(MatchDataService().matchData);
     super.initState();
   }
 
