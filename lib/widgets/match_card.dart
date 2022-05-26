@@ -41,7 +41,10 @@ class _MatchCardState extends State<MatchCard>
       // standard layout
       return Stack(
         children: <Widget>[
-          NameAndButtons(name: widget.data.name, hasUnreadMessages: false, dateType: widget.data.dateType),
+          NameAndButtons(
+              name: widget.data.name,
+              hasUnreadMessages: false,
+              dateType: widget.data.dateType),
           MatchDateType(dateTypes: widget.data.dateTypes!),
           _circleAvatar,
           MatchCardOverlay(activeDate: _beenTapped)
@@ -51,7 +54,10 @@ class _MatchCardState extends State<MatchCard>
       // date layout
       return Stack(
         children: <Widget>[
-          NameAndButtons(name: widget.data.name, hasUnreadMessages: false, dateType: widget.data.dateType),
+          NameAndButtons(
+              name: widget.data.name,
+              hasUnreadMessages: false,
+              dateType: widget.data.dateType),
           _circleAvatar,
           DateInfo(venue: widget.data.venue!, dateTime: widget.data.dateTime!),
         ],
@@ -142,17 +148,28 @@ class MatchName extends StatelessWidget {
 
   Widget get _name {
     String? displayedName;
+    String dateTypeString = "";
+    int index = 0;
     if (dateType != null) {
-      // TODO: split word into two if necessary and format
-      displayedName = "$dateType Date with $name";
+      for (String char in dateType!.characters) {
+        if (char == char.toUpperCase() || index == 0) {
+          dateTypeString += (" " + char.toUpperCase());
+        } else {
+          char.toLowerCase();
+          dateTypeString += char;
+        }
+        index++;
+      }
+      displayedName = "$dateTypeString Date with $name";
     }
-    return Text(displayedName ?? name, style: kTextStyle, softWrap: true, textAlign: TextAlign.start);
+    return Text(displayedName ?? name,
+        style: kTextStyle, softWrap: true, textAlign: TextAlign.start);
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: put this in a column with the buttons
-    return FittedBox(child: _name, fit: BoxFit.scaleDown, alignment: Alignment.centerLeft);
+    return FittedBox(
+        child: _name, fit: BoxFit.scaleDown, alignment: Alignment.centerLeft);
   }
 }
 
@@ -163,25 +180,37 @@ class DateInfo extends StatelessWidget {
   final DateTime dateTime;
   final DateFormat formatter = DateFormat('EEEE, d MMMM, h:mm a');
 
-  String? get displayDate {
-    return formatter.format(DateTime.parse(dateTime.toString()));
-  }
+  String? get displayDate =>
+      formatter.format(DateTime.parse(dateTime.toString()));
 
-  Widget get _dateDescription {
-    return Align(
-      alignment: const Alignment(-0.85, -0.2),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        textBaseline: TextBaseline.ideographic,
-        children: <Widget>[
-          Text("at $venue"),
-          const SizedBox(height: 10),
-          Text("on $displayDate")
-        ],
-      ),
-    );
-  }
+  Widget get _dateDescription => Align(
+        alignment: const Alignment(-0.85, -0.2),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            textBaseline: TextBaseline.ideographic,
+            children: <Widget>[
+              Row(
+                children: [
+                  const Icon(Icons.group, color: Colors.white, size: 18),
+                  const SizedBox(width: 5),
+                  Text(venue),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  const Icon(Icons.timer, color: Colors.white, size: 18),
+                  const SizedBox(width: 5),
+                  Text(displayDate!),
+                ],
+              )
+            ],
+          ),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -202,23 +231,21 @@ class DateOptionsBar extends StatelessWidget {
     // TODO: add details tap
   }
 
-  Widget get _messageButton {
-    return GestureDetector(
-      onTap: _onMessageTap,
-      child: Stack(
-        children: [
-          const Icon(Icons.message, color: Colors.white),
-          Container(
-            height: 10,
-            width: 10,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: hasUnreadMessages ? Colors.red : Colors.transparent),
-          )
-        ],
-      ),
-    );
-  }
+  Widget get _messageButton => GestureDetector(
+        onTap: _onMessageTap,
+        child: Stack(
+          children: [
+            const Icon(Icons.message, color: Colors.white),
+            Container(
+              height: 10,
+              width: 10,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: hasUnreadMessages ? Colors.red : Colors.transparent),
+            )
+          ],
+        ),
+      );
 
   Widget get _detailsButton => IconButton(
         onPressed: _onDetailsTap,
@@ -320,7 +347,12 @@ class MatchDateType extends StatelessWidget {
 }
 
 class NameAndButtons extends StatelessWidget {
-  const NameAndButtons({Key? key, required this.name, required this.hasUnreadMessages, this.dateType}) : super(key: key);
+  const NameAndButtons(
+      {Key? key,
+      required this.name,
+      required this.hasUnreadMessages,
+      this.dateType})
+      : super(key: key);
   final String name;
   final bool hasUnreadMessages;
   final String? dateType;
@@ -331,13 +363,22 @@ class NameAndButtons extends StatelessWidget {
       alignment: Alignment.topCenter,
       child: Row(
         children: <Widget>[
-          const SizedBox(width: 10,),
-          Flexible(child: MatchName(name: name, dateType: dateType), flex: 4, fit: FlexFit.tight),
-          const SizedBox(width: 10,),
-          Flexible(child: DateOptionsBar(hasUnreadMessages: hasUnreadMessages), flex: 1,)
+          const SizedBox(
+            width: 10,
+          ),
+          Flexible(
+              child: MatchName(name: name, dateType: dateType),
+              flex: 4,
+              fit: FlexFit.tight),
+          const SizedBox(
+            width: 10,
+          ),
+          Flexible(
+            child: DateOptionsBar(hasUnreadMessages: hasUnreadMessages),
+            flex: 1,
+          )
         ],
       ),
     );
   }
 }
-
