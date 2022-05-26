@@ -35,7 +35,6 @@ class GooglePlacesService {
       return [];
     }
   }
-  // ChIJi6C1MxquEmsR9-c-3O48ykI
 
   Future<String> get venueId async {
     List _venues = await venues;
