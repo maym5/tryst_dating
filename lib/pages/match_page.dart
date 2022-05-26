@@ -1,11 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:rendezvous_beta_v3/services/match_data_service.dart';
 import 'package:rendezvous_beta_v3/widgets/match_card.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 
-import '../constants.dart';
 
 class MatchPage extends StatefulWidget {
   static const id = "match_page";
@@ -18,8 +15,13 @@ class MatchPage extends StatefulWidget {
 class _MatchPageState extends State<MatchPage> {
 
   @override
+  void initState() {
+    print(MatchDataService().matchData);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // TODO: test this, probably many bugs
     return PageBackground(
       body: SafeArea(
         child: StreamBuilder(

@@ -128,14 +128,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                               venueType:
                                   _dateType) // might be empty handle that case
                           .venue;
-                      // CongratsDialogue(
-                      //   setDateTime: setDateTime,
-                      //   matchName: _currentDiscoverData.name,
-                      //   venueName: _venueData["name"],
-                      // );
                       // DateTimeDialogue(setDateTime: setDateTime)
-                      //     .buildCalendarDialogue(context);
-                      if (_dateTime != null) {
+                      //     .buildCalendarDialogue(context, matchName: );
+                      if (_dateTime != null && _venueData["status"] == "OK") {
                         MatchDataService.updateMatchData(
                             otherUserUID: currentUID,
                             dateType: _dateType,
