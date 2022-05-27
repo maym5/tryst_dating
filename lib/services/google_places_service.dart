@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:dio/dio.dart';
 import '../models/users.dart';
 
@@ -31,7 +30,6 @@ class GooglePlacesService {
         return results;
       } return [];
     } catch (e) {
-      print(e);
       return [];
     }
   }
@@ -60,6 +58,28 @@ class GooglePlacesService {
     } catch (e) {
       print(e);
       return {"status" : "not ok"};
+    }
+  }
+
+  static Future<bool> checkDateTime(DateTime dateTime, Map venue) async {
+    // 1) convert day of week to int
+    // 2) get open hours frm venue getter
+    // 3) convert open hours to a DateTime object
+    // 4) return whether or not the given time is between the open hours on that day
+    final day = dateTime.weekday;
+    try {
+      final Map openHours = venue["openHours"][day];
+      print(openHours);
+      final String _openTime = openHours["open"]["time"];
+      final String _closeTime = openHours["close"]["time"];
+      final _open = DateTime(dateTime.year, dateTime.month, dateTime.day, int.parse(_openTime.substring(0, 2)), int.parse(_openTime.substring(2)));
+      final _close = DateTime(dateTime.year, dateTime.month, dateTime.day, int.parse(_closeTime.substring(0, 2)), int.parse(_closeTime.substring(2)));
+      if (dateTime.isBefore(_close) && dateTime.isAfter(_open)) {
+        return true;
+      } return false;
+    } catch (e) {
+      print(e);
+      return false;
     }
   }
 

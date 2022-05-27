@@ -94,27 +94,36 @@ class MatchDataService {
     yield* Stream.value(result);
   }
 
-  static void setMatchData({required String currentDiscoverUID}) {
+  static Future<void> setMatchData({required String currentDiscoverUID}) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
-    db.collection("matchData").doc(currentUserUID! + currentDiscoverUID).set({
-      "likeUID": currentUserUID,
-      "matchUID": currentDiscoverUID,
-      "match": false
-    });
+    try {
+      await db.collection("matchData").doc(currentUserUID! + currentDiscoverUID).set({
+        "likeUID": currentUserUID,
+        "matchUID": currentDiscoverUID,
+        "match": false
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
-  static void updateMatchData(
+  static Future<void> updateMatchData(
+      // TODO: delete matchData where path is not of form below
       {required otherUserUID,
       required String dateType,
       required DateTime dateTime,
-      required String venue}) {
+      required String venue}) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
-    db.collection("matchData").doc(currentUserUID! + otherUserUID).update({
-      "venue": venue,
-      "match": true,
-      "dateType": dateType,
-      "dateTime": dateTime
-    });
+    try {
+      await db.collection("matchData").doc(currentUserUID! + otherUserUID).update({
+        "venue": venue,
+        "match": true,
+        "dateType": dateType,
+        "dateTime": dateTime
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 }
 

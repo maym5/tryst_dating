@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../models/users.dart';
 
 Future onEmailAndPasswordLogin(String email, String password) async {
   FirebaseAuth auth = FirebaseAuth.instance;

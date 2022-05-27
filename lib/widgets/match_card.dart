@@ -105,17 +105,23 @@ class _MatchCardState extends State<MatchCard>
                 ?.where((element) => UserData.dates.contains(element))
                 .toList();
             if (_commonDates != null) {
+              print("have common dates");
               final _dateType =
                   _commonDates[Random().nextInt(_commonDates.length)];
               final Map _venue =
                   await GooglePlacesService(venueType: _dateType).venue;
               // deal with google places edge cases
               if (_venue["status"] == "OK") {
+                print("venue status OK");
                 await DateTimeDialogue(setDateTime: _setDateTime)
                     .buildCalendarDialogue(context,
                         venueName: _venue["name"], matchName: widget.data.name);
-                if (_dateTime != null) {
-                  MatchDataService.updateMatchData(
+                final _isOpen = await GooglePlacesService.checkDateTime(
+                    _dateTime!, _venue);
+                print(_isOpen);
+                if (_dateTime != null && _isOpen) {
+                  print("date time is alright");
+                  await MatchDataService.updateMatchData(
                       otherUserUID: widget.data.matchID,
                       dateType: _dateType,
                       dateTime: _dateTime!,

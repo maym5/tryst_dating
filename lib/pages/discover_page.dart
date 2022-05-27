@@ -98,7 +98,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
             textAlign: TextAlign.center, style: kTextStyle),
       );
 
-
   @override
   Widget build(BuildContext context) {
     return PageBackground(
@@ -119,6 +118,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                       // (2) select one of said dateTypes and feed it to the google places service
                       // (3) use returned data to alter matchData document in the cloud.
                       // dates they share in common
+                      // TODO: i think currentUID is changing before this so we're looking up wrong user
                       List<String> commonDateTypes = _currentDiscoverData.dates
                           .where((element) => UserData.dates.contains(element))
                           .toList();
@@ -128,17 +128,30 @@ class _DiscoverPageState extends State<DiscoverPage> {
                               venueType:
                                   _dateType) // might be empty handle that case
                           .venue;
-                      // DateTimeDialogue(setDateTime: setDateTime)
-                      //     .buildCalendarDialogue(context, matchName: );
-                      if (_dateTime != null && _venueData["status"] == "OK") {
-                        MatchDataService.updateMatchData(
-                            otherUserUID: currentUID,
-                            dateType: _dateType,
-                            dateTime: _dateTime!,
-                            venue: _venueData["name"]);
+                      final DocumentSnapshot _matchSnapshot = await _firestore
+                          .collection("userData")
+                          .doc(currentUID)
+                          .get();
+                      final Map _matchData = _matchSnapshot.data() as Map;
+                      if (_venueData["status"] == "OK") {
+                        await DateTimeDialogue(setDateTime: setDateTime)
+                            .buildCalendarDialogue(context,
+                                matchName: _matchData["name"],
+                                venueName: _venueData["name"]);
+                        if (_dateTime != null &&
+                            await GooglePlacesService.checkDateTime(
+                                _dateTime!, _venueData)) {
+                          await MatchDataService.updateMatchData(
+                              otherUserUID: currentUID,
+                              dateType: _dateType,
+                              dateTime: _dateTime!,
+                              venue: _venueData["name"]);
+                        }
+                      } else {
+                        // what do we do if api fails ??
                       }
                     } else {
-                      MatchDataService.setMatchData(
+                      await MatchDataService.setMatchData(
                           currentDiscoverUID: currentUID);
                     }
                   }
