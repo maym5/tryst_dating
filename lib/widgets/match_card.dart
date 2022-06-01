@@ -130,6 +130,10 @@ class _MatchCardState extends State<MatchCard>
                 } else {
                   setState(() => _beenTapped = false);
                 }
+              } else {
+                setState(() {
+                  _beenTapped = false;
+                });
               }
             }
           }

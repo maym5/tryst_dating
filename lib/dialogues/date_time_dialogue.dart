@@ -60,7 +60,7 @@ class DateTimeDialogue extends StatelessWidget {
         builder: (context, child) {
           return Theme(
             data: Theme.of(context).copyWith(
-                dialogBackgroundColor: kPopUpColor,
+                dialogBackgroundColor: kDarkTransparent,
                 textButtonTheme: TextButtonThemeData(
                     style: TextButton.styleFrom(primary: Colors.redAccent))),
             child: child!,
