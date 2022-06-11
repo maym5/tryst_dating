@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rendezvous_beta_v3/services/authentication.dart';
 import 'dart:async';
-import 'package:rxdart/rxdart.dart';
 
 class MatchDataService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -18,13 +17,44 @@ class MatchDataService {
     }
   }
 
-  Stream<MatchCardData?> get newMatchData async* {
+  Stream<List<MatchCardData>?> get datesData async* {
+    Stream<QuerySnapshot> _data = _db
+        .collection("matchData")
+        .where("likeUID", isEqualTo: currentUserUID)
+        .where("match", isEqualTo: true)
+        .snapshots();
+    final List<MatchCardData> result = [];
+    await for (QuerySnapshot snapshot in _data) {
+      if (snapshot.docs.isNotEmpty) {
+        // print("here");
+        for (var doc in snapshot.docs) {
+          // print("down here");
+          final Map _matchData = doc.data() as Map;
+          final String _matchUID = _matchData["matchUID"];
+          final DocumentSnapshot _likeUserData =
+              await _db.collection("userData").doc(_matchUID).get();
+          final Map _userData = _likeUserData.data() as Map;
+          result.add(MatchCardData(
+              name: _userData["name"],
+              matchID: _matchUID,
+              venue: _matchData["venue"],
+              dateType: _matchData["dateType"],
+              dateTime: _convertTimeStamp(_matchData["dateTime"]),
+              image: _userData["imageURLs"][0]));
+          yield result;
+        }
+      }
+    }
+  }
+
+  Stream<List<MatchCardData>?> get matchData async* {
     Stream<QuerySnapshot> _data = _db
         .collection("matchData")
         .where("matchUID", isEqualTo: currentUserUID)
         .snapshots();
-      await for (QuerySnapshot snapshot in _data) {
-        if (snapshot.docs.isNotEmpty) {
+    final List<MatchCardData> result = [];
+    await for (QuerySnapshot snapshot in _data) {
+      if (snapshot.docs.isNotEmpty) {
         for (var doc in snapshot.docs) {
           Map<String, dynamic> _matchData = doc.data() as Map<String, dynamic>;
           final String _likeUID = _matchData["likeUID"];
@@ -32,147 +62,108 @@ class MatchDataService {
               await _db.collection("userData").doc(_likeUID).get();
           final Map _userData = _likeUserData.data() as Map;
           if (_matchData["match"] == true) {
-            yield MatchCardData(
+            result.add(MatchCardData(
                 name: _userData["name"],
                 matchID: _likeUID,
                 venue: _matchData["venue"],
                 dateType: _matchData["dateType"],
                 dateTime: _convertTimeStamp(_matchData["dateTime"]),
-                image: _userData["imageURLs"][0]);
+                image: _userData["imageURLs"][0]));
+            yield result;
           } else {
-            yield MatchCardData(
+            result.add(MatchCardData(
                 name: _userData["name"],
                 matchID: _likeUID,
                 image: _userData["imageURLs"][0],
-                dateTypes: _userData["dates"]);
+                dateTypes: _userData["dates"]));
+            yield result;
           }
         }
-      } else {
-          yield null;
-        }
-      }
-    }
-
-  Stream<MatchCardData?> get newDatesData async* {
-    Stream<QuerySnapshot> _data = _db
-        .collection("matchData")
-        .where("likeUID", isEqualTo: currentUserUID)
-        .where("match", isEqualTo: true)
-        .snapshots();
-    await for (QuerySnapshot snapshot in _data) {
-      if (snapshot.docs.isNotEmpty) {
-        for (var doc in snapshot.docs) {
-          final Map _matchData = doc.data() as Map;
-          final String _matchUID = _matchData["matchUID"];
-          final DocumentSnapshot _likeUserData =
-              await _db.collection("userData").doc(_matchUID).get();
-          final Map _userData = _likeUserData.data() as Map;
-          if (_matchData["match"] == true) {
-            yield MatchCardData(
-                name: _userData["name"],
-                matchID: _matchUID,
-                venue: _matchData["venue"],
-                dateType: _matchData["dateType"],
-                dateTime: _convertTimeStamp(_matchData["dateTime"]),
-                image: _userData["imageURLs"][0]);
-          } else {
-            yield MatchCardData(
-                name: _userData["name"],
-                matchID: _matchUID,
-                image: _userData["imageURLs"][0],
-                dateTypes: _userData["dates"]);
-          }
-        }
-      } else {
-        yield null;
       }
     }
   }
 
-  Stream<List<MatchCardData?>> get newFinalData {
-    return CombineLatestStream.list([newDatesData, newMatchData]);
-  }
 
   // ----------------BELOW IS WHATS IN APP, ABOVE IS WORK IN PROGRESS---------------------- //
 
-  Future<List<MatchCardData>> get matchData async {
-    List<MatchCardData> result = [];
-    final QuerySnapshot _matchSnapshot = await _db
-        .collection("matchData")
-        .where("matchUID", isEqualTo: currentUserUID)
-        .get();
-    final _docs = _matchSnapshot.docs;
-    try {
-      for (var doc in _docs) {
-        final Map _matchData = doc.data() as Map;
-        final String _likeUID = _matchData["likeUID"];
-        final DocumentSnapshot _likeUserData =
-            await _db.collection("userData").doc(_likeUID).get();
-        final Map _userData = _likeUserData.data() as Map;
-        if (_matchData["match"] == true) {
-          result.add(MatchCardData(
-              name: _userData["name"],
-              matchID: _likeUID,
-              venue: _matchData["venue"],
-              dateType: _matchData["dateType"],
-              dateTime: _convertTimeStamp(_matchData["dateTime"]),
-              image: _userData["imageURLs"][0]));
-        } else {
-          result.add(MatchCardData(
-              name: _userData["name"],
-              matchID: _likeUID,
-              image: _userData["imageURLs"][0],
-              dateTypes: _userData["dates"]));
-        }
-      }
-    } catch (e) {
-      print(e);
-    }
-    return result;
-  }
-
-  Future<List<MatchCardData>> get datesData async {
-    List<MatchCardData> result = [];
-    final QuerySnapshot _matchSnapshot = await _db
-        .collection("matchData")
-        .where("likeUID", isEqualTo: currentUserUID)
-        .where("match", isEqualTo: true)
-        .get();
-    final _docs = _matchSnapshot.docs;
-    try {
-      for (var doc in _docs) {
-        final Map _matchData = doc.data() as Map;
-        final String _matchUID = _matchData["matchUID"];
-        final DocumentSnapshot _likeUserData =
-            await _db.collection("userData").doc(_matchUID).get();
-        final Map _userData = _likeUserData.data() as Map;
-        if (_matchData["match"] == true) {
-          result.add(MatchCardData(
-              name: _userData["name"],
-              matchID: _matchUID,
-              venue: _matchData["venue"],
-              dateType: _matchData["dateType"],
-              dateTime: _convertTimeStamp(_matchData["dateTime"]),
-              image: _userData["imageURLs"][0]));
-        } else {
-          result.add(MatchCardData(
-              name: _userData["name"],
-              matchID: _matchUID,
-              image: _userData["imageURLs"][0],
-              dateTypes: _userData["dates"]));
-        }
-      }
-    } catch (e) {
-      print(e);
-    }
-    return result;
-  }
-
-  Stream<List<MatchCardData>> get matchDataStream async* {
-    // not responding to changes here
-    final List<MatchCardData> result = await matchData + await datesData;
-    yield* Stream.value(result);
-  }
+  // Future<List<MatchCardData>> get matchData async {
+  //   List<MatchCardData> result = [];
+  //   final QuerySnapshot _matchSnapshot = await _db
+  //       .collection("matchData")
+  //       .where("matchUID", isEqualTo: currentUserUID)
+  //       .get();
+  //   final _docs = _matchSnapshot.docs;
+  //   try {
+  //     for (var doc in _docs) {
+  //       final Map _matchData = doc.data() as Map;
+  //       final String _likeUID = _matchData["likeUID"];
+  //       final DocumentSnapshot _likeUserData =
+  //           await _db.collection("userData").doc(_likeUID).get();
+  //       final Map _userData = _likeUserData.data() as Map;
+  //       if (_matchData["match"] == true) {
+  //         result.add(MatchCardData(
+  //             name: _userData["name"],
+  //             matchID: _likeUID,
+  //             venue: _matchData["venue"],
+  //             dateType: _matchData["dateType"],
+  //             dateTime: _convertTimeStamp(_matchData["dateTime"]),
+  //             image: _userData["imageURLs"][0]));
+  //       } else {
+  //         result.add(MatchCardData(
+  //             name: _userData["name"],
+  //             matchID: _likeUID,
+  //             image: _userData["imageURLs"][0],
+  //             dateTypes: _userData["dates"]));
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  //   return result;
+  // }
+  //
+  // Future<List<MatchCardData>> get datesData async {
+  //   List<MatchCardData> result = [];
+  //   final QuerySnapshot _matchSnapshot = await _db
+  //       .collection("matchData")
+  //       .where("likeUID", isEqualTo: currentUserUID)
+  //       .where("match", isEqualTo: true)
+  //       .get();
+  //   final _docs = _matchSnapshot.docs;
+  //   try {
+  //     for (var doc in _docs) {
+  //       final Map _matchData = doc.data() as Map;
+  //       final String _matchUID = _matchData["matchUID"];
+  //       final DocumentSnapshot _likeUserData =
+  //           await _db.collection("userData").doc(_matchUID).get();
+  //       final Map _userData = _likeUserData.data() as Map;
+  //       if (_matchData["match"] == true) {
+  //         result.add(MatchCardData(
+  //             name: _userData["name"],
+  //             matchID: _matchUID,
+  //             venue: _matchData["venue"],
+  //             dateType: _matchData["dateType"],
+  //             dateTime: _convertTimeStamp(_matchData["dateTime"]),
+  //             image: _userData["imageURLs"][0]));
+  //       } else {
+  //         result.add(MatchCardData(
+  //             name: _userData["name"],
+  //             matchID: _matchUID,
+  //             image: _userData["imageURLs"][0],
+  //             dateTypes: _userData["dates"]));
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  //   return result;
+  // }
+  //
+  // Stream<List<MatchCardData>> get matchDataStream async* {
+  //   // not responding to changes here
+  //   final List<MatchCardData> result = await matchData + await datesData;
+  //   yield* Stream.value(result);
+  // }
 
   static Future<void> setMatchData({required String currentDiscoverUID}) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;

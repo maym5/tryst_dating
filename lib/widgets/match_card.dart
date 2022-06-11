@@ -88,6 +88,7 @@ class _MatchCardState extends State<MatchCard>
 
   @override
   Widget build(BuildContext context) {
+    print("building ${widget.data.name}");
     return BounceAnimation(
       controller: _controller,
       child: GestureDetector(
