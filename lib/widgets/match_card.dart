@@ -59,7 +59,7 @@ class _MatchCardState extends State<MatchCard>
               hasUnreadMessages: false,
               dateType: widget.data.dateType),
           _circleAvatar,
-          DateInfo(venue: widget.data.venue!, dateTime: widget.data.dateTime!),
+          DateInfo(venue: widget.data.venue!, dateTime: widget.data.dateTime!, dateType: widget.data.dateType!,),
         ],
       );
     }
@@ -158,22 +158,8 @@ class MatchName extends StatelessWidget {
   final String? dateType;
 
   Widget get _name {
-    String? displayedName;
-    String dateTypeString = "";
-    int index = 0;
-    if (dateType != null) {
-      for (String char in dateType!.characters) {
-        if (char == char.toUpperCase() || index == 0) {
-          dateTypeString += (" " + char.toUpperCase());
-        } else {
-          char.toLowerCase();
-          dateTypeString += char;
-        }
-        index++;
-      }
-      displayedName = "$dateTypeString Date with $name";
-    }
-    return Text(displayedName ?? name,
+    String? displayedName = "Date with $name";
+    return Text(displayedName,
         style: kTextStyle, softWrap: true, textAlign: TextAlign.start);
   }
 
@@ -185,19 +171,33 @@ class MatchName extends StatelessWidget {
 }
 
 class DateInfo extends StatelessWidget {
-  DateInfo({Key? key, required this.venue, required this.dateTime})
+  DateInfo({Key? key, required this.venue, required this.dateTime, required this.dateType})
       : super(key: key);
   final String venue;
+  final String dateType;
   final DateTime dateTime;
   final DateFormat formatter = DateFormat('EEEE, d MMMM, h:mm a');
 
   String? get displayDate =>
       formatter.format(DateTime.parse(dateTime.toString()));
 
+  String get _dateType {
+    String dateTypeString = "";
+    int index = 0;
+    for (String char in dateType.characters) {
+      if (char == char.toUpperCase() || index == 0) {
+        dateTypeString += (" " + char.toUpperCase());
+      } else {
+        char.toLowerCase();
+        dateTypeString += char;
+      } index++;
+  } return dateTypeString;
+  }
+
   Widget get _dateDescription => Align(
         alignment: const Alignment(-0.85, -0.2),
         child: Padding(
-          padding: const EdgeInsets.only(left: 10),
+          padding: const EdgeInsets.only(left: 10, top: 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,7 +205,15 @@ class DateInfo extends StatelessWidget {
             children: <Widget>[
               Row(
                 children: [
-                  const Icon(Icons.group, color: Colors.white, size: 18),
+                  const Icon(Icons.where_to_vote, color: Colors.white, size: 18),
+                  SizedBox(width: 5,),
+                  Text(_dateType)
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  const Icon(Icons.add_business_rounded, color: Colors.white, size: 18),
                   const SizedBox(width: 5),
                   Text(venue),
                 ],

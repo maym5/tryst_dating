@@ -58,6 +58,12 @@ class MatchPage extends StatefulWidget {
 
   @override
   State<MatchPage> createState() => _MatchPageState();
+
+  // Widget get _name {
+  //   String displayedText = "Date with $name!";
+  //   return Text(displayedText,
+  //       style: kTextStyle, softWrap: true, textAlign: TextAlign.start);
+  // }
 }
 
 class _MatchPageState extends State<MatchPage> {
