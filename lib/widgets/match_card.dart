@@ -88,7 +88,6 @@ class _MatchCardState extends State<MatchCard>
 
   @override
   Widget build(BuildContext context) {
-    print("building ${widget.data.name}");
     return BounceAnimation(
       controller: _controller,
       child: GestureDetector(
@@ -112,6 +111,7 @@ class _MatchCardState extends State<MatchCard>
               final Map _venue =
                   await GooglePlacesService(venueType: _dateType).venue;
               // deal with google places edge cases
+              print(_venue["status"]);
               if (_venue["status"] == "OK") {
                 print("venue status OK");
                 await DateTimeDialogue(setDateTime: _setDateTime)

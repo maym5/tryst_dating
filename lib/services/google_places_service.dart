@@ -25,8 +25,6 @@ class GooglePlacesService {
       final Response _venues = await dio.get(_path);
       final _venueData = _venues.data;
       final List results = _venueData["results"];
-      // type this shit brah//////
-      // test this change in control statement
       if (results.isNotEmpty) {
         return results;
       }
@@ -69,11 +67,9 @@ class GooglePlacesService {
     // 2) get open hours frm venue getter
     // 3) convert open hours to a DateTime object
     // 4) return whether or not the given time is between the open hours on that day
-    // TODO: fix hour and minture parsing
     final day = dateTime.weekday;
     try {
       final Map openHours = venue["openHours"][day];
-      print(openHours);
       final String _openTime = openHours["open"]["time"];
       final String _closeTime = openHours["close"]["time"];
       final _open = DateTime(
@@ -88,11 +84,6 @@ class GooglePlacesService {
           int.parse(_closeTime.substring(0, 2)) < 12 ? dateTime.day + 1 : dateTime.day,
           int.parse(_closeTime.substring(0, 2)),
           int.parse(_closeTime.substring(2)));
-      // print("open: $_open");
-      // print("close: $_close");
-      // print("dateTime: $dateTime");
-      // print("isBefore: ${dateTime.isBefore(_close)}");
-      // print("isAfter: ${dateTime.isAfter(_open)}");
       if (dateTime.isBefore(_close) && dateTime.isAfter(_open)) {
         return true;
       }

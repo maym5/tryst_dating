@@ -1,4 +1,3 @@
-
 import 'package:geolocator/geolocator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -36,9 +35,10 @@ class UserData with ChangeNotifier {
       'maxAge': maxAge,
       'distance': maxDistance,
       'minPrice': minPrice,
-      "maxPrice" : maxPrice,
+      "maxPrice": maxPrice,
       'imageURLs': imageURLs,
-      "uid" : currentUserUID
+      "loaction" : location,
+      "uid": currentUserUID
     };
   }
 
@@ -46,7 +46,8 @@ class UserData with ChangeNotifier {
     Set<String> result = {};
     for (var item in values) {
       result.add(item.toString());
-    } return result;
+    }
+    return result;
   }
 
   static void fromJson(Map<String, dynamic> incomingData) {
@@ -63,7 +64,6 @@ class UserData with ChangeNotifier {
     minAge = incomingData["minAge"];
     imageURLs = DiscoverData.listToListOfStrings(incomingData["imageURLs"]);
   }
-
 
   User? retrieveUser({FirebaseAuth? auth}) {
     auth ??= FirebaseAuth.instance;
@@ -85,9 +85,9 @@ class UserData with ChangeNotifier {
       if (value == null) {
         return false;
       }
-    } return true;
+    }
+    return true;
   }
-
 
   static Future<Position> get userLocation async {
     bool serviceEnabled;
@@ -105,7 +105,8 @@ class UserData with ChangeNotifier {
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      return Future.error("Permissions are denied forever, there is nothing we can do");
+      return Future.error(
+          "Permissions are denied forever, there is nothing we can do");
     }
     return await Geolocator.getCurrentPosition();
   }
@@ -130,9 +131,19 @@ class UserData with ChangeNotifier {
   Future<void> getUserData() async {
     final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
     User? _user = retrieveUser();
-    final DocumentSnapshot snapshot = await _fireStore.collection("userData").doc(_user?.uid).get();
+    final DocumentSnapshot snapshot =
+        await _fireStore.collection("userData").doc(_user?.uid).get();
     final Map<String, dynamic> _data = snapshot.data() as Map<String, dynamic>;
     fromJson(_data);
+    UserImages.getImagesFromUserData();
   }
 
+  Future<void> uploadUserLocation() async {
+    final FirebaseFirestore _db = FirebaseFirestore.instance;
+    User? _user = retrieveUser();
+    await _db.collection("userData").doc(_user?.uid).update({
+      "location":
+          GeoPoint(UserData.location!.latitude, UserData.location!.longitude)
+    });
+  }
 }

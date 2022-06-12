@@ -72,6 +72,8 @@ class _MatchPageState extends State<MatchPage> {
                 stream: MatchDataService().matchData,
                   builder: (BuildContext context, AsyncSnapshot<List<MatchCardData>?> matchSnapshot) {
                   if (dateSnapshot.hasData && matchSnapshot.hasData && (!dateSnapshot.hasError || !matchSnapshot.hasError)) {
+                    print("dateSnapShot length: ${dateSnapshot.data!.length}");
+                    print("matchSnapshot length: ${matchSnapshot.data!.length}");
                     return ListView.builder(
                       itemCount: dateSnapshot.data!.length + matchSnapshot.data!.length,
                         itemBuilder: (context, index) {

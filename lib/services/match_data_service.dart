@@ -26,9 +26,7 @@ class MatchDataService {
     final List<MatchCardData> result = [];
     await for (QuerySnapshot snapshot in _data) {
       if (snapshot.docs.isNotEmpty) {
-        // print("here");
         for (var doc in snapshot.docs) {
-          // print("down here");
           final Map _matchData = doc.data() as Map;
           final String _matchUID = _matchData["matchUID"];
           final DocumentSnapshot _likeUserData =

@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/animations/text_fade_in.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
-import 'package:rendezvous_beta_v3/models/user_images.dart';
 import 'package:rendezvous_beta_v3/pages/home_page.dart';
 import 'package:rendezvous_beta_v3/pages/intro_page.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
@@ -20,18 +19,14 @@ class LoadingPage extends StatefulWidget {
 
 class _LoadingPageState extends State<LoadingPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Future fakeDelay() async {
     UserData.location = await UserData.userLocation;
+    UserData().uploadUserLocation();
     // GooglePlacesService(venueType: "cafe").venues;
     await Future.delayed(const Duration(seconds: 4));
     final User? currentUser = _auth.currentUser;
     if (currentUser != null) {
-      final DocumentSnapshot<Map<String, dynamic>> _rawData =
-          await _firestore.collection("userData").doc(currentUser.uid).get();
-      final Map<String, dynamic> _data = _rawData.data()!;
-      UserData.fromJson(_data);
-      UserImages.getImagesFromUserData();
+      await UserData().getUserData();
       Navigator.pushNamed(context, HomePage.id);
     } else {
       Navigator.pushNamed(context, IntroPage.id);
