@@ -102,8 +102,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
   Widget build(BuildContext context) {
     return PageBackground(
       body: StreamBuilder(
-        stream: DiscoverService().discoverStream,
-        builder: (context, AsyncSnapshot<QuerySnapshot<Map>> snapshot) =>
+        stream: DiscoverService().peopleInRange,
+        builder: (context, AsyncSnapshot<QueryDocumentSnapshot<Map>> snapshot) =>
             PageView.builder(
                 onPageChanged: (page) async {
                   if (_userRating > 5) {
@@ -158,14 +158,15 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 },
                 controller: _pageController,
                 scrollDirection: Axis.vertical,
-                itemCount: snapshot.data?.size,
+                itemCount: snapshot.data?.data().length,
                 itemBuilder: (BuildContext context, int index) {
                   if (snapshot.hasData && !snapshot.hasError) {
-                    final List<Map<String, dynamic>> documents = snapshot
-                        .data!.docs
-                        .map((doc) => doc.data() as Map<String, dynamic>)
-                        .toList();
-                    final Map<String, dynamic> currentDoc = documents[index];
+                    // final List<Map<String, dynamic>> documents = snapshot
+                    //     .data!.docs
+                    //     .map((doc) => doc.data() as Map<String, dynamic>)
+                    //     .toList();
+                    // final Map<String, dynamic> currentDoc = documents[index];
+                    final currentDoc = snapshot.data?.data() as Map<String, dynamic>;
                     _currentDiscoverData =
                         DiscoverData.getDiscoverData(currentDoc);
                     currentUID = _currentDiscoverData.uid;

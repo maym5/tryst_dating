@@ -37,7 +37,7 @@ class UserData with ChangeNotifier {
       'minPrice': minPrice,
       "maxPrice": maxPrice,
       'imageURLs': imageURLs,
-      "loaction" : location,
+      "location" : location,
       "uid": currentUserUID
     };
   }
@@ -81,12 +81,14 @@ class UserData with ChangeNotifier {
   }
 
   static bool get canCreateUser {
-    for (var value in UserData.toJson().values) {
-      if (value == null) {
-        return false;
+    for (var key in UserData.toJson().keys) {
+      if (key != "location" && key != "uid" && key != "imageURLs") {
+        if (UserData.toJson()[key] == null) {
+          return false;
+        }
       }
     }
-    return true;
+    return UserImages.userImages.isNotEmpty;
   }
 
   static Future<Position> get userLocation async {

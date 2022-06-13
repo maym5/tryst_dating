@@ -7,51 +7,81 @@ class DiscoverService {
   DiscoverService();
   final Map<String, dynamic> currentUserData = UserData.toJson();
 
-  Stream<QuerySnapshot<Map>> get newDiscoverStream async* {
+  Set<String> getQueryUID(QuerySnapshot snapshot) {
+    final Set<String> uids = {};
+    final List<QueryDocumentSnapshot> _data = snapshot.docs;
+    for (var doc in _data) {
+      final Map documentData = doc.data() as Map;
+      uids.add(documentData["uid"]);
+    } return uids;
+  }
+
+  Stream<QueryDocumentSnapshot<Map>> get newDiscoverStream async* {
     FirebaseFirestore _db = FirebaseFirestore.instance;
     final discoverRef = _db.collection("userData");
     final QuerySnapshot dateMatches = await discoverRef
-        .where("dates", arrayContains: currentUserData["dates"])
+        .where("dates", arrayContainsAny: currentUserData["dates"])
         .get();
+
     final ageMatch = await discoverRef
         .where("age", isGreaterThanOrEqualTo: currentUserData["minAge"])
         .where("age", isLessThanOrEqualTo: currentUserData["maxAge"])
         .get();
+    final Set<String> ageMatchUID = getQueryUID(ageMatch);
+
     final gender = await discoverRef
-        .where("gender", arrayContainsAny: currentUserData["prefGender"])
+        .where("gender", whereIn: currentUserData["prefGender"])
         .get();
-    final price = await discoverRef
-        .where("price", isLessThanOrEqualTo: currentUserData["maxPrice"])
-        .where("price", isGreaterThanOrEqualTo: currentUserData["minPrice"])
+    final Set<String> genderMatchUID = getQueryUID(gender);
+
+    final maxPrice = await discoverRef
+        .where("maxPrice", isLessThanOrEqualTo: currentUserData["maxPrice"])
         .get();
+    final Set<String> maxPriceUID = getQueryUID(maxPrice);
+    final minPrice = await discoverRef
+        .where("minPrice", isGreaterThanOrEqualTo: currentUserData["minPrice"])
+        .get();
+    final Set<String> minPriceUID = getQueryUID(minPrice);
+
     final notYou = await discoverRef
-        .where("name", isNotEqualTo: currentUserData["name"])
+        .where("uid", isNotEqualTo: currentUserData["uid"])
         .get();
-    for (var doc in dateMatches.docs) {
-      if (ageMatch.docs.contains(doc) &&
-          gender.docs.contains(doc) &&
-          price.docs.contains(doc) &&
-          notYou.docs.contains(doc)) {
-        final QuerySnapshot<Map> result = doc as QuerySnapshot<Map>;
+    final Set<String> notYouUID = getQueryUID(notYou);
+
+    // check that they aren't matched
+    for (QueryDocumentSnapshot doc in dateMatches.docs) {
+      final Map _data = doc.data() as  Map;
+      final _uid = _data["uid"];
+      if (ageMatchUID.contains(_uid) &&
+          genderMatchUID.contains(_uid) &&
+          maxPriceUID.contains(_uid) &&
+          minPriceUID.contains(_uid) &&
+          notYouUID.contains(_uid)) {
+        final QueryDocumentSnapshot<Map> result = doc as QueryDocumentSnapshot<Map>;
+        // print(doc.data()["name"]);
         yield result;
       }
     }
-    // add current location to userData firestore
   }
 
   Stream<QueryDocumentSnapshot<Map>> get peopleInRange async* {
-    await for (var snapshot in newDiscoverStream) {
-      for (var doc in snapshot.docs) {
-        final GeoPoint _geopoint = doc.data()["location"];
-        if (Geolocator.distanceBetween(
+    try {
+      await for (QueryDocumentSnapshot<Map> doc in newDiscoverStream) {
+          final GeoPoint? _geopoint = doc.data()["location"];
+          if (_geopoint != null) {
+            if (Geolocator.distanceBetween(
                 UserData.location!.latitude,
                 UserData.location!.longitude,
                 _geopoint.latitude,
                 _geopoint.longitude) <=
-            (UserData.maxDistance! * 1609.34)) {
-          yield doc;
-        }
+                (UserData.maxDistance! * 1609.34)) {
+              print(doc.data()["name"]);
+              yield doc;
+            }
+          }
       }
+    } catch (e) {
+      print(e);
     }
   }
 

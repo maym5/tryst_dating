@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
+import 'package:rendezvous_beta_v3/models/user_images.dart';
 import '../dialogues/log_out_dialogue.dart';
 import '../models/users.dart';
 import '../widgets/page_background.dart';

@@ -191,7 +191,7 @@ class DateInfo extends StatelessWidget {
         char.toLowerCase();
         dateTypeString += char;
       } index++;
-  } return dateTypeString;
+  } return dateTypeString + " date";
   }
 
   Widget get _dateDescription => Align(
@@ -206,7 +206,7 @@ class DateInfo extends StatelessWidget {
               Row(
                 children: [
                   const Icon(Icons.where_to_vote, color: Colors.white, size: 18),
-                  SizedBox(width: 5,),
+                  const SizedBox(width: 5,),
                   Text(_dateType)
                 ],
               ),
