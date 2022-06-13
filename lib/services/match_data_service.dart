@@ -82,8 +82,6 @@ class MatchDataService {
   }
 
 
-  // ----------------BELOW IS WHATS IN APP, ABOVE IS WORK IN PROGRESS---------------------- //
-
   // Future<List<MatchCardData>> get matchData async {
   //   List<MatchCardData> result = [];
   //   final QuerySnapshot _matchSnapshot = await _db

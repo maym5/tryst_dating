@@ -148,4 +148,9 @@ class UserData with ChangeNotifier {
           GeoPoint(UserData.location!.latitude, UserData.location!.longitude)
     });
   }
+
+  Future<void> setLocation() async {
+    UserData.location = await UserData.userLocation;
+    UserData().uploadUserLocation();
+  }
 }
