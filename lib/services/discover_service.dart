@@ -64,7 +64,8 @@ class DiscoverService {
     }
   }
 
-  Stream<QueryDocumentSnapshot<Map>> get peopleInRange async* {
+  Stream<List<QueryDocumentSnapshot<Map>>> get peopleInRange async* {
+    List<QueryDocumentSnapshot<Map>> result = [];
     try {
       await for (QueryDocumentSnapshot<Map> doc in newDiscoverStream) {
           final GeoPoint? _geopoint = doc.data()["location"];
@@ -75,8 +76,8 @@ class DiscoverService {
                 _geopoint.latitude,
                 _geopoint.longitude) <=
                 (UserData.maxDistance! * 1609.34)) {
-              print(doc.data()["name"]);
-              yield doc;
+              result.add(doc);
+              yield result;
             }
           }
       }
@@ -85,13 +86,13 @@ class DiscoverService {
     }
   }
 
-  Stream<QuerySnapshot<Map>> get discoverStream async* {
-    // TODO: write real code here
-    FirebaseFirestore db = FirebaseFirestore.instance;
-    yield* db
-        .collection("userData")
-        .where("distance", isLessThanOrEqualTo: currentUserData["distance"])
-        .get()
-        .asStream();
-  }
+  // Stream<QuerySnapshot<Map>> get discoverStream async* {
+  //   // TODO: write real code here
+  //   FirebaseFirestore db = FirebaseFirestore.instance;
+  //   yield* db
+  //       .collection("userData")
+  //       .where("distance", isLessThanOrEqualTo: currentUserData["distance"])
+  //       .get()
+  //       .asStream();
+  // }
 }

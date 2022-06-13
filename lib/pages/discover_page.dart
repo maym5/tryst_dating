@@ -103,7 +103,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
     return PageBackground(
       body: StreamBuilder(
         stream: DiscoverService().peopleInRange,
-        builder: (context, AsyncSnapshot<QueryDocumentSnapshot<Map>> snapshot) =>
+        builder: (context, AsyncSnapshot<List<QueryDocumentSnapshot<Map>>> snapshot) =>
             PageView.builder(
                 onPageChanged: (page) async {
                   if (_userRating > 5) {
@@ -118,7 +118,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
                       // (2) select one of said dateTypes and feed it to the google places service
                       // (3) use returned data to alter matchData document in the cloud.
                       // dates they share in common
-                      // TODO: i think currentUID is changing before this so we're looking up wrong user
                       List<String> commonDateTypes = _currentDiscoverData.dates
                           .where((element) => UserData.dates.contains(element))
                           .toList();
@@ -158,15 +157,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 },
                 controller: _pageController,
                 scrollDirection: Axis.vertical,
-                itemCount: snapshot.data?.data().length,
+                itemCount: snapshot.data?.length,
                 itemBuilder: (BuildContext context, int index) {
                   if (snapshot.hasData && !snapshot.hasError) {
-                    // final List<Map<String, dynamic>> documents = snapshot
-                    //     .data!.docs
-                    //     .map((doc) => doc.data() as Map<String, dynamic>)
-                    //     .toList();
-                    // final Map<String, dynamic> currentDoc = documents[index];
-                    final currentDoc = snapshot.data?.data() as Map<String, dynamic>;
+                    final currentDoc = snapshot.data![index].data() as Map<String, dynamic>;
                     _currentDiscoverData =
                         DiscoverData.getDiscoverData(currentDoc);
                     currentUID = _currentDiscoverData.uid;
