@@ -16,7 +16,7 @@ class DiscoverService {
     } return uids;
   }
 
-  Stream<QueryDocumentSnapshot<Map>> get newDiscoverStream async* {
+  Stream<QueryDocumentSnapshot<Map>> get preferenceMatches async* {
     FirebaseFirestore _db = FirebaseFirestore.instance;
     final discoverRef = _db.collection("userData");
     final QuerySnapshot dateMatches = await discoverRef
@@ -64,10 +64,10 @@ class DiscoverService {
     }
   }
 
-  Stream<List<QueryDocumentSnapshot<Map>>> get peopleInRange async* {
+  Stream<List<QueryDocumentSnapshot<Map>>> get discoverStream async* {
     List<QueryDocumentSnapshot<Map>> result = [];
     try {
-      await for (QueryDocumentSnapshot<Map> doc in newDiscoverStream) {
+      await for (QueryDocumentSnapshot<Map> doc in preferenceMatches) {
           final GeoPoint? _geopoint = doc.data()["location"];
           if (_geopoint != null) {
             if (Geolocator.distanceBetween(

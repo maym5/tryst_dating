@@ -102,7 +102,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   Widget build(BuildContext context) {
     return PageBackground(
       body: StreamBuilder(
-        stream: DiscoverService().peopleInRange,
+        stream: DiscoverService().discoverStream,
         builder: (context, AsyncSnapshot<List<QueryDocumentSnapshot<Map>>> snapshot) =>
             PageView.builder(
                 onPageChanged: (page) async {
