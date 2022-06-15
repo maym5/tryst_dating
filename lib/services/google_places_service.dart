@@ -50,11 +50,15 @@ class GooglePlacesService {
     try {
       final Response result = await dio.get(_path);
       final _data = result.data;
-      return {
-        "name": _data["result"]["name"],
-        "openHours": _data["result"]["opening_hours"]["periods"],
-        "status": _data["status"]
-      };
+      if (result.statusCode! >= 200 &&  result.statusCode! < 300) {
+        return {
+          "name": _data["result"]["name"],
+          "openHours": _data["result"]["opening_hours"]["periods"],
+          "status": _data["status"]
+        };
+      } else {
+        return {"status": "not ok"};
+      }
     } catch (e) {
       print(e);
       return {"status": "not ok"};
