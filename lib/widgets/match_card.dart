@@ -36,7 +36,7 @@ class _MatchCardState extends State<MatchCard>
         ),
       );
 
-  Widget get UI {
+  Widget get ui {
     if (widget.data.dateTime == null) {
       // standard layout
       return Stack(
@@ -44,6 +44,7 @@ class _MatchCardState extends State<MatchCard>
           NameAndButtons(
               name: widget.data.name,
               hasUnreadMessages: false,
+              confirmedDate: widget.data.dateTime != null,
               dateType: widget.data.dateType),
           MatchDateType(dateTypes: widget.data.dateTypes!),
           _circleAvatar,
@@ -57,6 +58,7 @@ class _MatchCardState extends State<MatchCard>
           NameAndButtons(
               name: widget.data.name,
               hasUnreadMessages: false,
+              confirmedDate: widget.data.dateTime != null,
               dateType: widget.data.dateType),
           _circleAvatar,
           DateInfo(venue: widget.data.venue!, dateTime: widget.data.dateTime!, dateType: widget.data.dateType!,),
@@ -114,6 +116,7 @@ class _MatchCardState extends State<MatchCard>
               print(_venue["status"]);
               if (_venue["status"] == "OK") {
                 print("venue status OK");
+                // TODO: if they dismiss dialogue dont show calendar and clock
                 await DateTimeDialogue(setDateTime: _setDateTime)
                     .buildCalendarDialogue(context,
                         venueName: _venue["name"], matchName: widget.data.name);
@@ -142,7 +145,7 @@ class _MatchCardState extends State<MatchCard>
           height: 175,
           child: TileCard(
             padding: const EdgeInsets.all(0),
-            child: UI,
+            child: ui,
           ),
         ),
       ),
@@ -151,13 +154,14 @@ class _MatchCardState extends State<MatchCard>
 }
 
 class MatchName extends StatelessWidget {
-  const MatchName({Key? key, required this.name, this.dateType})
+  const MatchName({Key? key, required this.name, this.dateType, required this.confirmedDate})
       : super(key: key);
   final String name;
   final String? dateType;
+  final bool confirmedDate;
 
   Widget get _name {
-    String? displayedName = "Date with $name";
+    String? displayedName = confirmedDate ? "Date with $name" : name;
     return Text(displayedName,
         style: kTextStyle, softWrap: true, textAlign: TextAlign.start);
   }
@@ -369,11 +373,13 @@ class NameAndButtons extends StatelessWidget {
       {Key? key,
       required this.name,
       required this.hasUnreadMessages,
+        required this.confirmedDate,
       this.dateType})
       : super(key: key);
   final String name;
   final bool hasUnreadMessages;
   final String? dateType;
+  final bool confirmedDate;
 
   @override
   Widget build(BuildContext context) {
@@ -385,7 +391,7 @@ class NameAndButtons extends StatelessWidget {
             width: 10,
           ),
           Flexible(
-              child: MatchName(name: name, dateType: dateType),
+              child: MatchName(name: name, dateType: dateType, confirmedDate: confirmedDate,),
               flex: 4,
               fit: FlexFit.tight),
           const SizedBox(

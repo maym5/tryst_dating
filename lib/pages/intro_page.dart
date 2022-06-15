@@ -13,12 +13,12 @@ class IntroPage extends StatelessWidget {
   Widget loginButton(BuildContext context) => GradientButton(
       title: "Login",
       onPressed: () async {
-        await UserData().setLocation();
+        // await UserData().setLocation();
         Navigator.pushNamed(context, LoginPage.id);
       });
 
   Widget signUpButton(BuildContext context) => GradientButton(title: "Sign Up", onPressed: () async {
-    await UserData().setLocation();
+    // await UserData().setLocation();
     Navigator.pushNamed(context, SignUpPage.id);
   });
 

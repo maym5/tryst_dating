@@ -71,58 +71,58 @@ class _MatchPageState extends State<MatchPage> {
   Widget build(BuildContext context) {
     return PageBackground(
         body: SafeArea(
-          child: StreamBuilder(
-            stream: MatchDataService().datesData,
-            builder: (BuildContext context, AsyncSnapshot<List<MatchCardData>?> dateSnapshot) {
-              return StreamBuilder(
-                stream: MatchDataService().matchData,
-                  builder: (BuildContext context, AsyncSnapshot<List<MatchCardData>?> matchSnapshot) {
-                  if (dateSnapshot.hasData && matchSnapshot.hasData && (!dateSnapshot.hasError || !matchSnapshot.hasError)) {
-                    print("dateSnapShot length: ${dateSnapshot.data!.length}");
-                    print("matchSnapshot length: ${matchSnapshot.data!.length}");
-                    return ListView.builder(
-                      itemCount: dateSnapshot.data!.length + matchSnapshot.data!.length,
-                        itemBuilder: (context, index) {
+      child: StreamBuilder(
+        stream: MatchDataService().datesData,
+        builder: (BuildContext context,
+            AsyncSnapshot<List<MatchCardData>?> dateSnapshot) {
+          return StreamBuilder(
+              stream: MatchDataService().matchData,
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<MatchCardData>?> matchSnapshot) {
+                if (dateSnapshot.hasData &&
+                    matchSnapshot.hasData &&
+                    !dateSnapshot.hasError &&
+                    !matchSnapshot.hasError) {
+                  return ListView.builder(
+                      itemCount: dateSnapshot.data!.length +
+                          matchSnapshot.data!.length,
+                      itemBuilder: (context, index) {
                         if (index < dateSnapshot.data!.length) {
                           return MatchCard(data: dateSnapshot.data![index]);
                         } else {
-                          return MatchCard(data: matchSnapshot.data![index]);
+                          return MatchCard(data: matchSnapshot.data![index - dateSnapshot.data!.length]);
                         }
-                      }
-                    );
-                  } else if (dateSnapshot.hasData) {
-                    return ListView.builder(
+                      });
+                } else if (dateSnapshot.hasData) {
+                  return ListView.builder(
                       itemCount: dateSnapshot.data!.length,
-                        itemBuilder: (context, index) => MatchCard(data: dateSnapshot.data![index])
-                    );
-                  } else if (matchSnapshot.hasData) {
-                    return ListView.builder(
+                      itemBuilder: (context, index) =>
+                          MatchCard(data: dateSnapshot.data![index]));
+                } else if (matchSnapshot.hasData) {
+                  return ListView.builder(
                       itemCount: matchSnapshot.data!.length,
-                        itemBuilder: (context, index) => MatchCard(data: matchSnapshot.data![index])
-                    );
-                  } else if (!dateSnapshot.hasData && !matchSnapshot.hasData) {
-                    return Container(
-                      alignment: Alignment.center,
-                      height: MediaQuery.of(context).size.height,
-                      child: const Text("Such empty, get swiping!"),
-                    );
+                      itemBuilder: (context, index) =>
+                          MatchCard(data: matchSnapshot.data![index]));
+                } else if (!dateSnapshot.hasData && !matchSnapshot.hasData) {
+                  return Container(
+                    alignment: Alignment.center,
+                    height: MediaQuery.of(context).size.height,
+                    child: const Text("Such empty, get swiping!"),
+                  );
                 } else {
-                    return Container(
-                      alignment: Alignment.center,
-                      height: MediaQuery.of(context).size.height,
-                      child: const Text(
-                          "There's been an error loading your match data, try again soon"),
-                    );
-                  }
+                  return Container(
+                    alignment: Alignment.center,
+                    height: MediaQuery.of(context).size.height,
+                    child: const Text(
+                        "There's been an error loading your match data, try again soon"),
+                  );
                 }
-              );
-            },
-          ),
-        )
-    );
+              });
+        },
+      ),
+    ));
   }
 }
-
 
 // return ListView.builder(
 // itemCount: _data.length,

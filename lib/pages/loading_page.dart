@@ -21,11 +21,10 @@ class LoadingPage extends StatefulWidget {
 class _LoadingPageState extends State<LoadingPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   Future fakeDelay() async {
-    await UserData().setLocation();
-    // GooglePlacesService(venueType: "cafe").venues;
     await Future.delayed(const Duration(seconds: 4));
     final User? currentUser = _auth.currentUser;
     if (currentUser != null) {
+      await UserData().setLocation();
       await UserData().getUserData();
       Navigator.pushNamed(context, HomePage.id);
     } else {

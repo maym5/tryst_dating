@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:dio/dio.dart';
 import '../models/users.dart';
 
@@ -37,8 +36,8 @@ class GooglePlacesService {
   Future<String> get venueId async {
     List _venues = await venues;
     if (_venues.isNotEmpty) {
-      int randInt = Random().nextInt(_venues.length);
-      return _venues[randInt]["place_id"];
+      // results are returned ranked by prominence, so we grab the first one
+      return _venues[0]["place_id"];
     }
     return "No venues found";
   }

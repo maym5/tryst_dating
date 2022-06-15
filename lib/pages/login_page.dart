@@ -94,6 +94,7 @@ class _LoginPageState extends State<LoginPage> {
             break;
         }
       } else {
+        await UserData().setLocation();
         await UserData().getUserData();
         Navigator.pushNamed(context, HomePage.id);
       }
