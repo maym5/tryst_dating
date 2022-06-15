@@ -113,6 +113,12 @@ const kUserInfoAlignment = Alignment(-0.9, 0.78);
 
 const kDarkTransparent = Color(0x44000000);
 
+const kPopUpColorScheme = ColorScheme.dark(
+  primary: Colors.redAccent,
+  onPrimary: Colors.white,
+  onSurface: Colors.white,
+);
+
 final kTextButtonStyle = TextButtonThemeData(
     style: ButtonStyle(
   shape: MaterialStateProperty.resolveWith((states) => const CircleBorder()),

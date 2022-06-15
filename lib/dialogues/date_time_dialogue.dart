@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/dialogues/log_out_dialogue.dart';
+import 'package:rendezvous_beta_v3/dialogues/pick_another_day_dialogue.dart';
 import 'package:rendezvous_beta_v3/widgets/gradient_button.dart';
 
 import '../constants.dart';
@@ -23,15 +24,19 @@ class DateTimeDialogue extends StatelessWidget {
     return false;
   }
 
-  Future<void> buildCalendarDialogue(BuildContext context, {required String venueName, required String matchName}) async {
-
+  Future<void> buildCalendarDialogue(BuildContext context,
+      {required String venueName,
+      required String matchName,
+      bool pickAnother=false}) async {
     await showGeneralDialog(
-        context: context, pageBuilder: (context, animation, _) => CongratsDialogue(
-        animation: animation,
-        venueName: venueName,
-        matchName: matchName,
-        setDateTime: setDateTime)
-    );
+        context: context,
+        pageBuilder: (context, animation, _) => pickAnother
+            ? PickAnotherDayDialogue(animation: animation, venueName: venueName)
+            : CongratsDialogue(
+                animation: animation,
+                venueName: venueName,
+                matchName: matchName,
+                setDateTime: setDateTime));
 
     final DateTime now = DateTime.now();
     final DateTime? picked = await showDatePicker(
@@ -43,6 +48,7 @@ class DateTimeDialogue extends StatelessWidget {
           return Theme(
             data: Theme.of(context).copyWith(
                 dialogBackgroundColor: kPopUpColor,
+                colorScheme: kPopUpColorScheme,
                 textButtonTheme: TextButtonThemeData(
                     style: TextButton.styleFrom(primary: Colors.redAccent))),
             child: child!,
@@ -61,6 +67,7 @@ class DateTimeDialogue extends StatelessWidget {
           return Theme(
             data: Theme.of(context).copyWith(
                 dialogBackgroundColor: kDarkTransparent,
+                colorScheme: kPopUpColorScheme,
                 textButtonTheme: TextButtonThemeData(
                     style: TextButton.styleFrom(primary: Colors.redAccent))),
             child: child!,
@@ -71,8 +78,6 @@ class DateTimeDialogue extends StatelessWidget {
     if (pickedTime != null && picked != null) {
       setDateTime(picked, pickedTime);
     }
-
-
   }
 
   @override
@@ -82,36 +87,44 @@ class DateTimeDialogue extends StatelessWidget {
 }
 
 class CongratsDialogue extends StatelessWidget {
-  const CongratsDialogue({Key? key, required this.animation, required this.venueName, required this.matchName, required this.setDateTime}) : super(key: key);
+  const CongratsDialogue(
+      {Key? key,
+      required this.animation,
+      required this.venueName,
+      required this.matchName,
+      required this.setDateTime})
+      : super(key: key);
   final Animation<double> animation;
   final String matchName;
   final String venueName;
   final void Function(DateTime date, TimeOfDay time) setDateTime;
 
   @override
-  Widget build(BuildContext context) => buildPopUpDialogue(animation, context,
-      height: 400,
-      children: [
-        Text("Congrats you've got a date with $matchName at $venueName!",
-          softWrap: true,
-          textAlign: TextAlign.center,
-          style: kTextStyle.copyWith(fontSize: 20),
-        ),
-        const SizedBox(height: 10),
-        GradientButton(
-          title: "Pick a time!",
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        const SizedBox(height: 10),
-        GradientButton(
-          title: "Nah, I'll pass",
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        )
-      ],
-  );
+  Widget build(BuildContext context) => buildPopUpDialogue(
+        animation,
+        context,
+        height: 400,
+        children: [
+          Text(
+            "Congrats you've got a date with $matchName at $venueName!",
+            softWrap: true,
+            textAlign: TextAlign.center,
+            style: kTextStyle.copyWith(fontSize: 20),
+          ),
+          const SizedBox(height: 10),
+          GradientButton(
+            title: "Pick a time!",
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          const SizedBox(height: 10),
+          GradientButton(
+            title: "Nah, I'll pass",
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          )
+        ],
+      );
 }
-

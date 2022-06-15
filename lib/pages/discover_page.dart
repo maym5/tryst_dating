@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
+import 'package:rendezvous_beta_v3/dialogues/pick_another_day_dialogue.dart';
 import 'package:rendezvous_beta_v3/services/authentication.dart';
 import 'package:rendezvous_beta_v3/services/google_places_service.dart';
 import 'package:rendezvous_beta_v3/services/match_data_service.dart';
@@ -103,7 +104,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
     return PageBackground(
       body: StreamBuilder(
         stream: DiscoverService().discoverStream,
-        builder: (context, AsyncSnapshot<List<QueryDocumentSnapshot<Map>>> snapshot) =>
+        builder: (context,
+                AsyncSnapshot<List<QueryDocumentSnapshot<Map>>> snapshot) =>
             PageView.builder(
                 onPageChanged: (page) async {
                   if (_userRating > 5) {
@@ -148,6 +150,16 @@ class _DiscoverPageState extends State<DiscoverPage> {
                         }
                       } else {
                         // what do we do if api fails ??
+                        if (!await GooglePlacesService.checkDateTime(
+                            _dateTime!, _venueData)) {
+                          await DateTimeDialogue(setDateTime: setDateTime)
+                              .buildCalendarDialogue(context,
+                                  venueName: _venueData["name"],
+                                  pickAnother: true,
+                                  matchName: _matchData["name"]);
+                        } else {
+                          // error dialgoue
+                        }
                       }
                     } else {
                       await MatchDataService.setMatchData(
@@ -160,7 +172,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 itemCount: snapshot.data?.length,
                 itemBuilder: (BuildContext context, int index) {
                   if (snapshot.hasData && !snapshot.hasError) {
-                    final currentDoc = snapshot.data![index].data() as Map<String, dynamic>;
+                    final currentDoc =
+                        snapshot.data![index].data() as Map<String, dynamic>;
                     _currentDiscoverData =
                         DiscoverData.getDiscoverData(currentDoc);
                     currentUID = _currentDiscoverData.uid;

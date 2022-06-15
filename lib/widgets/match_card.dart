@@ -119,7 +119,6 @@ class _MatchCardState extends State<MatchCard>
                         venueName: _venue["name"], matchName: widget.data.name);
                 final _isOpen = await GooglePlacesService.checkDateTime(
                     _dateTime!, _venue);
-                print(_isOpen);
                 if (_dateTime != null && _isOpen) {
                   print("date time is alright");
                   await MatchDataService.updateMatchData(
