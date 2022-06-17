@@ -47,6 +47,7 @@ class _LoginPageState extends State<LoginPage> {
 
   TextInputField get _passwordField => TextInputField(
     title: "Password",
+    obscureText: true,
     onChanged: (password) {
       setState(() {
         if (password == "") {

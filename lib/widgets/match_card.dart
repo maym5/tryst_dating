@@ -350,8 +350,12 @@ class MatchDateType extends StatelessWidget {
 
   List<DateTypeIcon> get children {
     List<DateTypeIcon> result = [];
+    int index = 0;
     for (var dateType in dateTypes) {
-      result.add(DateTypeIcon(icon: _icons[dateType]!));
+      if (index <= 6) {
+        result.add(DateTypeIcon(icon: _icons[dateType]!));
+      }
+      index++;
     }
     return result;
   }

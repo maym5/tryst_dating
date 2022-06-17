@@ -26,8 +26,8 @@ class MatchDataService {
     final List<MatchCardData> result = [];
     await for (QuerySnapshot snapshot in _data) {
       if (snapshot.docs.isNotEmpty) {
-        for (var doc in snapshot.docs) {
-          final Map _matchData = doc.data() as Map;
+        for (var doc in snapshot.docChanges) {
+          final Map _matchData = doc.doc.data() as Map;
           final String _matchUID = _matchData["matchUID"];
           final DocumentSnapshot _likeUserData =
               await _db.collection("userData").doc(_matchUID).get();
@@ -53,8 +53,8 @@ class MatchDataService {
     final List<MatchCardData> result = [];
     await for (QuerySnapshot snapshot in _data) {
       if (snapshot.docs.isNotEmpty) {
-        for (var doc in snapshot.docs) {
-          Map<String, dynamic> _matchData = doc.data() as Map<String, dynamic>;
+        for (var doc in snapshot.docChanges) {
+          Map<String, dynamic> _matchData = doc.doc.data() as Map<String, dynamic>;
           final String _likeUID = _matchData["likeUID"];
           final DocumentSnapshot _likeUserData =
               await _db.collection("userData").doc(_likeUID).get();

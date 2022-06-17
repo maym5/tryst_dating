@@ -83,6 +83,8 @@ class _MatchPageState extends State<MatchPage> {
                     matchSnapshot.hasData &&
                     !dateSnapshot.hasError &&
                     !matchSnapshot.hasError) {
+                  // print(dateSnapshot.data!.length);
+                  // print(matchSnapshot.data!.length);
                   return ListView.builder(
                       itemCount: dateSnapshot.data!.length +
                           matchSnapshot.data!.length,
@@ -90,7 +92,9 @@ class _MatchPageState extends State<MatchPage> {
                         if (index < dateSnapshot.data!.length) {
                           return MatchCard(data: dateSnapshot.data![index]);
                         } else {
-                          return MatchCard(data: matchSnapshot.data![index - dateSnapshot.data!.length]);
+                          return MatchCard(
+                              data: matchSnapshot
+                                  .data![index - dateSnapshot.data!.length]);
                         }
                       });
                 } else if (dateSnapshot.hasData) {
