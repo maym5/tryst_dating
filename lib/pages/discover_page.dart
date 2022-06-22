@@ -29,7 +29,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   late PageController _pageController;
   late ValueNotifier<double> _animation;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  late String currentUID;
+  late String currentDiscoverUID;
   late DiscoverData _currentDiscoverData;
   DateTime? _dateTime;
 
@@ -112,7 +112,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     QuerySnapshot matchSnapshot = await _firestore
                         .collection("matchData")
                         .where("matchUID", isEqualTo: currentUserUID)
-                        .where("likeUID", isEqualTo: currentUID)
+                        .where("likeUID", isEqualTo: currentDiscoverUID)
                         .get();
                     if (matchSnapshot.size != 0) {
                       // (1) get overlapping dateTypes between both users (userData pull)
@@ -131,7 +131,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                           .venue;
                       final DocumentSnapshot _matchSnapshot = await _firestore
                           .collection("userData")
-                          .doc(currentUID)
+                          .doc(currentDiscoverUID)
                           .get();
                       final Map _matchData = _matchSnapshot.data() as Map;
                       if (_venueData["status"] == "OK") {
@@ -143,7 +143,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                             await GooglePlacesService.checkDateTime(
                                 _dateTime!, _venueData)) {
                           await MatchDataService.updateMatchData(
-                              otherUserUID: currentUID,
+                              otherUserUID: currentDiscoverUID,
                               dateType: _dateType,
                               dateTime: _dateTime!,
                               venue: _venueData["name"]);
@@ -163,7 +163,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                       }
                     } else {
                       await MatchDataService.setMatchData(
-                          currentDiscoverUID: currentUID);
+                          currentDiscoverUID: currentDiscoverUID);
                     }
                   }
                 },
@@ -176,7 +176,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                         snapshot.data![index].data() as Map<String, dynamic>;
                     _currentDiscoverData =
                         DiscoverData.getDiscoverData(currentDoc);
-                    currentUID = _currentDiscoverData.uid;
+                    currentDiscoverUID = _currentDiscoverData.uid;
                     return Stack(
                       children: [
                         DiscoverView(

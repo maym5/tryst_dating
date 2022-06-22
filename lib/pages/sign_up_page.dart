@@ -114,7 +114,7 @@ class _SignUpPageState extends State<SignUpPage> {
               break;
           }
         } else {
-          await UserData().setLocation();
+          // await UserData().setLocation();
           Navigator.pushNamed(context, UserEditPage.id);
         }
       } else {

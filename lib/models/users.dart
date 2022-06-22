@@ -77,6 +77,7 @@ class UserData with ChangeNotifier {
       await UserImages.uploadImages(_user);
       Map<String, dynamic> _userData = UserData.toJson();
       _fireStore.collection("userData").doc(_user.uid).set(_userData);
+      await UserData().setLocation();
     }
   }
 

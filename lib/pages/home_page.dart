@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
       children: <Widget>[
         UserEditPage(onHomePageButtonPress: _userEditButtonPress),
         const DiscoverPage(),
-        const MatchPage(),
+        const MatchPageTwo(),
       ],
     );
   }
