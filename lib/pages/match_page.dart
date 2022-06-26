@@ -1,87 +1,85 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/services/match_data_service.dart';
 import 'package:rendezvous_beta_v3/widgets/match_card.dart';
 import 'package:rendezvous_beta_v3/widgets/match_tile.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 
-import '../services/authentication.dart';
 
-class MatchPage extends StatefulWidget {
-  const MatchPage({Key? key}) : super(key: key);
-  static const id = "match_page";
-
-  @override
-  State<MatchPage> createState() => _MatchPageState();
-
-  // Widget get _name {
-  //   String displayedText = "Date with $name!";
-  //   return Text(displayedText,
-  //       style: kTextStyle, softWrap: true, textAlign: TextAlign.start);
-  // }
-}
-
-class _MatchPageState extends State<MatchPage> {
-  @override
-  Widget build(BuildContext context) {
-    return PageBackground(
-        body: SafeArea(
-      child: StreamBuilder(
-        stream: MatchDataService().datesData,
-        builder: (BuildContext context,
-            AsyncSnapshot<List<MatchCardData>?> dateSnapshot) {
-          return StreamBuilder(
-              stream: MatchDataService().matchData,
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<MatchCardData>?> matchSnapshot) {
-                if (dateSnapshot.hasData &&
-                    matchSnapshot.hasData &&
-                    !dateSnapshot.hasError &&
-                    !matchSnapshot.hasError) {
-                  print(dateSnapshot.data!.length);
-                  print(matchSnapshot.data!.length);
-                  return ListView.builder(
-                      itemCount: dateSnapshot.data!.length +
-                          matchSnapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        if (index < dateSnapshot.data!.length) {
-                          return MatchCard(data: dateSnapshot.data![index]);
-                        } else {
-                          return MatchCard(
-                              data: matchSnapshot
-                                  .data![index - dateSnapshot.data!.length]);
-                        }
-                      });
-                } else if (dateSnapshot.hasData) {
-                  return ListView.builder(
-                      itemCount: dateSnapshot.data!.length,
-                      itemBuilder: (context, index) =>
-                          MatchCard(data: dateSnapshot.data![index]));
-                } else if (matchSnapshot.hasData) {
-                  return ListView.builder(
-                      itemCount: matchSnapshot.data!.length,
-                      itemBuilder: (context, index) =>
-                          MatchCard(data: matchSnapshot.data![index]));
-                } else if (!dateSnapshot.hasData && !matchSnapshot.hasData) {
-                  return Container(
-                    alignment: Alignment.center,
-                    height: MediaQuery.of(context).size.height,
-                    child: const Text("Such empty, get swiping!"),
-                  );
-                } else {
-                  return Container(
-                    alignment: Alignment.center,
-                    height: MediaQuery.of(context).size.height,
-                    child: const Text(
-                        "There's been an error loading your match data, try again soon"),
-                  );
-                }
-              });
-        },
-      ),
-    ));
-  }
-}
+// class MatchPage extends StatefulWidget {
+//   const MatchPage({Key? key}) : super(key: key);
+//   static const id = "match_page";
+//
+//   @override
+//   State<MatchPage> createState() => _MatchPageState();
+//
+//   // Widget get _name {
+//   //   String displayedText = "Date with $name!";
+//   //   return Text(displayedText,
+//   //       style: kTextStyle, softWrap: true, textAlign: TextAlign.start);
+//   // }
+// }
+//
+// class _MatchPageState extends State<MatchPage> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return PageBackground(
+//         body: SafeArea(
+//       child: StreamBuilder(
+//         stream: MatchDataService().datesData,
+//         builder: (BuildContext context,
+//             AsyncSnapshot<List<MatchCardData>?> dateSnapshot) {
+//           return StreamBuilder(
+//               stream: MatchDataService().matchData,
+//               builder: (BuildContext context,
+//                   AsyncSnapshot<List<MatchCardData>?> matchSnapshot) {
+//                 if (dateSnapshot.hasData &&
+//                     matchSnapshot.hasData &&
+//                     !dateSnapshot.hasError &&
+//                     !matchSnapshot.hasError) {
+//                   print(dateSnapshot.data!.length);
+//                   print(matchSnapshot.data!.length);
+//                   return ListView.builder(
+//                       itemCount: dateSnapshot.data!.length +
+//                           matchSnapshot.data!.length,
+//                       itemBuilder: (context, index) {
+//                         if (index < dateSnapshot.data!.length) {
+//                           return MatchCard(data: dateSnapshot.data![index]);
+//                         } else {
+//                           return MatchCard(
+//                               data: matchSnapshot
+//                                   .data![index - dateSnapshot.data!.length]);
+//                         }
+//                       });
+//                 } else if (dateSnapshot.hasData) {
+//                   return ListView.builder(
+//                       itemCount: dateSnapshot.data!.length,
+//                       itemBuilder: (context, index) =>
+//                           MatchCard(data: dateSnapshot.data![index]));
+//                 } else if (matchSnapshot.hasData) {
+//                   return ListView.builder(
+//                       itemCount: matchSnapshot.data!.length,
+//                       itemBuilder: (context, index) =>
+//                           MatchCard(data: matchSnapshot.data![index]));
+//                 } else if (!dateSnapshot.hasData && !matchSnapshot.hasData) {
+//                   return Container(
+//                     alignment: Alignment.center,
+//                     height: MediaQuery.of(context).size.height,
+//                     child: const Text("Such empty, get swiping!"),
+//                   );
+//                 } else {
+//                   return Container(
+//                     alignment: Alignment.center,
+//                     height: MediaQuery.of(context).size.height,
+//                     child: const Text(
+//                         "There's been an error loading your match data, try again soon"),
+//                   );
+//                 }
+//               });
+//         },
+//       ),
+//     ));
+//   }
+// }
 
 class DatesPage extends StatelessWidget {
   const DatesPage({Key? key}) : super(key: key);
@@ -147,8 +145,9 @@ class _LikesPageState extends State<LikesPage> {
                 itemCount: likeSnapshot.data!.length,
                 itemBuilder: (BuildContext context, int index) => MatchTile(data: likeSnapshot.data![index]),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: 0.8,
                     crossAxisCount: 2,
-                    mainAxisSpacing: 8.0,
+                    mainAxisSpacing: 16.0,
                     crossAxisSpacing: 8.0
                 ),
               );
@@ -175,15 +174,15 @@ class _LikesPageState extends State<LikesPage> {
 
 
 
-class MatchPageTwo extends StatefulWidget {
-  const MatchPageTwo({Key? key}) : super(key: key);
-  static const id = "match_page_two";
+class MatchPage extends StatefulWidget {
+  const MatchPage({Key? key}) : super(key: key);
+  static const id = "match_page";
 
   @override
-  State<MatchPageTwo> createState() => _MatchPageTwoState();
+  State<MatchPage> createState() => _MatchPageState();
 }
 
-class _MatchPageTwoState extends State<MatchPageTwo> with SingleTickerProviderStateMixin {
+class _MatchPageState extends State<MatchPage> with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
   Widget get _dates => const DatesPage();
@@ -207,6 +206,7 @@ class _MatchPageTwoState extends State<MatchPageTwo> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     return PageBackground(
       appBar: AppBar(
+        leading: const BackButton(color: Colors.transparent),
         bottom: TabBar(
           controller: _tabController,
           tabs: _tabs,
@@ -215,6 +215,7 @@ class _MatchPageTwoState extends State<MatchPageTwo> with SingleTickerProviderSt
       ),
         body: TabBarView(
           controller: _tabController,
+            physics: const NeverScrollableScrollPhysics(),
             children: _children,
         ),
     );

@@ -37,21 +37,18 @@ class _MatchCardState extends State<MatchCard>
       );
 
   Widget get ui {
-    if (widget.data.dateTime == null) {
-      // standard layout
-      return Stack(
-        children: <Widget>[
-          NameAndButtons(
-              name: widget.data.name,
-              hasUnreadMessages: false,
-              confirmedDate: widget.data.dateTime != null,
-              dateType: widget.data.dateType),
-          MatchDateType(dateTypes: widget.data.dateTypes!),
-          _circleAvatar,
-          MatchCardOverlay(activeDate: _beenTapped)
-        ],
-      );
-    } else {
+    // Stack(
+    //   children: <Widget>[
+    //     NameAndButtons(
+    //         name: widget.data.name,
+    //         hasUnreadMessages: false,
+    //         confirmedDate: widget.data.dateTime != null,
+    //         dateType: widget.data.dateType),
+    //     MatchDateType(dateTypes: widget.data.dateTypes!),
+    //     _circleAvatar,
+    //     MatchCardOverlay(activeDate: _beenTapped)
+    //   ],
+    // );
       // date layout
       return Stack(
         children: <Widget>[
@@ -64,7 +61,6 @@ class _MatchCardState extends State<MatchCard>
           DateInfo(venue: widget.data.venue!, dateTime: widget.data.dateTime!, dateType: widget.data.dateType!,),
         ],
       );
-    }
   }
 
   @override
@@ -90,64 +86,11 @@ class _MatchCardState extends State<MatchCard>
 
   @override
   Widget build(BuildContext context) {
-    return BounceAnimation(
-      controller: _controller,
-      child: GestureDetector(
-        onTapDown: (details) {
-          if (!_beenTapped) {
-            _controller.forward();
-          }
-        },
-        onTapUp: (details) async {
-          if (!_beenTapped) {
-            _controller.reverse();
-            setState(() => _beenTapped = true);
-            // maybe just use sets instead here, could be more efficient
-            List? _commonDates = widget.data.dateTypes
-                ?.where((element) => UserData.dates.contains(element))
-                .toList();
-            if (_commonDates != null) {
-              print("have common dates");
-              final _dateType =
-                  _commonDates[Random().nextInt(_commonDates.length)];
-              final Map _venue =
-                  await GooglePlacesService(venueType: _dateType).venue;
-              // deal with google places edge cases
-              print(_venue["status"]);
-              if (_venue["status"] == "OK") {
-                print("venue status OK");
-                // TODO: if they dismiss dialogue dont show calendar and clock
-                await DateTimeDialogue(setDateTime: _setDateTime)
-                    .buildCalendarDialogue(context,
-                        venueName: _venue["name"], matchName: widget.data.name);
-                final _isOpen = await GooglePlacesService.checkDateTime(
-                    _dateTime!, _venue);
-                if (_dateTime != null && _isOpen) {
-                  print("date time is alright");
-                  await MatchDataService.updateMatchData(
-                      otherUserUID: widget.data.matchID,
-                      dateType: _dateType,
-                      dateTime: _dateTime!,
-                      venue: _venue["name"]);
-                  print("added data to firebase");
-                } else {
-                  setState(() => _beenTapped = false);
-                }
-              } else {
-                setState(() {
-                  _beenTapped = false;
-                });
-              }
-            }
-          }
-        },
-        child: SizedBox(
-          height: 175,
-          child: TileCard(
-            padding: const EdgeInsets.all(0),
-            child: ui,
-          ),
-        ),
+    return SizedBox(
+      height: 175,
+      child: TileCard(
+        padding: const EdgeInsets.all(0),
+        child: ui,
       ),
     );
   }

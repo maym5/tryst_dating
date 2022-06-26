@@ -46,13 +46,14 @@ class ProfileInfo extends StatelessWidget {
 }
 
 class NameAndAge extends StatelessWidget {
-  const NameAndAge({Key? key, required this.name, required this.age})
+  const NameAndAge({Key? key, required this.name, required this.age, this.padding})
       : super(key: key);
   final String name;
   final int age;
+  final EdgeInsetsGeometry? padding;
 
   Widget getText(String text) => Padding(
-        padding: kProfileInfoPadding,
+        padding: padding ?? kProfileInfoPadding,
         child: Text(
           text,
           style: text == name ? kNameTextStyle : kAgeTextStyle,
