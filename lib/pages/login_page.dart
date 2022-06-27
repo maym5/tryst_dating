@@ -17,12 +17,12 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // static late final TextEditingController _emailController = TextEditingController();
-  // static late final TextEditingController _passwordController = TextEditingController();
+
   Map<String, String?> loginInputs = {
     "email" : null,
     "password" : null
   };
+
   Map<String, String> errorMessages = {
     "email" : "Please enter a valid email",
     "password" : "Please enter a valid email"
@@ -61,6 +61,12 @@ class _LoginPageState extends State<LoginPage> {
     errorMessage: errorMessages["password"],
   );
 
+  AppBar get _appBar => AppBar(
+    leading: BackButton(
+      onPressed: _navigateBack,
+      color: Colors.redAccent,
+    ),
+  );
 
   void _handleSignIn() async {
     setState(() => _showSpinner = true);
@@ -109,10 +115,15 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
+  void _navigateBack() {
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: put in back arrow
     return PageBackground(
+      appBar: _appBar,
       body: ModalProgressHUD(
         inAsyncCall: _showSpinner,
         color: kDarkTransparent,

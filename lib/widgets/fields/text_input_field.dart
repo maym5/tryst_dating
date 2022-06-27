@@ -33,12 +33,13 @@ class TextInputField extends StatefulWidget {
   State<TextInputField> createState() => _TextInputFieldState();
 }
 
-class _TextInputFieldState extends State<TextInputField> {
+class _TextInputFieldState extends State<TextInputField> with AutomaticKeepAliveClientMixin {
   late final TextEditingController _controller =
       TextEditingController(text: widget.initialValue);
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -68,6 +69,9 @@ class _TextInputFieldState extends State<TextInputField> {
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => _controller.text != "";
 }
 
 class NameField extends StatefulWidget {

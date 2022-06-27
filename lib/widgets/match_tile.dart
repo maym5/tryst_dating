@@ -11,7 +11,7 @@ import '../services/google_places_service.dart';
 
 class MatchTile extends StatefulWidget {
   const MatchTile({Key? key, required this.data}) : super(key: key);
-  final MatchCardData data;
+  final MatchData data;
 
   @override
   State<MatchTile> createState() => _MatchTileState();
@@ -19,7 +19,6 @@ class MatchTile extends StatefulWidget {
 
 class _MatchTileState extends State<MatchTile> with TickerProviderStateMixin {
   DateTime? _dateTime;
-  late bool _beenTapped;
   late final AnimationController _controller;
 
   void _setDateTime(DateTime date, TimeOfDay time) {
@@ -60,32 +59,20 @@ class _MatchTileState extends State<MatchTile> with TickerProviderStateMixin {
             await GooglePlacesService.checkDateTime(_dateTime!, _venue);
         if (_dateTime != null && _isOpen) {
           print("date time is alright");
-          await MatchDataService.updateMatchSubcollection(
+          await MatchDataService.updateMatchData(
               otherUserUID: widget.data.matchID,
               dateType: _dateType,
               dateTime: _dateTime!,
               venue: _venue["name"]);
           print("added data to firebase");
-          setState(() {
-            _beenTapped = true;
-          });
         } else if (!_isOpen) {
-          setState(() {
-            _beenTapped = false;
-          });
           // do a pop up
         } else {
           // do a pop up
-          setState(() {
-            _beenTapped = false;
-          });
         }
       }
     } else {
-      setState(() {
-        // do a pop up
-        _beenTapped = false;
-      });
+
     }
   }
 
@@ -112,7 +99,6 @@ class _MatchTileState extends State<MatchTile> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    _beenTapped = false;
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 200),
@@ -129,19 +115,16 @@ class _MatchTileState extends State<MatchTile> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     // TODO: check edge cases on this visibility
-    return Visibility(
-      visible: !_beenTapped,
-      child: BounceAnimation(
-        controller: _controller,
-        child: GestureDetector(
-          onTapDown: _onTapDown,
-          onTapUp: _onTapUp,
-          child: Container(
-            width: 150,
-            height: 375,
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(25)),
-            child: _stack,
-          ),
+    return BounceAnimation(
+      controller: _controller,
+      child: GestureDetector(
+        onTapDown: _onTapDown,
+        onTapUp: _onTapUp,
+        child: Container(
+          width: 150,
+          height: 375,
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(25)),
+          child: _stack,
         ),
       ),
     );

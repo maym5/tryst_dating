@@ -99,6 +99,71 @@ class _DiscoverPageState extends State<DiscoverPage> {
             textAlign: TextAlign.center, style: kTextStyle),
       );
 
+  Future<void> onPageChanged(int page) async {
+    if (_userRating > 5) {
+      QuerySnapshot matchSnapshot = await _firestore
+          .collection("matchData")
+          .where("matchUID", isEqualTo: currentUserUID)
+          .where("likeUID", isEqualTo: currentDiscoverUID)
+          .get();
+      if (matchSnapshot.size != 0) {
+        // (1) get overlapping dateTypes between both users (userData pull)
+        // do this in the build someplace and save to local varaible
+        // (2) select one of said dateTypes and feed it to the google places service
+        // (3) use returned data to alter matchData document in the cloud.
+        // dates they share in common
+        List<String> commonDateTypes = _currentDiscoverData.dates
+            .where((element) => UserData.dates.contains(element))
+            .toList();
+        final String _dateType = commonDateTypes[
+        Random().nextInt(commonDateTypes.length)];
+        final Map _venueData = await GooglePlacesService(
+            venueType:
+            _dateType) // might be empty handle that case
+            .venue;
+        final DocumentSnapshot _matchSnapshot = await _firestore
+            .collection("userData")
+            .doc(currentDiscoverUID)
+            .get();
+        final Map _matchData = _matchSnapshot.data() as Map;
+        if (_venueData["status"] == "OK") {
+          await DateTimeDialogue(setDateTime: setDateTime)
+              .buildCalendarDialogue(context,
+              matchName: _matchData["name"],
+              venueName: _venueData["name"]);
+          if (_dateTime != null &&
+              await GooglePlacesService.checkDateTime(
+                  _dateTime!, _venueData)) {
+            await MatchDataService.updateMatchData(
+                otherUserUID: currentDiscoverUID,
+                dateType: _dateType,
+                dateTime: _dateTime!,
+                venue: _venueData["name"],
+              userRating: _userRating
+            );
+          }
+        } else {
+          // what do we do if api fails ??
+          if (!await GooglePlacesService.checkDateTime(
+              _dateTime!, _venueData)) {
+            await DateTimeDialogue(setDateTime: setDateTime)
+                .buildCalendarDialogue(context,
+                venueName: _venueData["name"],
+                pickAnother: true,
+                matchName: _matchData["name"]);
+          } else {
+            // error dialgoue
+          }
+        }
+      } else {
+        await MatchDataService.setMatchData(
+            currentDiscoverUID: currentDiscoverUID,
+          userRating: _userRating
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PageBackground(
@@ -107,66 +172,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
         builder: (context,
                 AsyncSnapshot<List<QueryDocumentSnapshot<Map>>> snapshot) =>
             PageView.builder(
-                onPageChanged: (page) async {
-                  if (_userRating > 5) {
-                    QuerySnapshot matchSnapshot = await _firestore
-                        .collection("matchData")
-                        .where("matchUID", isEqualTo: currentUserUID)
-                        .where("likeUID", isEqualTo: currentDiscoverUID)
-                        .get();
-                    if (matchSnapshot.size != 0) {
-                      // (1) get overlapping dateTypes between both users (userData pull)
-                      // do this in the build someplace and save to local varaible
-                      // (2) select one of said dateTypes and feed it to the google places service
-                      // (3) use returned data to alter matchData document in the cloud.
-                      // dates they share in common
-                      List<String> commonDateTypes = _currentDiscoverData.dates
-                          .where((element) => UserData.dates.contains(element))
-                          .toList();
-                      final String _dateType = commonDateTypes[
-                          Random().nextInt(commonDateTypes.length)];
-                      final Map _venueData = await GooglePlacesService(
-                              venueType:
-                                  _dateType) // might be empty handle that case
-                          .venue;
-                      final DocumentSnapshot _matchSnapshot = await _firestore
-                          .collection("userData")
-                          .doc(currentDiscoverUID)
-                          .get();
-                      final Map _matchData = _matchSnapshot.data() as Map;
-                      if (_venueData["status"] == "OK") {
-                        await DateTimeDialogue(setDateTime: setDateTime)
-                            .buildCalendarDialogue(context,
-                                matchName: _matchData["name"],
-                                venueName: _venueData["name"]);
-                        if (_dateTime != null &&
-                            await GooglePlacesService.checkDateTime(
-                                _dateTime!, _venueData)) {
-                          await MatchDataService.updateMatchSubcollection(
-                              otherUserUID: currentDiscoverUID,
-                              dateType: _dateType,
-                              dateTime: _dateTime!,
-                              venue: _venueData["name"]);
-                        }
-                      } else {
-                        // what do we do if api fails ??
-                        if (!await GooglePlacesService.checkDateTime(
-                            _dateTime!, _venueData)) {
-                          await DateTimeDialogue(setDateTime: setDateTime)
-                              .buildCalendarDialogue(context,
-                                  venueName: _venueData["name"],
-                                  pickAnother: true,
-                                  matchName: _matchData["name"]);
-                        } else {
-                          // error dialgoue
-                        }
-                      }
-                    } else {
-                      await MatchDataService.setSubCollectionMatchData(
-                          currentDiscoverUID: currentDiscoverUID);
-                    }
-                  }
-                },
+                onPageChanged: onPageChanged,
                 controller: _pageController,
                 scrollDirection: Axis.vertical,
                 itemCount: snapshot.data?.length,

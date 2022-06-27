@@ -78,6 +78,13 @@ class _SignUpPageState extends State<SignUpPage> {
     errorMessage: errorMessages["confirm"],
   );
 
+  AppBar get _appBar => AppBar(
+    leading: BackButton(
+      color: Colors.redAccent,
+      onPressed: _navigateBack,
+    ),
+  );
+
   void _handleRegistration() async {
     if (!passwordsDontMatch) {
       setState(() {
@@ -135,9 +142,15 @@ class _SignUpPageState extends State<SignUpPage> {
     super.initState();
   }
 
+  void _navigateBack() async {
+    Navigator.pop(context);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return PageBackground(
+      appBar: _appBar,
         body: ModalProgressHUD(
           inAsyncCall: _showSpinner,
           color: kDarkTransparent,

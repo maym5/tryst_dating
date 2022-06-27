@@ -89,34 +89,37 @@ class DatesPage extends StatefulWidget {
 }
 
 class _DatesPageState extends State<DatesPage> {
-  final Stream<List<MatchCardData>?> _datesData = MatchDataService().newMatchData;
+  final Stream<List<MatchData>?> _datesStream = MatchDataService().datesStream;
 
+  Widget get _emptyMessage => Container(
+    alignment: Alignment.center,
+    height: MediaQuery.of(context).size.height,
+    child: const Text("Such empty, get swiping!"),
+  );
+
+  Widget get _errorMessage => Container(
+    alignment: Alignment.center,
+    height: MediaQuery.of(context).size.height,
+    child: const Text(
+        "There's been an error loading your dates data, try again soon"),
+  );
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 15),
       child: StreamBuilder(
-        stream: _datesData,
-          builder: (BuildContext context, AsyncSnapshot<List<MatchCardData>?> dateSnapshot) {
+        stream: _datesStream,
+          builder: (BuildContext context, AsyncSnapshot<List<MatchData>?> dateSnapshot) {
           if (dateSnapshot.hasData && !dateSnapshot.hasError) {
             return ListView.builder(
               itemCount: dateSnapshot.data!.length,
-                itemBuilder: (context, index) => MatchCard(data: dateSnapshot.data![index])
+                itemBuilder: (context, index) => DateCard(data: dateSnapshot.data![index])
             );
           } else if (!dateSnapshot.hasData) {
-            return Container(
-              alignment: Alignment.center,
-              height: MediaQuery.of(context).size.height,
-              child: const Text("Such empty, get swiping!"),
-            );
+            return _emptyMessage;
           } else {
-            return Container(
-              alignment: Alignment.center,
-              height: MediaQuery.of(context).size.height,
-              child: const Text(
-                  "There's been an error loading your match data, try again soon"),
-            );
+            return _errorMessage;
           }
         }
       ),
@@ -132,15 +135,28 @@ class LikesPage extends StatefulWidget {
 }
 
 class _LikesPageState extends State<LikesPage> {
-  final Stream<List<MatchCardData>?> _likesData = MatchDataService().newLikesData;
+  final Stream<List<MatchData>?> _likesStream = MatchDataService().likesStream;
+
+  Widget get _noLikesMessage => Container(
+    alignment: Alignment.center,
+    height: MediaQuery.of(context).size.height,
+    child: const Text("Don't worry, people are liking you right now!"),
+  );
+
+  Widget get _errorMessage => Container(
+    alignment: Alignment.center,
+    height: MediaQuery.of(context).size.height,
+    child: const Text(
+        "There's been an error loading your match data, try again soon"),
+  );
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 15),
-      child: StreamBuilder<List<MatchCardData>?>(
-          stream: _likesData,
-          builder: (BuildContext context, AsyncSnapshot<List<MatchCardData>?> likeSnapshot) {
+      child: StreamBuilder<List<MatchData>?>(
+          stream: _likesStream,
+          builder: (BuildContext context, AsyncSnapshot<List<MatchData>?> likeSnapshot) {
             if (likeSnapshot.hasData && !likeSnapshot.hasError) {
               // TODO: make this a reorderable gridview
               return GridView.builder(
@@ -154,19 +170,10 @@ class _LikesPageState extends State<LikesPage> {
                 ),
               );
             } else if (!likeSnapshot.hasData) {
-              return Container(
-                alignment: Alignment.center,
-                height: MediaQuery.of(context).size.height,
-                child: const Text("Don't worry, people are liking you right now!"),
-              );
+              return _noLikesMessage;
             }
             else {
-              return Container(
-                alignment: Alignment.center,
-                height: MediaQuery.of(context).size.height,
-                child: const Text(
-                    "There's been an error loading your match data, try again soon"),
-              );
+              return _errorMessage;
             }
           }
       ),
@@ -223,58 +230,3 @@ class _MatchPageState extends State<MatchPage> with SingleTickerProviderStateMix
     );
   }
 }
-
-
-// return ListView.builder(
-// itemCount: _data.length,
-// itemBuilder: (context, index) {
-// return MatchCard(data: _data[index]);
-// });
-
-//
-// (context, index) =>
-// snapshot.data![index] != null
-// ? MatchCard(data: snapshot.data![index]!)
-// : Container());
-
-// class MatchPageTwo extends StatefulWidget {
-//   const MatchPageTwo({Key? key}) : super(key: key);
-//
-//   @override
-//   State<MatchPageTwo> createState() => _MatchPageTwoState();
-// }
-//
-// class _MatchPageTwoState extends State<MatchPageTwo> {
-//   final List<MatchCard> matchCardChildren = [];
-//
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return PageBackground(
-//         body: StreamBuilder(
-//           stream: MatchDataService().newDatesData,
-//           builder: (context, AsyncSnapshot<MatchCardData> snapshot) {
-//             if (snapshot.hasData && !snapshot.hasError && snapshot.data != null) {
-//               matchCardChildren.add(MatchCard(data: snapshot.data!));
-//               return ListView(
-//                 children: matchCardChildren,
-//               );
-//             } else if (!snapshot.hasData || snapshot.data == null) {
-//               return Container(
-//                 alignment: Alignment.center,
-//                 height: MediaQuery.of(context).size.height,
-//                 child: const Text("Such empty, get swiping!"),
-//               );
-//             } else {
-//               return Container(
-//                 alignment: Alignment.center,
-//                 height: MediaQuery.of(context).size.height,
-//                 child: const Text(
-//                     "There's been an error loading your match data, try again soon"),
-//               );
-//             }
-//           },
-//         )
-//     );
-//   }
-// }

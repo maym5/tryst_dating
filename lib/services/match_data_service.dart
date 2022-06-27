@@ -17,100 +17,29 @@ class MatchDataService {
     }
   }
 
-  Stream<List<MatchCardData>?> get datesData async* {
-    // same problemo how to merge streams????
-    Stream<QuerySnapshot> _anotherData = _db
-        .collection("matchData")
-        .where("matchUID", isEqualTo: currentUserUID)
-        .where("match", isEqualTo: true)
-        .snapshots();
+  Stream<List<MatchData>?> get likesStream async* {
     Stream<QuerySnapshot> _data = _db
-        .collection("matchData")
-        .where("likeUID", isEqualTo: currentUserUID)
-        .where("match", isEqualTo: true)
+        .collection("userData")
+        .doc(currentUserUID)
+        .collection("matches")
+        .where("match", isEqualTo: false)
         .snapshots();
-    final List<MatchCardData> result = [];
+    final List<MatchData> result = <MatchData>[];
     await for (QuerySnapshot snapshot in _data) {
       if (snapshot.docs.isNotEmpty) {
         for (QueryDocumentSnapshot doc in snapshot.docs) {
           if (doc.exists && doc.data() != null) {
-            final Map _matchData = doc.data() as Map;
+            Map<String, dynamic> _matchData =
+                doc.data() as Map<String, dynamic>;
             final String _matchUID = _matchData["matchUID"];
-            final DocumentSnapshot _likeUserData =
+            final DocumentSnapshot _matchUserData =
                 await _db.collection("userData").doc(_matchUID).get();
-            if (_likeUserData.exists && _likeUserData.data() != null) {
-              final Map _userData = _likeUserData.data() as Map;
-              result.add(MatchCardData(
+            if (_matchUserData.exists && _matchUserData.data() != null) {
+              final Map _userData = _matchUserData.data() as Map;
+              result.add(MatchData(
                   name: _userData["name"],
+                  age: _userData["age"],
                   matchID: _matchUID,
-                  venue: _matchData["venue"],
-                  dateType: _matchData["dateType"],
-                  dateTime: _convertTimeStamp(_matchData["dateTime"]),
-                  image: _userData["imageURLs"][0]));
-              yield result;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  Stream<List<MatchCardData>?> get likesData async* {
-    Stream<QuerySnapshot> _data = _db
-        .collection("matchData")
-        .where("matchUID", isEqualTo: currentUserUID)
-        .where("match", isEqualTo: false)
-        .snapshots();
-    final List<MatchCardData> result = [];
-    await for (QuerySnapshot snapshot in _data) {
-      if (snapshot.docs.isNotEmpty) {
-        for (QueryDocumentSnapshot doc in snapshot.docs) {
-          if (doc.exists && doc.data() != null) {
-            Map<String, dynamic> _matchData =
-                doc.data() as Map<String, dynamic>;
-            final String _likeUID = _matchData["likeUID"];
-            final DocumentSnapshot _likeUserData =
-                await _db.collection("userData").doc(_likeUID).get();
-            if (_likeUserData.exists && _likeUserData.data() != null) {
-              final Map _userData = _likeUserData.data() as Map;
-              result.add(MatchCardData(
-                  name: _userData["name"],
-                  age: _userData["age"],
-                  matchID: _likeUID,
-                  image: _userData["imageURLs"][0],
-                  dateTypes: _userData["dates"]));
-              yield result;
-              print(result);
-            }
-          }
-        }
-      }
-    }
-  }
-
-  Stream<List<MatchCardData>?> get newLikesData async* {
-    Stream<QuerySnapshot> _data = _db
-        .collection("userData")
-        .doc(currentUserUID)
-        .collection("matches")
-        .where("match", isEqualTo: false)
-        .snapshots();
-    final List<MatchCardData> result = <MatchCardData>[];
-    await for (QuerySnapshot snapshot in _data) {
-      if (snapshot.docs.isNotEmpty) {
-        for (QueryDocumentSnapshot doc in snapshot.docs) {
-          if (doc.exists && doc.data() != null) {
-            Map<String, dynamic> _matchData =
-                doc.data() as Map<String, dynamic>;
-            final String _likeUID = _matchData["likeUID"];
-            final DocumentSnapshot _likeUserData =
-                await _db.collection("userData").doc(_likeUID).get();
-            if (_likeUserData.exists && _likeUserData.data() != null) {
-              final Map _userData = _likeUserData.data() as Map;
-              result.add(MatchCardData(
-                  name: _userData["name"],
-                  age: _userData["age"],
-                  matchID: _likeUID,
                   image: _userData["imageURLs"][0],
                   dateTypes: _userData["dates"]));
               yield result;
@@ -121,25 +50,25 @@ class MatchDataService {
     }
   }
 
-  Stream<List<MatchCardData>?> get newMatchData async* {
+  Stream<List<MatchData>?> get datesStream async* {
     Stream<QuerySnapshot> _data = _db
         .collection("userData")
         .doc(currentUserUID)
         .collection("matches")
         .where("match", isEqualTo: true)
         .snapshots();
-    final List<MatchCardData> result = <MatchCardData>[];
+    final List<MatchData> result = <MatchData>[];
     await for (QuerySnapshot snapshot in _data) {
       if (snapshot.docs.isNotEmpty) {
         for (QueryDocumentSnapshot doc in snapshot.docs) {
           if (doc.exists && doc.data() != null) {
             final Map _matchData = doc.data() as Map;
             final String _matchUID = _matchData["matchUID"];
-            final DocumentSnapshot _likeUserData =
-            await _db.collection("userData").doc(_matchUID).get();
-            if (_likeUserData.exists && _likeUserData.data() != null) {
-              final Map _userData = _likeUserData.data() as Map;
-              result.add(MatchCardData(
+            final DocumentSnapshot _matchUserData =
+                await _db.collection("userData").doc(_matchUID).get();
+            if (_matchUserData.exists && _matchUserData.data() != null) {
+              final Map _userData = _matchUserData.data() as Map;
+              result.add(MatchData(
                   name: _userData["name"],
                   matchID: _matchUID,
                   venue: _matchData["venue"],
@@ -154,82 +83,42 @@ class MatchDataService {
     }
   }
 
-  static Future<void> setMatchData({required String currentDiscoverUID}) async {
+  static Future<void> setMatchData(
+      {required String currentDiscoverUID, required double userRating}) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
     try {
       await db
-          .collection("matchData")
-          .doc(currentUserUID! + currentDiscoverUID)
+          .collection("userData")
+          .doc(currentUserUID)
+          .collection("matches")
+          .doc(currentDiscoverUID)
           .set({
-        "likeUID": currentUserUID,
         "matchUID": currentDiscoverUID,
-        "match": false
+        "match": false,
+        "userRating": userRating
+      });
+      await db
+          .collection("userData")
+          .doc(currentDiscoverUID)
+          .collection("matches")
+          .doc(currentUserUID)
+          .set({
+        "matchUID": currentUserUID,
+        "match": false,
+        "otherUserRating": userRating
       });
     } catch (e) {
       print(e);
     }
   }
 
-  static Future<void> setSubCollectionMatchData(
-      {required String currentDiscoverUID}) async {
-    final FirebaseFirestore db = FirebaseFirestore.instance;
-    try {
-      await db
-          .collection("userData")
-          .doc(currentUserUID)
-          .collection("matches")
-          .doc(currentDiscoverUID)
-          .set({"matchUID": currentDiscoverUID, "match": false});
-      await db
-          .collection("userData")
-          .doc(currentDiscoverUID)
-          .collection("matches")
-          .doc(currentUserUID)
-          .set({"matchUID": currentUserUID, "match": false});
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  static Future<void> updateMatchData(
-      {required otherUserUID,
-      required String dateType,
-      required DateTime dateTime,
-      required String venue}) async {
-    final FirebaseFirestore db = FirebaseFirestore.instance;
-    try {
-      await db
-          .collection("matchData")
-          .doc(currentUserUID! + otherUserUID)
-          .update({
-        "venue": venue,
-        "match": true,
-        "dateType": dateType,
-        "dateTime": dateTime
-      });
-    } catch (e) {
-      if (e is FirebaseException &&
-          e.message == "Some requested document was not found.") {
-        await db
-            .collection("matchData")
-            .doc(otherUserUID + currentUserUID)
-            .update({
-          "venue": venue,
-          "match": true,
-          "dateType": dateType,
-          "dateTime": dateTime,
-        });
-      } else {
-        print(e);
-      }
-    }
-  }
-
-  static Future<void> updateMatchSubcollection(
-      {required otherUserUID,
-      required String dateType,
-      required DateTime dateTime,
-      required String venue}) async {
+  static Future<void> updateMatchData({
+    required otherUserUID,
+    required String dateType,
+    required DateTime dateTime,
+    required String venue,
+    double? userRating,
+  }) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
     try {
       await db
@@ -242,6 +131,7 @@ class MatchDataService {
         "match": true,
         "dateType": dateType,
         "dateTime": dateTime,
+        "userRating" : userRating
       });
       await db
           .collection("userData")
@@ -253,6 +143,7 @@ class MatchDataService {
         "match": true,
         "dateType": dateType,
         "dateTime": dateTime,
+        "otherUserRating" : userRating
       });
     } catch (e) {
       print(e);
@@ -260,8 +151,8 @@ class MatchDataService {
   }
 }
 
-class MatchCardData {
-  MatchCardData(
+class MatchData {
+  MatchData(
       {required this.name,
       required this.matchID,
       this.image,

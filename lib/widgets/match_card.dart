@@ -1,30 +1,22 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:rendezvous_beta_v3/animations/bounce_animation.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
-import 'package:rendezvous_beta_v3/dialogues/date_time_dialogue.dart';
-import 'package:rendezvous_beta_v3/services/google_places_service.dart';
 import 'package:rendezvous_beta_v3/widgets/tile_card.dart';
 import 'package:intl/intl.dart';
-
-import '../models/users.dart';
 import '../services/match_data_service.dart';
 
-class MatchCard extends StatefulWidget {
+class DateCard extends StatefulWidget {
   // TODO: figure out how to check if they have unread messages
-  const MatchCard({Key? key, required this.data}) : super(key: key);
-  final MatchCardData data;
+  const DateCard({Key? key, required this.data}) : super(key: key);
+  final MatchData data;
 
   @override
-  State<MatchCard> createState() => _MatchCardState();
+  State<DateCard> createState() => _DateCardState();
 }
 
-class _MatchCardState extends State<MatchCard>
+class _DateCardState extends State<DateCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late bool _beenTapped;
-  DateTime? _dateTime;
 
   Widget get _circleAvatar => Align(
         alignment: const Alignment(.75, 0.25),
@@ -67,7 +59,6 @@ class _MatchCardState extends State<MatchCard>
   void initState() {
     _controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 200));
-    _beenTapped = widget.data.dateTime != null;
     super.initState();
   }
 
@@ -77,12 +68,12 @@ class _MatchCardState extends State<MatchCard>
     super.dispose();
   }
 
-  void _setDateTime(DateTime date, TimeOfDay time) {
-    setState(() {
-      _dateTime =
-          DateTime(date.year, date.month, date.day, time.hour, time.minute);
-    });
-  }
+  // void _setDateTime(DateTime date, TimeOfDay time) {
+  //   setState(() {
+  //     _dateTime =
+  //         DateTime(date.year, date.month, date.day, time.hour, time.minute);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
