@@ -142,7 +142,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                         if (_dateTime != null &&
                             await GooglePlacesService.checkDateTime(
                                 _dateTime!, _venueData)) {
-                          await MatchDataService.updateMatchData(
+                          await MatchDataService.updateMatchSubcollection(
                               otherUserUID: currentDiscoverUID,
                               dateType: _dateType,
                               dateTime: _dateTime!,
@@ -162,7 +162,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                         }
                       }
                     } else {
-                      await MatchDataService.setMatchData(
+                      await MatchDataService.setSubCollectionMatchData(
                           currentDiscoverUID: currentDiscoverUID);
                     }
                   }

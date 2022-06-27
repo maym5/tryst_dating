@@ -81,15 +81,23 @@ import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 //   }
 // }
 
-class DatesPage extends StatelessWidget {
+class DatesPage extends StatefulWidget {
   const DatesPage({Key? key}) : super(key: key);
+
+  @override
+  State<DatesPage> createState() => _DatesPageState();
+}
+
+class _DatesPageState extends State<DatesPage> {
+  final Stream<List<MatchCardData>?> _datesData = MatchDataService().newMatchData;
+
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 15),
       child: StreamBuilder(
-        stream: MatchDataService().datesData,
+        stream: _datesData,
           builder: (BuildContext context, AsyncSnapshot<List<MatchCardData>?> dateSnapshot) {
           if (dateSnapshot.hasData && !dateSnapshot.hasError) {
             return ListView.builder(
@@ -124,23 +132,17 @@ class LikesPage extends StatefulWidget {
 }
 
 class _LikesPageState extends State<LikesPage> {
-
-  late Stream<List<MatchCardData>?> matchData;
-
-  @override
-  void initState() {
-    matchData = MatchDataService().matchData;
-    super.initState();
-  }
+  final Stream<List<MatchCardData>?> _likesData = MatchDataService().newLikesData;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 15),
-      child: StreamBuilder(
-          stream: matchData,
+      child: StreamBuilder<List<MatchCardData>?>(
+          stream: _likesData,
           builder: (BuildContext context, AsyncSnapshot<List<MatchCardData>?> likeSnapshot) {
             if (likeSnapshot.hasData && !likeSnapshot.hasError) {
+              // TODO: make this a reorderable gridview
               return GridView.builder(
                 itemCount: likeSnapshot.data!.length,
                 itemBuilder: (BuildContext context, int index) => MatchTile(data: likeSnapshot.data![index]),

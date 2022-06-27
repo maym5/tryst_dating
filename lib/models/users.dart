@@ -73,11 +73,13 @@ class UserData with ChangeNotifier {
   Future<void> uploadUserData() async {
     final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
     User? _user = retrieveUser();
+    print(_user?.uid);
     if (_user != null) {
       await UserImages.uploadImages(_user);
       Map<String, dynamic> _userData = UserData.toJson();
       _fireStore.collection("userData").doc(_user.uid).set(_userData);
       await UserData().setLocation();
+      // _fireStore.collection("userData").doc(_user.uid).collection("matches");
     }
   }
 

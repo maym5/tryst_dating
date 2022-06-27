@@ -22,34 +22,6 @@ class _MatchTileState extends State<MatchTile> with TickerProviderStateMixin {
   late bool _beenTapped;
   late final AnimationController _controller;
 
-  // List? _commonDates = widget.data.dateTypes
-  //     ?.where((element) => UserData.dates.contains(element))
-  //     .toList();
-  // if (_commonDates != null) {
-  // print("have common dates");
-  // final _dateType =
-  // _commonDates[Random().nextInt(_commonDates.length)];
-  // final Map _venue =
-  // await GooglePlacesService(venueType: _dateType).venue;
-  // // deal with google places edge cases
-  // print(_venue["status"]);
-  // if (_venue["status"] == "OK") {
-  // print("venue status OK");
-  // // TODO: if they dismiss dialogue dont show calendar and clock
-  // await DateTimeDialogue(setDateTime: _setDateTime)
-  //     .buildCalendarDialogue(context,
-  // venueName: _venue["name"], matchName: widget.data.name);
-  // final _isOpen = await GooglePlacesService.checkDateTime(
-  // _dateTime!, _venue);
-  // if (_dateTime != null && _isOpen) {
-  // print("date time is alright");
-  // await MatchDataService.updateMatchData(
-  // otherUserUID: widget.data.matchID,
-  // dateType: _dateType,
-  // dateTime: _dateTime!,
-  // venue: _venue["name"]);
-  // print("added data to firebase");
-
   void _setDateTime(DateTime date, TimeOfDay time) {
     setState(() {
       _dateTime =
@@ -64,6 +36,7 @@ class _MatchTileState extends State<MatchTile> with TickerProviderStateMixin {
   }
 
   void _onTapUp(TapUpDetails details) async {
+    // TODO: refactor this inefficient and dumb
     setState(() {
       _controller.reverse();
     });
@@ -87,12 +60,15 @@ class _MatchTileState extends State<MatchTile> with TickerProviderStateMixin {
             await GooglePlacesService.checkDateTime(_dateTime!, _venue);
         if (_dateTime != null && _isOpen) {
           print("date time is alright");
-          await MatchDataService.updateMatchData(
+          await MatchDataService.updateMatchSubcollection(
               otherUserUID: widget.data.matchID,
               dateType: _dateType,
               dateTime: _dateTime!,
               venue: _venue["name"]);
           print("added data to firebase");
+          setState(() {
+            _beenTapped = true;
+          });
         } else if (!_isOpen) {
           setState(() {
             _beenTapped = false;
