@@ -179,6 +179,7 @@ class DateOptionsBar extends StatelessWidget {
       : super(key: key);
   final bool hasUnreadMessages;
 
+
   void _onMessageTap() {
     // TODO: add messaging tap
   }
@@ -218,30 +219,6 @@ class DateOptionsBar extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[_messageButton, _detailsButton],
     );
-  }
-}
-
-class MatchCardOverlay extends StatelessWidget {
-  const MatchCardOverlay({Key? key, required this.activeDate})
-      : super(key: key);
-  final bool activeDate;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        alignment: const Alignment(-0.85, 0.6),
-        decoration: BoxDecoration(
-            color: !activeDate
-                ? kDarkTransparent.withOpacity(0.3)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(25)),
-        child: !activeDate
-            ? Text(
-                "Tap to ask out",
-                style:
-                    kTextStyle.copyWith(color: Colors.redAccent, fontSize: 20),
-              )
-            : null);
   }
 }
 

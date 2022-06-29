@@ -1,19 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:rendezvous_beta_v3/services/authentication.dart';
-
 import '../models/users.dart';
 
 class DiscoverService {
   DiscoverService();
   final Map<String, dynamic> currentUserData = UserData.toJson();
 
-  Set<String> getQueryUID(QuerySnapshot snapshot) {
+  Set<String> getQueryUID(QuerySnapshot snapshot, {bool matchData = false}) {
     final Set<String> uids = {};
     final List<QueryDocumentSnapshot> _data = snapshot.docs;
     for (var doc in _data) {
-      final Map documentData = doc.data() as Map;
-      uids.add(documentData["uid"]);
+      if (!matchData) {
+        final Map documentData = doc.data() as Map;
+        uids.add(documentData["uid"]);
+      } else {
+        final Map documentData = doc.data() as Map;
+        uids.add(documentData["matchUID"]);
+      }
     }
     return uids;
   }
@@ -52,7 +56,7 @@ class DiscoverService {
 
     final alreadySeen =
         await discoverRef.doc(currentUserUID).collection("matches").get();
-    final Set<String> alreadySeenUID = getQueryUID(alreadySeen);
+    final Set<String> alreadySeenUID = getQueryUID(alreadySeen, matchData: true);
 
     // check that they aren't matched
     for (QueryDocumentSnapshot doc in dateMatches.docs) {
