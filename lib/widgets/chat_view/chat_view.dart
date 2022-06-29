@@ -7,11 +7,11 @@ import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 
 class ChatView extends StatefulWidget {
   const ChatView(
-      {Key? key, required this.image, required this.name, required this.sender})
+      {Key? key, required this.image, required this.name, required this.match})
       : super(key: key);
   final String name;
   final String image;
-  final String sender;
+  final String match;
 
   @override
   State<ChatView> createState() => _ChatViewState();
@@ -21,24 +21,36 @@ class _ChatViewState extends State<ChatView> {
   String _messageText = "";
   final TextEditingController _textController = TextEditingController();
 
-  AppBar get _appBar => AppBar(
-        centerTitle: true,
-        title: Column(
-          children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(widget.image),
-              radius: 20,
-            ),
-            const SizedBox(height: 10),
-            Text(widget.name, style: kTextStyle.copyWith(fontSize: 15))
-          ],
+  PreferredSize get _appBar => PreferredSize(
+    preferredSize: const Size(double.infinity, 75),
+    child: AppBar(
+      toolbarHeight: 75,
+          leading: BackButton(
+            color: Colors.redAccent,
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          centerTitle: true,
+          title: Column(
+            children: [
+              CircleAvatar(
+                backgroundImage: NetworkImage(widget.image),
+                radius: 20,
+              ),
+              const SizedBox(height: 10),
+              Text(widget.name, style: kTextStyle.copyWith(fontSize: 15))
+            ],
+          ),
         ),
-      );
+  );
 
   Widget get _chatBox => Row(
         children: [
           Expanded(
             child: TextField(
+              decoration: kTextFieldDecoration.copyWith(hintText: "ex. How you doin'!"),
+              cursorColor: Colors.redAccent,
               onChanged: (chat) {
                 setState(() {
                   _messageText = chat;
@@ -48,7 +60,7 @@ class _ChatViewState extends State<ChatView> {
           ),
           TextButton(
               onPressed: () {
-                MessengingService().sendMessage(_messageText, widget.sender);
+                MessengingService().sendMessage(_messageText, widget.match);
                 setState(() {
                   _messageText = "";
                   _textController.text = _messageText;
@@ -61,7 +73,13 @@ class _ChatViewState extends State<ChatView> {
       );
 
   late final Stream<List<MessengerData>> _messagesStream =
-      MessengingService().messageStream(widget.sender);
+      MessengingService().messageStream(widget.match);
+
+  @override
+  void initState() {
+    MessengingService().markMessagesRead(widget.match);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +104,7 @@ class _ChatViewState extends State<ChatView> {
                   alignment: Alignment.center,
                   child: Text(
                       "Get the ball rolling and send ${widget.name} a message!",
+                      textAlign: TextAlign.center,
                       style: kTextStyle),
                 );
                 // no data
@@ -95,6 +114,7 @@ class _ChatViewState extends State<ChatView> {
                   alignment: Alignment.center,
                   child: Text(
                       "Oops! There's been an error, that's our bad. Try again later",
+                      textAlign: TextAlign.center,
                       style: kTextStyle),
                 );
               }

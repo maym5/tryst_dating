@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
+import 'package:rendezvous_beta_v3/services/messaging_service.dart';
+import 'package:rendezvous_beta_v3/widgets/chat_view/chat_view.dart';
 import 'package:rendezvous_beta_v3/widgets/tile_card.dart';
 import 'package:intl/intl.dart';
 import '../services/match_data_service.dart';
@@ -29,30 +31,17 @@ class _DateCardState extends State<DateCard>
       );
 
   Widget get ui {
-    // Stack(
-    //   children: <Widget>[
-    //     NameAndButtons(
-    //         name: widget.data.name,
-    //         hasUnreadMessages: false,
-    //         confirmedDate: widget.data.dateTime != null,
-    //         dateType: widget.data.dateType),
-    //     MatchDateType(dateTypes: widget.data.dateTypes!),
-    //     _circleAvatar,
-    //     MatchCardOverlay(activeDate: _beenTapped)
-    //   ],
-    // );
-      // date layout
-      return Stack(
-        children: <Widget>[
-          NameAndButtons(
-              name: widget.data.name,
-              hasUnreadMessages: false,
-              confirmedDate: widget.data.dateTime != null,
-              dateType: widget.data.dateType),
-          _circleAvatar,
-          DateInfo(venue: widget.data.venue!, dateTime: widget.data.dateTime!, dateType: widget.data.dateType!,),
-        ],
-      );
+    return Stack(
+      children: <Widget>[
+        NameAndButtons(data: widget.data),
+        _circleAvatar,
+        DateInfo(
+          venue: widget.data.venue!,
+          dateTime: widget.data.dateTime!,
+          dateType: widget.data.dateType!,
+        ),
+      ],
+    );
   }
 
   @override
@@ -68,13 +57,6 @@ class _DateCardState extends State<DateCard>
     super.dispose();
   }
 
-  // void _setDateTime(DateTime date, TimeOfDay time) {
-  //   setState(() {
-  //     _dateTime =
-  //         DateTime(date.year, date.month, date.day, time.hour, time.minute);
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -88,7 +70,11 @@ class _DateCardState extends State<DateCard>
 }
 
 class MatchName extends StatelessWidget {
-  const MatchName({Key? key, required this.name, this.dateType, required this.confirmedDate})
+  const MatchName(
+      {Key? key,
+      required this.name,
+      this.dateType,
+      required this.confirmedDate})
       : super(key: key);
   final String name;
   final String? dateType;
@@ -108,7 +94,11 @@ class MatchName extends StatelessWidget {
 }
 
 class DateInfo extends StatelessWidget {
-  DateInfo({Key? key, required this.venue, required this.dateTime, required this.dateType})
+  DateInfo(
+      {Key? key,
+      required this.venue,
+      required this.dateTime,
+      required this.dateType})
       : super(key: key);
   final String venue;
   final String dateType;
@@ -127,8 +117,10 @@ class DateInfo extends StatelessWidget {
       } else {
         char.toLowerCase();
         dateTypeString += char;
-      } index++;
-  } return dateTypeString + " date";
+      }
+      index++;
+    }
+    return dateTypeString + " date";
   }
 
   Widget get _dateDescription => Align(
@@ -142,15 +134,19 @@ class DateInfo extends StatelessWidget {
             children: <Widget>[
               Row(
                 children: [
-                  const Icon(Icons.where_to_vote, color: Colors.white, size: 18),
-                  const SizedBox(width: 5,),
+                  const Icon(Icons.where_to_vote,
+                      color: Colors.white, size: 18),
+                  const SizedBox(
+                    width: 5,
+                  ),
                   Text(_dateType)
                 ],
               ),
               const SizedBox(height: 10),
               Row(
                 children: [
-                  const Icon(Icons.add_business_rounded, color: Colors.white, size: 18),
+                  const Icon(Icons.add_business_rounded,
+                      color: Colors.white, size: 18),
                   const SizedBox(width: 5),
                   Text(venue),
                 ],
@@ -174,18 +170,39 @@ class DateInfo extends StatelessWidget {
   }
 }
 
-class DateOptionsBar extends StatelessWidget {
-  const DateOptionsBar({Key? key, required this.hasUnreadMessages})
-      : super(key: key);
-  final bool hasUnreadMessages;
+class DateOptionsBar extends StatefulWidget {
+  const DateOptionsBar({Key? key, required this.matchData}) : super(key: key);
+  // final bool hasUnreadMessages;
+  final MatchData matchData;
 
+  @override
+  State<DateOptionsBar> createState() => _DateOptionsBarState();
+}
+
+class _DateOptionsBarState extends State<DateOptionsBar> {
+  bool hasUnreadMessages = false;
 
   void _onMessageTap() {
-    // TODO: add messaging tap
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ChatView(
+                image: widget.matchData.image!,
+                name: widget.matchData.name,
+                match: widget.matchData.matchID)));
   }
 
   void _onDetailsTap() {
     // TODO: add details tap
+  }
+
+  Future<bool> get _hasUnreadMessages async {
+    return await MessengingService()
+        .hasUnreadMessages(widget.matchData.matchID);
+  }
+
+  void _setUnreadMessages() async {
+    hasUnreadMessages = await _hasUnreadMessages;
   }
 
   Widget get _messageButton => GestureDetector(
@@ -212,6 +229,12 @@ class DateOptionsBar extends StatelessWidget {
           size: 25,
         ),
       );
+
+  @override
+  void initState() {
+    _setUnreadMessages();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -286,15 +309,13 @@ class MatchDateType extends StatelessWidget {
 class NameAndButtons extends StatelessWidget {
   const NameAndButtons(
       {Key? key,
-      required this.name,
-      required this.hasUnreadMessages,
-        required this.confirmedDate,
-      this.dateType})
+      required this.data
+      })
       : super(key: key);
-  final String name;
-  final bool hasUnreadMessages;
-  final String? dateType;
-  final bool confirmedDate;
+  final MatchData data;
+  // final String name;
+  // final String? dateType;
+  // final bool confirmedDate;
 
   @override
   Widget build(BuildContext context) {
@@ -306,14 +327,18 @@ class NameAndButtons extends StatelessWidget {
             width: 10,
           ),
           Flexible(
-              child: MatchName(name: name, dateType: dateType, confirmedDate: confirmedDate,),
+              child: MatchName(
+                name: data.name,
+                dateType: data.dateType,
+                confirmedDate: data.dateTime != null,
+              ),
               flex: 4,
               fit: FlexFit.tight),
           const SizedBox(
             width: 10,
           ),
           Flexible(
-            child: DateOptionsBar(hasUnreadMessages: hasUnreadMessages),
+            child: DateOptionsBar(matchData: data),
             flex: 1,
           )
         ],
