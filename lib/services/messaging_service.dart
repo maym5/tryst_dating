@@ -13,6 +13,7 @@ class MessengingService {
         .collection("matches")
         .doc(targetUID)
         .collection("messages")
+        .where("sender", isEqualTo: targetUID)
         .where("read", isEqualTo: false)
         .get();
     return unreadMessages.size != 0;
@@ -57,22 +58,12 @@ class MessengingService {
         .get();
     _querySnapshot.docs.forEach((doc) {
       if (doc.exists && doc.data() != null) {
-        doc.reference.update({"read": true});
+        final Map _data = doc.data() as Map;
+        if (_data["sender"] != currentUserUID) {
+          doc.reference.update({"read": true});
+        }
       }
     });
-    // final List<DocumentSnapshot> docs = _querySnapshot.docs;
-    // for (DocumentSnapshot doc in docs) {
-    //   if (doc.exists && doc.data() != null) {
-    //     final Map<String, dynamic> _data = doc.data() as Map<String, dynamic>;
-    //     if (_data["read"] == false) {
-    //       _db.collection("userData")
-    //           .doc(currentUserUID)
-    //           .collection("matches")
-    //           .doc(targetUID)
-    //           .collection("messages").doc(_data["docRef"]).update({"read" : true});
-    //     }
-    //   }
-    // }
   }
 
   Stream<QuerySnapshot> messageStream(String targetUID) async* {

@@ -23,9 +23,9 @@ class _ChatViewState extends State<ChatView> {
   final TextEditingController _textController = TextEditingController();
 
   PreferredSize get _appBar => PreferredSize(
-    preferredSize: const Size(double.infinity, 75),
-    child: AppBar(
-      toolbarHeight: 75,
+        preferredSize: const Size(double.infinity, 75),
+        child: AppBar(
+          toolbarHeight: 75,
           leading: BackButton(
             color: Colors.redAccent,
             onPressed: () {
@@ -44,15 +44,16 @@ class _ChatViewState extends State<ChatView> {
             ],
           ),
         ),
-  );
+      );
 
   Widget get _chatBox => SafeArea(
-    child: Row(
+        child: Row(
           children: [
             Expanded(
               child: TextField(
                 controller: _textController,
-                decoration: kTextFieldDecoration.copyWith(hintText: "ex. How you doin'!"),
+                decoration: kTextFieldDecoration.copyWith(
+                    hintText: "ex. How you doin'!"),
                 cursorColor: Colors.redAccent,
                 onChanged: (chat) {
                   setState(() {
@@ -74,7 +75,7 @@ class _ChatViewState extends State<ChatView> {
                         color: Colors.redAccent, fontSize: 15)))
           ],
         ),
-  );
+      );
 
   late final Stream<QuerySnapshot> _messagesStream;
 
@@ -93,7 +94,10 @@ class _ChatViewState extends State<ChatView> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          MessagesStreamBuilder(stream: _messagesStream, name: widget.name,),
+          MessagesStreamBuilder(
+            stream: _messagesStream,
+            name: widget.name,
+          ),
           _chatBox
         ],
       ),
@@ -101,27 +105,42 @@ class _ChatViewState extends State<ChatView> {
   }
 }
 
-class MessagesStreamBuilder extends StatelessWidget {
-  const MessagesStreamBuilder({Key? key, required this.stream, required this.name}) : super(key: key);
+class MessagesStreamBuilder extends StatefulWidget {
+  const MessagesStreamBuilder(
+      {Key? key, required this.stream, required this.name})
+      : super(key: key);
   final Stream<QuerySnapshot> stream;
   final String name;
 
   @override
+  State<MessagesStreamBuilder> createState() => _MessagesStreamBuilderState();
+}
+
+class _MessagesStreamBuilderState extends State<MessagesStreamBuilder> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: stream,
-      builder: (BuildContext context,
-          AsyncSnapshot<QuerySnapshot> snapshot) {
+      stream: widget.stream,
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasData && !snapshot.hasError) {
           final messages = snapshot.data!.docs;
           List<MessengerData> messagesData = [];
           for (var message in messages) {
             final Map data = message.data() as Map;
-            final MessengerData messengerData = MessengerData(message: data["message"], sender: data["sender"]);
+            final MessengerData messengerData =
+                MessengerData(message: data["message"], sender: data["sender"]);
             messagesData.add(messengerData);
           }
           return Expanded(
             child: ListView.builder(
+                controller: _scrollController,
                 itemCount: messagesData.length,
                 itemBuilder: (context, index) {
                   if (messagesData[index].sender == currentUserUID) {
@@ -135,7 +154,7 @@ class MessagesStreamBuilder extends StatelessWidget {
           return Container(
             alignment: Alignment.center,
             child: Text(
-                "Get the ball rolling and send $name a message!",
+                "Get the ball rolling and send ${widget.name} a message!",
                 textAlign: TextAlign.center,
                 style: kTextStyle),
           );
@@ -154,4 +173,3 @@ class MessagesStreamBuilder extends StatelessWidget {
     );
   }
 }
-
