@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/services/authentication.dart';
@@ -45,39 +46,42 @@ class _ChatViewState extends State<ChatView> {
         ),
   );
 
-  Widget get _chatBox => Row(
-        children: [
-          Expanded(
-            child: TextField(
-              decoration: kTextFieldDecoration.copyWith(hintText: "ex. How you doin'!"),
-              cursorColor: Colors.redAccent,
-              onChanged: (chat) {
-                setState(() {
-                  _messageText = chat;
-                });
-              },
+  Widget get _chatBox => SafeArea(
+    child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _textController,
+                decoration: kTextFieldDecoration.copyWith(hintText: "ex. How you doin'!"),
+                cursorColor: Colors.redAccent,
+                onChanged: (chat) {
+                  setState(() {
+                    _messageText = chat;
+                  });
+                },
+              ),
             ),
-          ),
-          TextButton(
-              onPressed: () {
-                MessengingService().sendMessage(_messageText, widget.match);
-                setState(() {
-                  _messageText = "";
-                  _textController.text = _messageText;
-                });
-              },
-              child: Text("SEND",
-                  style: kTextStyle.copyWith(
-                      color: Colors.redAccent, fontSize: 15)))
-        ],
-      );
+            TextButton(
+                onPressed: () {
+                  MessengingService().sendMessage(_messageText, widget.match);
+                  setState(() {
+                    _messageText = "";
+                    _textController.text = _messageText;
+                  });
+                },
+                child: Text("SEND",
+                    style: kTextStyle.copyWith(
+                        color: Colors.redAccent, fontSize: 15)))
+          ],
+        ),
+  );
 
-  late final Stream<List<MessengerData>> _messagesStream =
-      MessengingService().messageStream(widget.match);
+  late final Stream<QuerySnapshot> _messagesStream;
 
   @override
   void initState() {
     MessengingService().markMessagesRead(widget.match);
+    _messagesStream = MessengingService().messageStream(widget.match);
     super.initState();
   }
 
@@ -85,44 +89,69 @@ class _ChatViewState extends State<ChatView> {
   Widget build(BuildContext context) {
     return PageBackground(
       appBar: _appBar,
-      body: ListView(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          StreamBuilder(
-            stream: _messagesStream,
-            builder: (BuildContext context,
-                AsyncSnapshot<List<MessengerData>> snapshot) {
-              if (snapshot.hasData && !snapshot.hasError) {
-                return AnimatedList(itemBuilder: (context, index, animation) {
-                  if (snapshot.data![index].sender == currentUserUID) {
-                    return OutBubble(message: snapshot.data![index].message);
-                  } else {
-                    return InBubble(message: snapshot.data![index].message);
-                  }
-                });
-              } else if (!snapshot.hasData) {
-                return Container(
-                  alignment: Alignment.center,
-                  child: Text(
-                      "Get the ball rolling and send ${widget.name} a message!",
-                      textAlign: TextAlign.center,
-                      style: kTextStyle),
-                );
-                // no data
-              } else {
-                // oops theres an error
-                return Container(
-                  alignment: Alignment.center,
-                  child: Text(
-                      "Oops! There's been an error, that's our bad. Try again later",
-                      textAlign: TextAlign.center,
-                      style: kTextStyle),
-                );
-              }
-            },
-          ),
+          MessagesStreamBuilder(stream: _messagesStream, name: widget.name,),
           _chatBox
         ],
       ),
     );
   }
 }
+
+class MessagesStreamBuilder extends StatelessWidget {
+  const MessagesStreamBuilder({Key? key, required this.stream, required this.name}) : super(key: key);
+  final Stream<QuerySnapshot> stream;
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: stream,
+      builder: (BuildContext context,
+          AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasData && !snapshot.hasError) {
+          final messages = snapshot.data!.docs;
+          List<MessengerData> messagesData = [];
+          for (var message in messages) {
+            final Map data = message.data() as Map;
+            final MessengerData messengerData = MessengerData(message: data["message"], sender: data["sender"]);
+            messagesData.add(messengerData);
+          }
+          return Expanded(
+            child: ListView.builder(
+                itemCount: messagesData.length,
+                itemBuilder: (context, index) {
+                  if (messagesData[index].sender == currentUserUID) {
+                    return OutBubble(message: messagesData[index].message);
+                  } else {
+                    return InBubble(message: messagesData[index].message);
+                  }
+                }),
+          );
+        } else if (!snapshot.hasData) {
+          return Container(
+            alignment: Alignment.center,
+            child: Text(
+                "Get the ball rolling and send $name a message!",
+                textAlign: TextAlign.center,
+                style: kTextStyle),
+          );
+          // no data
+        } else {
+          // oops theres an error
+          return Container(
+            alignment: Alignment.center,
+            child: Text(
+                "Oops! There's been an error, that's our bad. Try again later",
+                textAlign: TextAlign.center,
+                style: kTextStyle),
+          );
+        }
+      },
+    );
+  }
+}
+

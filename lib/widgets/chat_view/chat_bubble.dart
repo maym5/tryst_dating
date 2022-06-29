@@ -8,36 +8,39 @@ class InBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Transform(
-          alignment: Alignment.center,
-          transform: Matrix4.rotationY(pi),
-          child: CustomPaint(
-            painter: Triangle(Colors.grey.shade300),
+    return Padding(
+      padding: const EdgeInsets.only(left: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.rotationY(pi),
+            child: CustomPaint(
+              painter: Triangle(Colors.grey.shade300),
+            ),
           ),
-        ),
-        Flexible(
-          child: Container(
-            padding: const EdgeInsets.all(15),
-            margin: const EdgeInsets.only(bottom: 5),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(19),
-                bottomLeft: Radius.circular(19),
-                bottomRight: Radius.circular(19),
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.all(15),
+              margin: const EdgeInsets.only(bottom: 5),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(19),
+                  bottomLeft: Radius.circular(19),
+                  bottomRight: Radius.circular(19),
+                ),
+              ),
+              child: Text(
+                message,
+                style: const TextStyle(color: Colors.black, fontSize: 15),
               ),
             ),
-            child: Text(
-              message,
-              style: const TextStyle(color: Colors.black, fontSize: 15),
-            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -48,31 +51,34 @@ class OutBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Flexible(
-          child: Container(
-            padding: const EdgeInsets.all(15),
-            margin: const EdgeInsets.only(bottom: 5),
-            decoration: const BoxDecoration(
-              // color: Colors.redAccent,
-              gradient: kButtonGradient,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(19),
-                bottomLeft: Radius.circular(19),
-                bottomRight: Radius.circular(19),
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.all(15),
+              margin: const EdgeInsets.only(bottom: 5),
+              decoration: const BoxDecoration(
+                // color: Colors.redAccent,
+                gradient: kButtonGradient,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(19),
+                  bottomLeft: Radius.circular(19),
+                  bottomRight: Radius.circular(19),
+                ),
+              ),
+              child: Text(
+                message,
+                style: const TextStyle(color: Colors.white, fontSize: 15),
               ),
             ),
-            child: Text(
-              message,
-              style: const TextStyle(color: Colors.white, fontSize: 15),
-            ),
           ),
-        ),
-        CustomPaint(painter: Triangle(Colors.redAccent)),
-      ],
+          CustomPaint(painter: Triangle(Colors.redAccent)),
+        ],
+      ),
     );
   }
 }
