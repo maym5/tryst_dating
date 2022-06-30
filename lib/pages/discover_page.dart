@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
-import 'package:rendezvous_beta_v3/dialogues/pick_another_day_dialogue.dart';
 import 'package:rendezvous_beta_v3/services/authentication.dart';
 import 'package:rendezvous_beta_v3/services/google_places_service.dart';
 import 'package:rendezvous_beta_v3/services/match_data_service.dart';
@@ -23,7 +22,6 @@ class DiscoverPage extends StatefulWidget {
 }
 
 class _DiscoverPageState extends State<DiscoverPage> {
-  // TODO: handle open hours
   late double _userRating;
   late int _previousPage;
   late PageController _pageController;
@@ -212,32 +210,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 }),
       ),
     );
-  }
-}
-
-class DiscoverData {
-  DiscoverData(
-      this.name, this.age, this.images, this.dates, this.bio, this.uid);
-  final String name;
-  final int age;
-  final List<String> dates;
-  final List<String> images;
-  final String bio;
-  final String uid;
-
-  static List<String> listToListOfStrings(List list) {
-    final List<String> aListOfStrings = [];
-    for (var item in list) {
-      aListOfStrings.add(item.toString());
-    }
-    return aListOfStrings;
-  }
-
-  factory DiscoverData.getDiscoverData(Map<String, dynamic> data) {
-    final List<String> _dates = listToListOfStrings(data["dates"]);
-    final List<String> _images = listToListOfStrings(data["imageURLs"]);
-    return DiscoverData(
-        data["name"], data["age"], _images, _dates, data["bio"], data["uid"]);
   }
 }
 

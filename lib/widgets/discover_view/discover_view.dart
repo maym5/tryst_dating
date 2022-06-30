@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/pages/discover_page.dart';
 import 'package:rendezvous_beta_v3/widgets/discover_view/ratings_circle.dart';
 
+import '../../services/discover_service.dart';
 import '../profile_view/profile_view.dart';
 
 

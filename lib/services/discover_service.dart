@@ -98,3 +98,29 @@ class DiscoverService {
     }
   }
 }
+
+class DiscoverData {
+  DiscoverData(
+      this.name, this.age, this.images, this.dates, this.bio, this.uid);
+  final String name;
+  final int age;
+  final List<String> dates;
+  final List<String> images;
+  final String bio;
+  final String uid;
+
+  static List<String> listToListOfStrings(List list) {
+    final List<String> aListOfStrings = [];
+    for (var item in list) {
+      aListOfStrings.add(item.toString());
+    }
+    return aListOfStrings;
+  }
+
+  factory DiscoverData.getDiscoverData(Map<String, dynamic> data) {
+    final List<String> _dates = listToListOfStrings(data["dates"]);
+    final List<String> _images = listToListOfStrings(data["imageURLs"]);
+    return DiscoverData(
+        data["name"], data["age"], _images, _dates, data["bio"], data["uid"]);
+  }
+}
