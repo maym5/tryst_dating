@@ -2,10 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rendezvous_beta_v3/services/authentication.dart';
 import 'dart:async';
 
+import '../models/users.dart';
+
 class MatchDataService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  DateTime _convertTimeStamp(dynamic dateValue) {
+  static DateTime convertTimeStamp(dynamic dateValue) {
     if (dateValue is DateTime) {
       return dateValue;
     } else if (dateValue is String) {
@@ -73,7 +75,7 @@ class MatchDataService {
                   matchID: _matchUID,
                   venue: _matchData["venue"],
                   dateType: _matchData["dateType"],
-                  dateTime: _convertTimeStamp(_matchData["dateTime"]),
+                  dateTime: convertTimeStamp(_matchData["dateTime"]),
                   image: _userData["imageURLs"][0]));
               yield result;
             }
@@ -83,8 +85,30 @@ class MatchDataService {
     }
   }
 
+  Stream<QuerySnapshot> get newLikeStream async* {
+    yield* _db
+        .collection("userData")
+        .doc(currentUserUID)
+        .collection("matches")
+        .where("match", isEqualTo: false)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> get newDateData async* {
+    yield* _db
+        .collection("userData")
+        .doc(currentUserUID)
+        .collection("matches")
+        .where("match", isEqualTo: true)
+        .snapshots();
+  }
+
   static Future<void> setMatchData(
-      {required String currentDiscoverUID, required double userRating}) async {
+      {required String currentDiscoverUID,
+      required double userRating,
+      required String name,
+        required int age,
+      required String image}) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
     try {
       await db
@@ -95,7 +119,10 @@ class MatchDataService {
           .set({
         "matchUID": currentDiscoverUID,
         "match": false,
-        "userRating": userRating
+        "userRating": userRating,
+        "name": name,
+        "avatarImage": image,
+        "age" : age
       });
       await db
           .collection("userData")
@@ -105,7 +132,10 @@ class MatchDataService {
           .set({
         "matchUID": currentUserUID,
         "match": false,
-        "otherUserRating": userRating
+        "otherUserRating": userRating,
+        "name": UserData.name,
+        "avatarImage": UserData.imageURLs,
+        "age" : UserData.age
       });
     } catch (e) {
       print(e);
@@ -131,7 +161,8 @@ class MatchDataService {
         "match": true,
         "dateType": dateType,
         "dateTime": dateTime,
-        "userRating" : userRating
+        // TODO: figure this out its super dumb
+        "userRating": userRating
       });
       await db
           .collection("userData")
@@ -143,7 +174,7 @@ class MatchDataService {
         "match": true,
         "dateType": dateType,
         "dateTime": dateTime,
-        "otherUserRating" : userRating
+        "otherUserRating": userRating
       });
     } catch (e) {
       print(e);

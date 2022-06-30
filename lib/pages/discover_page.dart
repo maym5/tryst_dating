@@ -158,7 +158,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
       } else {
         await MatchDataService.setMatchData(
             currentDiscoverUID: currentDiscoverUID,
-          userRating: _userRating
+          userRating: _userRating,
+          image: _currentDiscoverData.images[0],
+          name: _currentDiscoverData.name,
+          age: _currentDiscoverData.age
         );
       }
     }
