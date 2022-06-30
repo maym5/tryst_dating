@@ -195,7 +195,7 @@ class NewDatePage extends StatefulWidget {
 }
 
 class _NewDatePageState extends State<NewDatePage> {
-  final Stream<QuerySnapshot> _datesStream = MatchDataService().newLikeStream;
+  final Stream<QuerySnapshot> _datesStream = MatchDataService().newDateData;
 
   Widget get _emptyMessage => Container(
         alignment: Alignment.center,

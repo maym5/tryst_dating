@@ -29,6 +29,7 @@ class _MatchTileState extends State<MatchTile> with TickerProviderStateMixin {
   }
 
   void _onTapDown(TapDownDetails details) {
+    print("tapped");
     setState(() {
       _controller.forward();
     });
@@ -39,6 +40,7 @@ class _MatchTileState extends State<MatchTile> with TickerProviderStateMixin {
     setState(() {
       _controller.reverse();
     });
+    print("that");
     List? _commonDates = widget.data.dateTypes
         ?.where((element) => UserData.dates.contains(element))
         .toList();
@@ -72,7 +74,7 @@ class _MatchTileState extends State<MatchTile> with TickerProviderStateMixin {
         }
       }
     } else {
-
+      print("I have no common dates master");
     }
   }
 

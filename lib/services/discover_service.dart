@@ -76,6 +76,7 @@ class DiscoverService {
   }
 
   Stream<List<QueryDocumentSnapshot<Map>>> get discoverStream async* {
+    // TODO: big todo fix this
     List<QueryDocumentSnapshot<Map>> result = [];
     try {
       await for (QueryDocumentSnapshot<Map> doc in preferenceMatches) {
