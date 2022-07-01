@@ -63,7 +63,7 @@ class OutBubble extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 5),
               decoration: const BoxDecoration(
                 // color: Colors.redAccent,
-                gradient: kButtonGradient,
+                gradient: kMessageBubbleGradient,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(19),
                   bottomLeft: Radius.circular(19),
@@ -76,7 +76,7 @@ class OutBubble extends StatelessWidget {
               ),
             ),
           ),
-          CustomPaint(painter: Triangle(Colors.redAccent)),
+          CustomPaint(painter: Triangle(Colors.red)),
         ],
       ),
     );

@@ -101,6 +101,11 @@ const kRatingCircleGradient = LinearGradient(
     colors: [Colors.redAccent, Colors.pink],
     stops: [0.2, 0.6]);
 
+const kMessageBubbleGradient = LinearGradient(
+    colors: [Colors.pink, Colors.redAccent, Colors.red],
+    stops: [0.2, 0.4, 0.9],
+);
+
 const kButtonGradient = LinearGradient(
     colors: [Colors.red, Colors.redAccent, Colors.pink],
     stops: [0.2, 0.4, 0.9]);

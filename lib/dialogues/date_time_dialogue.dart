@@ -1,14 +1,11 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/dialogues/log_out_dialogue.dart';
 import 'package:rendezvous_beta_v3/dialogues/pick_another_day_dialogue.dart';
 import 'package:rendezvous_beta_v3/widgets/gradient_button.dart';
-
 import '../constants.dart';
 
 class DateTimeDialogue extends StatelessWidget {
-  // TODO: build a congrats dialogue too to display the date
   const DateTimeDialogue({Key? key, required this.setDateTime})
       : super(key: key);
   final void Function(DateTime date, TimeOfDay time) setDateTime;
