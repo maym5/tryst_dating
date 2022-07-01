@@ -148,7 +148,9 @@ class _LikesPageState extends State<LikesPage> {
               name: _data["name"],
               matchID: _data["matchUID"],
               image: _data["avatarImage"],
-              age: _data["age"]));
+              age: _data["age"],
+            dateTypes: _data["dateTypes"]
+          ));
         }
       }
       return GridView.builder(

@@ -108,6 +108,7 @@ class MatchDataService {
       required double userRating,
       required String name,
         required int age,
+        required List<String> dateTypes,
       required String image}) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
     try {
@@ -122,7 +123,8 @@ class MatchDataService {
         "userRating": userRating,
         "name": name,
         "avatarImage": image,
-        "age" : age
+        "age" : age,
+        "dateTypes" : dateTypes
       });
       await db
           .collection("userData")
@@ -135,7 +137,8 @@ class MatchDataService {
         "otherUserRating": userRating,
         "name": UserData.name,
         "avatarImage": UserData.imageURLs,
-        "age" : UserData.age
+        "age" : UserData.age,
+        "dateTypes" : UserData.dates.toList()
       });
     } catch (e) {
       print(e);

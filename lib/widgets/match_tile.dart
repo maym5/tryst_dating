@@ -1,10 +1,8 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/animations/bounce_animation.dart';
 import 'package:rendezvous_beta_v3/services/match_data_service.dart';
 import 'package:rendezvous_beta_v3/widgets/profile_view/profile_info.dart';
-
 import '../dialogues/date_time_dialogue.dart';
 import '../models/users.dart';
 import '../services/google_places_service.dart';
@@ -29,30 +27,18 @@ class _MatchTileState extends State<MatchTile> with TickerProviderStateMixin {
   }
 
   void _onTapDown(TapDownDetails details) {
-    print("tapped");
-    setState(() {
-      _controller.forward();
-    });
+    setState(() => _controller.forward());
   }
 
   void _onTapUp(TapUpDetails details) async {
-    // TODO: refactor this inefficient and dumb
-    setState(() {
-      _controller.reverse();
-    });
-    print("that");
+    setState(() => _controller.reverse());
     List? _commonDates = widget.data.dateTypes
         ?.where((element) => UserData.dates.contains(element))
         .toList();
     if (_commonDates != null) {
-      print("have common dates");
       final _dateType = _commonDates[Random().nextInt(_commonDates.length)];
       final Map _venue = await GooglePlacesService(venueType: _dateType).venue;
-      // deal with google places edge cases
-      print(_venue["status"]);
       if (_venue["status"] == "OK") {
-        print("venue status OK");
-        // TODO: if they dismiss dialogue dont show calendar and clock
         await DateTimeDialogue(setDateTime: _setDateTime).buildCalendarDialogue(
             context,
             venueName: _venue["name"],
@@ -60,17 +46,21 @@ class _MatchTileState extends State<MatchTile> with TickerProviderStateMixin {
         final _isOpen =
             await GooglePlacesService.checkDateTime(_dateTime!, _venue);
         if (_dateTime != null && _isOpen) {
-          print("date time is alright");
           await MatchDataService.updateMatchData(
               otherUserUID: widget.data.matchID,
               dateType: _dateType,
               dateTime: _dateTime!,
               venue: _venue["name"]);
-          print("added data to firebase");
         } else if (!_isOpen) {
           // do a pop up
+          await DateTimeDialogue(setDateTime: _setDateTime)
+              .buildCalendarDialogue(context,
+                  venueName: _venue["name"],
+                  matchName: widget.data.name,
+                  pickAnother: true);
         } else {
           // do a pop up
+          print("dateTime is null");
         }
       }
     } else {
@@ -116,7 +106,6 @@ class _MatchTileState extends State<MatchTile> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: check edge cases on this visibility
     return BounceAnimation(
       controller: _controller,
       child: GestureDetector(

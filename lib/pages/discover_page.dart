@@ -159,7 +159,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
           userRating: _userRating,
           image: _currentDiscoverData.images[0],
           name: _currentDiscoverData.name,
-          age: _currentDiscoverData.age
+          age: _currentDiscoverData.age,
+          dateTypes: _currentDiscoverData.dates
         );
       }
     }

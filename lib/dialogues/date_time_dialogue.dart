@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/dialogues/log_out_dialogue.dart';
 import 'package:rendezvous_beta_v3/dialogues/pick_another_day_dialogue.dart';

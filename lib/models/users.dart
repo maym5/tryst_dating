@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rendezvous_beta_v3/models/user_images.dart';
 import 'package:rendezvous_beta_v3/services/authentication.dart';
-
 import '../services/discover_service.dart';
 
 class UserData with ChangeNotifier {
