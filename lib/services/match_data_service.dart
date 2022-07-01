@@ -136,7 +136,7 @@ class MatchDataService {
         "match": false,
         "otherUserRating": userRating,
         "name": UserData.name,
-        "avatarImage": UserData.imageURLs,
+        "avatarImage": UserData.imageURLs[0],
         "age" : UserData.age,
         "dateTypes" : UserData.dates.toList()
       });

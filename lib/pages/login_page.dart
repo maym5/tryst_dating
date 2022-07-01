@@ -131,10 +131,12 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Container(
-              height: 100,
-              width: 100,
-              color: Colors.redAccent,
+            Flexible(
+              child: Container(
+                height: 100,
+                width: 100,
+                color: Colors.redAccent,
+              ),
             ),
             Column(
               mainAxisSize: MainAxisSize.min,
