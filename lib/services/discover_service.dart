@@ -45,7 +45,7 @@ class DiscoverService {
         .get();
     final Set<String> maxPriceUID = getQueryUID(maxPrice);
     final minPrice = await discoverRef
-        .where("minPrice", isGreaterThanOrEqualTo: currentUserData["minPrice"])
+        .where("minPrice", isLessThanOrEqualTo: currentUserData["maxPrice"])
         .get();
     final Set<String> minPriceUID = getQueryUID(minPrice);
 
@@ -54,9 +54,13 @@ class DiscoverService {
         .get();
     final Set<String> notYouUID = getQueryUID(notYou);
 
-    final alreadySeen =
-        await discoverRef.doc(currentUserUID).collection("matches").get();
-    final Set<String> alreadySeenUID = getQueryUID(alreadySeen, matchData: true);
+    final alreadySeen = await discoverRef
+        .doc(currentUserUID)
+        .collection("matches")
+        .where("seen", isEqualTo: true)
+        .get();
+    final Set<String> alreadySeenUID =
+        getQueryUID(alreadySeen, matchData: true);
 
     // check that they aren't matched
     for (QueryDocumentSnapshot doc in dateMatches.docs) {
@@ -64,15 +68,30 @@ class DiscoverService {
       final _uid = _data["uid"];
       if (ageMatchUID.contains(_uid) &&
           genderMatchUID.contains(_uid) &&
-          maxPriceUID.contains(_uid) &&
-          minPriceUID.contains(_uid) &&
+          (maxPriceUID.contains(_uid) || minPriceUID.contains(_uid)) &&
           notYouUID.contains(_uid) &&
           !alreadySeenUID.contains(_uid)) {
         final QueryDocumentSnapshot<Map> result =
             doc as QueryDocumentSnapshot<Map>;
-        yield result;
+        if (await youMatchYourPreferences(_uid)) {
+          yield result;
+        }
       }
     }
+  }
+
+  Future<bool> youMatchYourPreferences(String uid) async {
+    FirebaseFirestore _db = FirebaseFirestore.instance;
+    final DocumentSnapshot snapshot =
+        await _db.collection("userData").doc(uid).get();
+    final Map<String, dynamic> _data = snapshot.data() as Map<String, dynamic>;
+    final List _prefGender = _data["prefGender"] as List;
+    if (currentUserData["age"] >= _data["minAge"] &&
+        currentUserData["age"] <= _data["maxAge"] &&
+        _prefGender.contains(currentUserData["gender"])) {
+      return true;
+    }
+    return false;
   }
 
   Stream<List<QueryDocumentSnapshot<Map>>> get discoverStream async* {

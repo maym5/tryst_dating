@@ -124,7 +124,8 @@ class MatchDataService {
         "name": name,
         "avatarImage": image,
         "age" : age,
-        "dateTypes" : dateTypes
+        "dateTypes" : dateTypes,
+        "seen" : true
       });
       await db
           .collection("userData")
@@ -138,7 +139,8 @@ class MatchDataService {
         "name": UserData.name,
         "avatarImage": UserData.imageURLs[0],
         "age" : UserData.age,
-        "dateTypes" : UserData.dates.toList()
+        "dateTypes" : UserData.dates.toList(),
+        "seen" : false
       });
     } catch (e) {
       print(e);
@@ -164,8 +166,8 @@ class MatchDataService {
         "match": true,
         "dateType": dateType,
         "dateTime": dateTime,
-        // TODO: figure this out its super dumb
-        "userRating": userRating
+        "userRating": userRating,
+        "seen" : true,
       });
       await db
           .collection("userData")
@@ -177,7 +179,8 @@ class MatchDataService {
         "match": true,
         "dateType": dateType,
         "dateTime": dateTime,
-        "otherUserRating": userRating
+        "otherUserRating": userRating,
+        "seen" : true
       });
     } catch (e) {
       print(e);

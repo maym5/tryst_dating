@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/widgets/gradient_button.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
+import '../services/authentication.dart';
 
 class VerificationPage extends StatelessWidget {
   const VerificationPage({Key? key}) : super(key: key);
+  static const id = "verification_page";
 
   Widget get _title => const Text(
     "Verify your email!",
@@ -26,7 +28,16 @@ class VerificationPage extends StatelessWidget {
       onPressed: _onPressed
   );
 
-  void _onPressed() {}
+  void _onPressed() async {
+    try {
+      await verifyEmail();
+    } catch(e) {
+      if (e == "invalid user") {
+        // what to do here?
+        print("user was invalid");
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

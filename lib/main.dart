@@ -8,6 +8,7 @@ import 'package:rendezvous_beta_v3/pages/login_page.dart';
 import 'package:rendezvous_beta_v3/pages/match_page.dart';
 import 'package:rendezvous_beta_v3/pages/sign_up_page.dart';
 import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
+import 'package:rendezvous_beta_v3/pages/verification_page.dart';
 import 'package:rendezvous_beta_v3/widgets/profile_view/profile_view.dart';
 import 'firebase_options.dart';
 
@@ -30,6 +31,7 @@ class Rendezvous extends StatelessWidget {
       routes: <String, WidgetBuilder> {
         IntroPage.id : (BuildContext context) => const IntroPage(),
         LoadingPage.id : (BuildContext context) => const LoadingPage(),
+        VerificationPage.id : (BuildContext context) => const VerificationPage(),
         HomePage.id :  (BuildContext context) => const HomePage(),
         MatchPage.id : (BuildContext context) => const MatchPage(),
         UserEditPage.id : (BuildContext context) => const UserEditPage(),
