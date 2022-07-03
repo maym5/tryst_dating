@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/services/match_data_service.dart';
 import 'package:rendezvous_beta_v3/widgets/match_card.dart';
@@ -114,6 +115,7 @@ class LikesPage extends StatefulWidget {
 
 class _LikesPageState extends State<LikesPage> {
   final Stream<QuerySnapshot> _likesStream = MatchDataService().likeStream;
+  bool _showSpinner = false;
 
   Widget get _noLikesMessage => Container(
         alignment: Alignment.center,
@@ -129,17 +131,21 @@ class _LikesPageState extends State<LikesPage> {
       );
 
   Widget get _noInternet => Container(
-    alignment: Alignment.center,
-    child: Text(
-      "You don't have any internet connection",
-      style: kTextStyle,
-      textAlign: TextAlign.center,
-    ),
-  );
+        alignment: Alignment.center,
+        child: Text(
+          "You don't have any internet connection",
+          style: kTextStyle,
+          textAlign: TextAlign.center,
+        ),
+      );
+
+  CircularProgressIndicator get _spinner => const CircularProgressIndicator(color: Colors.redAccent);
 
   Widget _likeBuilder(
       BuildContext context, AsyncSnapshot<QuerySnapshot> likeSnapshot) {
-    if (likeSnapshot.hasData && !likeSnapshot.hasError && likeSnapshot.data?.size != 0) {
+    if (likeSnapshot.hasData &&
+        !likeSnapshot.hasError &&
+        likeSnapshot.data?.size != 0) {
       final List<MatchData> matchData = [];
       for (DocumentSnapshot doc in likeSnapshot.data!.docs) {
         if (doc.exists && doc.data() != null) {
@@ -149,8 +155,7 @@ class _LikesPageState extends State<LikesPage> {
               matchID: _data["matchUID"],
               image: _data["avatarImage"],
               age: _data["age"],
-            dateTypes: _data["dateTypes"]
-          ));
+              dateTypes: _data["dateTypes"]));
         }
       }
       return GridView.builder(
@@ -174,17 +179,26 @@ class _LikesPageState extends State<LikesPage> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 15),
-      child: StreamBuilder<QuerySnapshot>(
-          stream: _likesStream,
-          builder: (BuildContext context,
-              AsyncSnapshot<QuerySnapshot> likeSnapshot) {
-            switch(likeSnapshot.connectionState) {
-              case ConnectionState.none: return _noInternet;
-              case ConnectionState.waiting: return const CircularProgressIndicator(color: Colors.redAccent);
-              case ConnectionState.active: return _likeBuilder(context, likeSnapshot);
-              case ConnectionState.done: return _likeBuilder(context, likeSnapshot);
-            }
-          }),
+      child: ModalProgressHUD(
+        progressIndicator: _spinner,
+        inAsyncCall: _showSpinner,
+        child: StreamBuilder<QuerySnapshot>(
+            stream: _likesStream,
+            builder: (BuildContext context,
+                AsyncSnapshot<QuerySnapshot> likeSnapshot) {
+              switch (likeSnapshot.connectionState) {
+                case ConnectionState.none:
+                  return _noInternet;
+                case ConnectionState.waiting:
+                  _showSpinner = true;
+                  return Container();
+                case ConnectionState.active:
+                  return _likeBuilder(context, likeSnapshot);
+                case ConnectionState.done:
+                  return _likeBuilder(context, likeSnapshot);
+              }
+            }),
+      ),
     );
   }
 }
@@ -198,6 +212,7 @@ class DatePage extends StatefulWidget {
 
 class _DatePageState extends State<DatePage> {
   final Stream<QuerySnapshot> _datesStream = MatchDataService().dateData;
+  bool _showSpinner = false;
 
   Widget get _emptyMessage => Container(
         alignment: Alignment.center,
@@ -220,6 +235,8 @@ class _DatePageState extends State<DatePage> {
           textAlign: TextAlign.center,
         ),
       );
+
+  CircularProgressIndicator get _spinner => const CircularProgressIndicator(color: Colors.redAccent);
 
   Widget _dateBuilder(
       BuildContext context, AsyncSnapshot<QuerySnapshot> dateSnapshot) {
@@ -255,21 +272,26 @@ class _DatePageState extends State<DatePage> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 15),
-      child: StreamBuilder<QuerySnapshot>(
-          stream: _datesStream,
-          builder: (BuildContext context,
-              AsyncSnapshot<QuerySnapshot> dateSnapshot) {
-            switch (dateSnapshot.connectionState) {
-              case ConnectionState.done:
-                return _dateBuilder(context, dateSnapshot);
-              case ConnectionState.waiting:
-                return const CircularProgressIndicator(color: Colors.redAccent);
-              case ConnectionState.none:
-                return _noInternet;
-              case ConnectionState.active:
-                return _dateBuilder(context, dateSnapshot);
-            }
-          }),
+      child: ModalProgressHUD(
+        inAsyncCall: _showSpinner,
+        progressIndicator: _spinner,
+        child: StreamBuilder<QuerySnapshot>(
+            stream: _datesStream,
+            builder: (BuildContext context,
+                AsyncSnapshot<QuerySnapshot> dateSnapshot) {
+              switch (dateSnapshot.connectionState) {
+                case ConnectionState.done:
+                  return _dateBuilder(context, dateSnapshot);
+                case ConnectionState.waiting:
+                  _showSpinner = true;
+                  return Container();
+                case ConnectionState.none:
+                  return _noInternet;
+                case ConnectionState.active:
+                  return _dateBuilder(context, dateSnapshot);
+              }
+            }),
+      ),
     );
   }
 }
@@ -311,6 +333,7 @@ class _MatchPageState extends State<MatchPage>
   Widget build(BuildContext context) {
     return PageBackground(
       appBar: AppBar(
+        backgroundColor: Colors.black45,
         leading: const BackButton(color: Colors.transparent),
         bottom: TabBar(
           controller: _tabController,

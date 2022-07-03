@@ -151,6 +151,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 matchName: _matchData["name"]);
           } else {
             // error dialgoue
+            // TODO: error dialogue
           }
         }
       } else {

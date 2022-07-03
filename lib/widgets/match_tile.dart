@@ -27,11 +27,11 @@ class _MatchTileState extends State<MatchTile> with TickerProviderStateMixin {
   }
 
   void _onTapDown(TapDownDetails details) {
-    setState(() => _controller.forward());
+    _controller.forward();
   }
 
   void _onTapUp(TapUpDetails details) async {
-    setState(() => _controller.reverse());
+    _controller.reverse();
     List? _commonDates = widget.data.dateTypes
         ?.where((element) => UserData.dates.contains(element))
         .toList();
