@@ -47,8 +47,7 @@ class MessengingService {
   }
 
   void markMessagesRead(String targetUID) async {
-    // TODO: possible improvements from StackOverflow
-    // TODO: don't mark messages you sent as read
+    // TODO: get it to work
     final QuerySnapshot _querySnapshot = await _db
         .collection("userData")
         .doc(AuthenticationService.currentUserUID)

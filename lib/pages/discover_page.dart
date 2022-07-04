@@ -30,11 +30,12 @@ class _DiscoverPageState extends State<DiscoverPage> {
   // late String currentDiscoverUID;
   // late DiscoverData _currentDiscoverData;
   DateTime? _dateTime;
+  late Map<String, dynamic> _displayedDoc;
   late Map<String, dynamic> _currentDoc;
 
+  DiscoverData get _displayedDiscoverData => DiscoverData.getDiscoverData(_displayedDoc);
   DiscoverData get _currentDiscoverData => DiscoverData.getDiscoverData(_currentDoc);
-
-  String get currentDiscoverUID => _currentDiscoverData.uid;
+  String get _currentUID => _currentDiscoverData.uid;
 
   void _onScroll() {
     // made change must test
@@ -187,7 +188,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
         .collection("userData")
         .doc(AuthenticationService.currentUserUID)
         .collection("matches")
-        .doc(currentDiscoverUID)
+        .doc(_currentUID)
         .get();
     return _matchSnapShot.exists && _matchSnapShot.data() != null;
   }
@@ -202,7 +203,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
             venueType: _dateType) // might be empty handle that case
         .venue;
     final DocumentSnapshot _matchSnapshot =
-        await _firestore.collection("userData").doc(currentDiscoverUID).get();
+        await _firestore.collection("userData").doc(_currentUID).get();
     final Map _matchData = _matchSnapshot.data() as Map;
     if (_venueData["status"] == "OK") {
       await DateTimeDialogue(setDateTime: setDateTime).buildCalendarDialogue(
@@ -212,14 +213,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
       if (_dateTime != null &&
           await GooglePlacesService.checkDateTime(_dateTime!, _venueData)) {
         await MatchDataService.updateMatchData(
-            otherUserUID: currentDiscoverUID,
+            otherUserUID: _currentUID,
             dateType: _dateType,
             dateTime: _dateTime!,
             venue: _venueData["name"],
             userRating: _userRating);
       }
     } else {
-      // what do we do if api fails ??
       if (!await GooglePlacesService.checkDateTime(_dateTime!, _venueData)) {
         await DateTimeDialogue(setDateTime: setDateTime).buildCalendarDialogue(
             context,
@@ -227,7 +227,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
             pickAnother: true,
             matchName: _matchData["name"]);
       } else {
-        // error dialgoue
+        print("there was an error");
         // TODO: error dialogue
       }
     }
@@ -235,7 +235,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
   Future<void> get createNewMatch async {
     await MatchDataService.setMatchData(
-        currentDiscoverUID: currentDiscoverUID,
+        currentDiscoverUID: _currentUID,
         userRating: _userRating,
         image: _currentDiscoverData.images[0],
         name: _currentDiscoverData.name,
@@ -252,6 +252,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 AsyncSnapshot<List<QueryDocumentSnapshot<Map>>> snapshot) =>
             PageView.builder(
                 onPageChanged: (int page) async {
+                  print(_currentDiscoverData.name);
                   if (_userRating > 5 && await matchExists) {
                     await date;
                   } else {
@@ -264,13 +265,14 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 itemCount: snapshot.data?.length,
                 itemBuilder: (BuildContext context, int index) {
                   if (snapshot.hasData && !snapshot.hasError) {
+                    _displayedDoc = snapshot.data![index].data() as Map<String, dynamic>;
                     if (index == 0) {
                       _currentDoc = snapshot.data![0].data() as Map<String, dynamic>;
                     }
                     return Stack(
                       children: [
                         DiscoverView(
-                          data: _currentDiscoverData,
+                          data: _displayedDiscoverData,
                           onDragUpdate: setUserRating,
                         ),
                         Center(

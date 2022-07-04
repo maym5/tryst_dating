@@ -73,14 +73,14 @@ class DiscoverService {
           !alreadySeenUID.contains(_uid)) {
         final QueryDocumentSnapshot<Map> result =
             doc as QueryDocumentSnapshot<Map>;
-        if (await youMatchYourPreferences(_uid)) {
+        if (await youMatchTheirPreferences(_uid)) {
           yield result;
         }
       }
     }
   }
 
-  Future<bool> youMatchYourPreferences(String uid) async {
+  Future<bool> youMatchTheirPreferences(String uid) async {
     FirebaseFirestore _db = FirebaseFirestore.instance;
     final DocumentSnapshot snapshot =
         await _db.collection("userData").doc(uid).get();
