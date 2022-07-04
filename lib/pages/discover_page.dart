@@ -26,15 +26,15 @@ class _DiscoverPageState extends State<DiscoverPage> {
   late int _previousPage;
   late PageController _pageController;
   late ValueNotifier<double> _animation;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  // late String currentDiscoverUID;
-  // late DiscoverData _currentDiscoverData;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
   DateTime? _dateTime;
   late Map<String, dynamic> _displayedDoc;
   late Map<String, dynamic> _currentDoc;
-
-  DiscoverData get _displayedDiscoverData => DiscoverData.getDiscoverData(_displayedDoc);
-  DiscoverData get _currentDiscoverData => DiscoverData.getDiscoverData(_currentDoc);
+  final Stream<List<QueryDocumentSnapshot<Map>>> _discoverStream = DiscoverService().discoverStream;
+  DiscoverData get _displayedDiscoverData =>
+      DiscoverData.getDiscoverData(_displayedDoc);
+  DiscoverData get _currentDiscoverData =>
+      DiscoverData.getDiscoverData(_currentDoc);
   String get _currentUID => _currentDiscoverData.uid;
 
   void _onScroll() {
@@ -81,7 +81,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
     });
   }
 
-  Widget get _waitingAnimation => RippleAnimation(
+  Widget get waitingAnimation => RippleAnimation(
         color: Colors.orangeAccent,
         child: const DiscoverLoadingAvatar(),
         repeat: true,
@@ -89,7 +89,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
         minRadius: 80,
       );
 
-  Widget get _noDataMessage => Center(
+  Widget get noDataMessage => Center(
         child: Text(
           "There's no one in your area, try increasing your search distance to keep rating",
           textAlign: TextAlign.center,
@@ -98,85 +98,12 @@ class _DiscoverPageState extends State<DiscoverPage> {
         ),
       );
 
-  Widget get _errorMessage => Center(
+  Widget get errorMessage => Center(
         child: Text("There has been an error, try restarting the app",
             textAlign: TextAlign.center, style: kTextStyle),
       );
 
-
-
-  // Future<void> onPageChanged(int page) async {
-  //   print(_currentDiscoverData.name);
-  //   if (_userRating > 5) {
-  //     DocumentSnapshot _matchSnapShot = await _firestore
-  //         .collection("userData")
-  //         .doc(currentUserUID)
-  //         .collection("matches")
-  //         .doc(currentDiscoverUID)
-  //         .get();
-  //     if (_matchSnapShot.exists && _matchSnapShot.data() != null) {
-  //       // (1) get overlapping dateTypes between both users (userData pull)
-  //       // do this in the build someplace and save to local varaible
-  //       // (2) select one of said dateTypes and feed it to the google places service
-  //       // (3) use returned data to alter matchData document in the cloud.
-  //       // dates they share in common
-  //       List<String> commonDateTypes = _currentDiscoverData.dates
-  //           .where((element) => UserData.dates.contains(element))
-  //           .toList();
-  //       final String _dateType =
-  //           commonDateTypes[Random().nextInt(commonDateTypes.length)];
-  //       final Map _venueData = await GooglePlacesService(
-  //               venueType: _dateType) // might be empty handle that case
-  //           .venue;
-  //       final DocumentSnapshot _matchSnapshot = await _firestore
-  //           .collection("userData")
-  //           .doc(currentDiscoverUID)
-  //           .get();
-  //       final Map _matchData = _matchSnapshot.data() as Map;
-  //       if (_venueData["status"] == "OK") {
-  //         await DateTimeDialogue(setDateTime: setDateTime)
-  //             .buildCalendarDialogue(context,
-  //                 matchName: _matchData["name"], venueName: _venueData["name"]);
-  //         if (_dateTime != null &&
-  //             await GooglePlacesService.checkDateTime(_dateTime!, _venueData)) {
-  //           await MatchDataService.updateMatchData(
-  //               otherUserUID: currentDiscoverUID,
-  //               dateType: _dateType,
-  //               dateTime: _dateTime!,
-  //               venue: _venueData["name"],
-  //               userRating: _userRating);
-  //         }
-  //       } else {
-  //         // what do we do if api fails ??
-  //         if (!await GooglePlacesService.checkDateTime(
-  //             _dateTime!, _venueData)) {
-  //           await DateTimeDialogue(setDateTime: setDateTime)
-  //               .buildCalendarDialogue(context,
-  //                   venueName: _venueData["name"],
-  //                   pickAnother: true,
-  //                   matchName: _matchData["name"]);
-  //         } else {
-  //           // error dialgoue
-  //           // TODO: error dialogue
-  //         }
-  //       }
-  //     } else {
-  //       await MatchDataService.setMatchData(
-  //           currentDiscoverUID: currentDiscoverUID,
-  //           userRating: _userRating,
-  //           image: _currentDiscoverData.images[0],
-  //           name: _currentDiscoverData.name,
-  //           age: _currentDiscoverData.age,
-  //           dateTypes: _currentDiscoverData.dates);
-  //     }
-  //   }
-  //   // setState(() {
-  //   //   final currentDoc =
-  //   //   snapshot.data![index].data() as Map<String, dynamic>;
-  //   // });
-  // }
-
-  void _scrollToNextUser(
+  void _updateCurrentDiscoverData(
       int page, AsyncSnapshot<List<QueryDocumentSnapshot<Map>>> snapshot) {
     setState(() {
       _currentDoc = snapshot.data![page].data() as Map<String, dynamic>;
@@ -184,7 +111,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   }
 
   Future<bool> get matchExists async {
-    DocumentSnapshot _matchSnapShot = await _firestore
+    DocumentSnapshot _matchSnapShot = await _db
         .collection("userData")
         .doc(AuthenticationService.currentUserUID)
         .collection("matches")
@@ -203,7 +130,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
             venueType: _dateType) // might be empty handle that case
         .venue;
     final DocumentSnapshot _matchSnapshot =
-        await _firestore.collection("userData").doc(_currentUID).get();
+        await _db.collection("userData").doc(_currentUID).get();
     final Map _matchData = _matchSnapshot.data() as Map;
     if (_venueData["status"] == "OK") {
       await DateTimeDialogue(setDateTime: setDateTime).buildCalendarDialogue(
@@ -247,27 +174,28 @@ class _DiscoverPageState extends State<DiscoverPage> {
   Widget build(BuildContext context) {
     return PageBackground(
       body: StreamBuilder(
-        stream: DiscoverService().discoverStream,
+        stream: _discoverStream,
         builder: (context,
                 AsyncSnapshot<List<QueryDocumentSnapshot<Map>>> snapshot) =>
             PageView.builder(
                 onPageChanged: (int page) async {
-                  print(_currentDiscoverData.name);
                   if (_userRating > 5 && await matchExists) {
                     await date;
                   } else {
                     await createNewMatch;
                   }
-                  _scrollToNextUser(page, snapshot);
+                  _updateCurrentDiscoverData(page, snapshot);
                 },
                 controller: _pageController,
                 scrollDirection: Axis.vertical,
                 itemCount: snapshot.data?.length,
                 itemBuilder: (BuildContext context, int index) {
                   if (snapshot.hasData && !snapshot.hasError) {
-                    _displayedDoc = snapshot.data![index].data() as Map<String, dynamic>;
+                    _displayedDoc =
+                        snapshot.data![index].data() as Map<String, dynamic>;
                     if (index == 0) {
-                      _currentDoc = snapshot.data![0].data() as Map<String, dynamic>;
+                      _currentDoc =
+                          snapshot.data![0].data() as Map<String, dynamic>;
                     }
                     return Stack(
                       children: [
@@ -285,11 +213,11 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     );
                   } else if (snapshot.connectionState ==
                       ConnectionState.waiting) {
-                    return _waitingAnimation;
+                    return waitingAnimation;
                   } else if (!snapshot.hasData) {
-                    return _noDataMessage;
+                    return noDataMessage;
                   } else {
-                    return _errorMessage;
+                    return errorMessage;
                   }
                 }),
       ),

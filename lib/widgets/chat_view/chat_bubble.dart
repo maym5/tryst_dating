@@ -36,6 +36,7 @@ class InBubble extends StatelessWidget {
               child: Text(
                 message,
                 style: const TextStyle(color: Colors.black, fontSize: 15),
+                softWrap: true,
               ),
             ),
           ),
@@ -73,6 +74,7 @@ class OutBubble extends StatelessWidget {
               child: Text(
                 message,
                 style: const TextStyle(color: Colors.white, fontSize: 15),
+                softWrap: true,
               ),
             ),
           ),

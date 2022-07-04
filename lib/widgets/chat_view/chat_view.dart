@@ -52,6 +52,7 @@ class _ChatViewState extends State<ChatView> {
             Expanded(
               child: TextField(
                 controller: _textController,
+                maxLines: null,
                 decoration: kTextFieldDecoration.copyWith(
                     hintText: "ex. How you doin'!"),
                 cursorColor: Colors.redAccent,
