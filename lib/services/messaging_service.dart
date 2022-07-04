@@ -9,7 +9,7 @@ class MessengingService {
   Future<bool> hasUnreadMessages(String targetUID) async {
     final QuerySnapshot unreadMessages = await _db
         .collection("userData")
-        .doc(currentUserUID)
+        .doc(AuthenticationService.currentUserUID)
         .collection("matches")
         .doc(targetUID)
         .collection("messages")
@@ -22,13 +22,13 @@ class MessengingService {
   void sendMessage(String message, String targetUID) async {
     await _db
         .collection("userData")
-        .doc(currentUserUID)
+        .doc(AuthenticationService.currentUserUID)
         .collection("matches")
         .doc(targetUID)
         .collection("messages")
         .add({
       "message": message,
-      "sender": currentUserUID,
+      "sender": AuthenticationService.currentUserUID,
       "read": false,
       "timeStamp": DateTime.now()
     });
@@ -36,11 +36,11 @@ class MessengingService {
         .collection("userData")
         .doc(targetUID)
         .collection("matches")
-        .doc(currentUserUID)
+        .doc(AuthenticationService.currentUserUID)
         .collection("messages")
         .add({
       "message": message,
-      "sender": currentUserUID,
+      "sender": AuthenticationService.currentUserUID,
       "read": false,
       "timeStamp": DateTime.now()
     });
@@ -51,7 +51,7 @@ class MessengingService {
     // TODO: don't mark messages you sent as read
     final QuerySnapshot _querySnapshot = await _db
         .collection("userData")
-        .doc(currentUserUID)
+        .doc(AuthenticationService.currentUserUID)
         .collection("matches")
         .doc(targetUID)
         .collection("messages")
@@ -59,7 +59,7 @@ class MessengingService {
     _querySnapshot.docs.forEach((doc) {
       if (doc.exists && doc.data() != null) {
         final Map _data = doc.data() as Map;
-        if (_data["sender"] != currentUserUID) {
+        if (_data["sender"] != AuthenticationService.currentUserUID) {
           doc.reference.update({"read": true});
         }
       }
@@ -69,7 +69,7 @@ class MessengingService {
   Stream<QuerySnapshot> messageStream(String targetUID) async* {
     yield* _db
         .collection("userData")
-        .doc(currentUserUID)
+        .doc(AuthenticationService.currentUserUID)
         .collection("matches")
         .doc(targetUID)
         .collection("messages")

@@ -56,7 +56,7 @@ class LogOutDialogue extends StatelessWidget {
           child: GradientButton(
             title: 'Yes',
             onPressed: () async {
-              await logOut();
+              await AuthenticationService().logOut();
               UserData.resetUserData();
               Navigator.pushNamed(context, IntroPage.id);
             },

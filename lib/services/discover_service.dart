@@ -55,7 +55,7 @@ class DiscoverService {
     final Set<String> notYouUID = getQueryUID(notYou);
 
     final alreadySeen = await discoverRef
-        .doc(currentUserUID)
+        .doc(AuthenticationService.currentUserUID)
         .collection("matches")
         .where("seen", isEqualTo: true)
         .get();

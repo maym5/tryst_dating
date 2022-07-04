@@ -88,7 +88,7 @@ class MatchDataService {
   Stream<QuerySnapshot> get likeStream async* {
     yield* _db
         .collection("userData")
-        .doc(currentUserUID)
+        .doc(AuthenticationService.currentUserUID)
         .collection("matches")
         .where("match", isEqualTo: false)
         .snapshots();
@@ -97,7 +97,7 @@ class MatchDataService {
   Stream<QuerySnapshot> get dateData async* {
     yield* _db
         .collection("userData")
-        .doc(currentUserUID)
+        .doc(AuthenticationService.currentUserUID)
         .collection("matches")
         .where("match", isEqualTo: true)
         .snapshots();
@@ -114,7 +114,7 @@ class MatchDataService {
     try {
       await db
           .collection("userData")
-          .doc(currentUserUID)
+          .doc(AuthenticationService.currentUserUID)
           .collection("matches")
           .doc(currentDiscoverUID)
           .set({
@@ -131,9 +131,9 @@ class MatchDataService {
           .collection("userData")
           .doc(currentDiscoverUID)
           .collection("matches")
-          .doc(currentUserUID)
+          .doc(AuthenticationService.currentUserUID)
           .set({
-        "matchUID": currentUserUID,
+        "matchUID": AuthenticationService.currentUserUID,
         "match": false,
         "otherUserRating": userRating,
         "name": UserData.name,
@@ -158,7 +158,7 @@ class MatchDataService {
     try {
       await db
           .collection("userData")
-          .doc(currentUserUID)
+          .doc(AuthenticationService.currentUserUID)
           .collection("matches")
           .doc(otherUserUID)
           .update({
@@ -173,7 +173,7 @@ class MatchDataService {
           .collection("userData")
           .doc(otherUserUID)
           .collection("matches")
-          .doc(currentUserUID)
+          .doc(AuthenticationService.currentUserUID)
           .update({
         "venue": venue,
         "match": true,

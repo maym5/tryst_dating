@@ -38,7 +38,7 @@ class UserData with ChangeNotifier {
       "maxPrice": maxPrice,
       'imageURLs': imageURLs,
       "location" : location,
-      "uid": currentUserUID
+      "uid": AuthenticationService.currentUserUID
     };
   }
 

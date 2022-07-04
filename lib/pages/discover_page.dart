@@ -185,7 +185,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   Future<bool> get matchExists async {
     DocumentSnapshot _matchSnapShot = await _firestore
         .collection("userData")
-        .doc(currentUserUID)
+        .doc(AuthenticationService.currentUserUID)
         .collection("matches")
         .doc(currentDiscoverUID)
         .get();
@@ -252,7 +252,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 AsyncSnapshot<List<QueryDocumentSnapshot<Map>>> snapshot) =>
             PageView.builder(
                 onPageChanged: (int page) async {
-                  print(_currentDiscoverData.name);
                   if (_userRating > 5 && await matchExists) {
                     await date;
                   } else {
@@ -268,11 +267,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     if (index == 0) {
                       _currentDoc = snapshot.data![0].data() as Map<String, dynamic>;
                     }
-                    // final currentDoc =
-                    //     snapshot.data![index].data() as Map<String, dynamic>;
-                    // _currentDiscoverData =
-                    //     DiscoverData.getDiscoverData(currentDoc);
-                    // currentDiscoverUID = _currentDiscoverData.uid;
                     return Stack(
                       children: [
                         DiscoverView(

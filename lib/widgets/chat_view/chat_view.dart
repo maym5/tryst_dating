@@ -143,7 +143,7 @@ class _MessagesStreamBuilderState extends State<MessagesStreamBuilder> {
                 controller: _scrollController,
                 itemCount: messagesData.length,
                 itemBuilder: (context, index) {
-                  if (messagesData[index].sender == currentUserUID) {
+                  if (messagesData[index].sender == AuthenticationService.currentUserUID) {
                     return OutBubble(message: messagesData[index].message);
                   } else {
                     return InBubble(message: messagesData[index].message);

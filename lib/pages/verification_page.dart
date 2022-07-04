@@ -30,7 +30,7 @@ class VerificationPage extends StatelessWidget {
 
   void _onPressed() async {
     try {
-      await verifyEmail();
+      await AuthenticationService().verifyEmail();
     } catch(e) {
       if (e == "invalid user") {
         // what to do here?

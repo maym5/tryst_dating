@@ -91,7 +91,7 @@ class _SignUpPageState extends State<SignUpPage> {
         _showSpinner = true;
       });
       if (userInputs["email"] != null && userInputs["password"] != null) {
-        var result = await onEmailAndPasswordSignUp(userInputs["email"]!, userInputs["password"]!);
+        var result = await AuthenticationService().onEmailAndPasswordSignUp(userInputs["email"]!, userInputs["password"]!);
         setState(() => _showSpinner = false);
         if (result is String) {
           switch(result) {

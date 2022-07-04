@@ -71,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
   void _handleSignIn() async {
     setState(() => _showSpinner = true);
     if (loginInputs['password'] != null && loginInputs['email'] != null) {
-      var result = await onEmailAndPasswordLogin(loginInputs['email']!, loginInputs['password']!);
+      var result = await AuthenticationService().onEmailAndPasswordLogin(loginInputs['email']!, loginInputs['password']!);
       setState(() => _showSpinner = false);
       if (result is String) {
         switch (result) {
