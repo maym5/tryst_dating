@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rendezvous_beta_v3/pages/verification_page.dart';
 import 'package:rendezvous_beta_v3/services/authentication.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
@@ -15,74 +16,76 @@ class SignUpPage extends StatefulWidget {
   State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
-  // TODO: these are showing up on push
-  // static late final TextEditingController _emailController = TextEditingController();
-  // static late final TextEditingController _passwordController = TextEditingController();
-  // static late final TextEditingController _confirmController = TextEditingController();
+class _SignUpPageState extends State<SignUpPage>
+    with AutomaticKeepAliveClientMixin {
   Map<String, String?> errorMessages = {
-    "email" : null,
-    "password" : null,
-    "confirm" : "Passwords don't match"
+    "email": null,
+    "password": null,
+    "confirm": "Passwords don't match"
   };
   Map<String, String?> userInputs = {
-    "email" : null,
-    "password" : null,
-    "confirm" : null
+    "email": null,
+    "password": null,
+    "confirm": null
   };
   late bool showErrors;
   late bool _showSpinner;
 
-  bool get passwordsDontMatch => userInputs['password'] != userInputs["confirm"];
+  bool get passwordsDontMatch =>
+      userInputs['password'] != userInputs["confirm"];
 
-  // TODO: look at refactoring these
   TextInputField get emailField => TextInputField(
-    title: "Email",
-    onChanged: (email) {
-      if (email == "") {
-        userInputs['email'] = null;
-      } else {
-        userInputs["email"] = email;
-      }
-    },
-    showError: (userInputs['email'] == null || errorMessages["email"] != null) && showErrors,
-    errorMessage: errorMessages["email"],
-  );
+        title: "Email",
+        onChanged: (email) {
+          if (email == "") {
+            userInputs['email'] = null;
+          } else {
+            userInputs["email"] = email;
+          }
+        },
+        showError:
+            (userInputs['email'] == null || errorMessages["email"] != null) &&
+                showErrors,
+        errorMessage: errorMessages["email"],
+      );
 
   TextInputField get passwordField => TextInputField(
-    title: "Password",
-    obscureText: true,
-    onChanged: (password) {
-      if (password == "") {
-        userInputs['password'] = null;
-      } else {
-        userInputs["password"] = password;
-      }
-    },
-    showError: (userInputs['password'] == null || errorMessages['password'] != null) && showErrors,
-    errorMessage: errorMessages["password"],
-  );
+        title: "Password",
+        obscureText: true,
+        onChanged: (password) {
+          if (password == "") {
+            userInputs['password'] = null;
+          } else {
+            userInputs["password"] = password;
+          }
+        },
+        showError: (userInputs['password'] == null ||
+                errorMessages['password'] != null) &&
+            showErrors,
+        errorMessage: errorMessages["password"],
+      );
 
   TextInputField get confirmField => TextInputField(
-    title: "Confirm Password",
-    obscureText: true,
-    onChanged: (confirm) {
-      if (confirm == "") {
-        userInputs['confirm'] = null;
-      } else {
-        userInputs["confirm"] = confirm;
-      }
-    },
-    showError: (userInputs['confirm'] == null || passwordsDontMatch) && showErrors,
-    errorMessage: errorMessages["confirm"],
-  );
+        title: "Confirm Password",
+        obscureText: true,
+        onChanged: (confirm) {
+          if (confirm == "") {
+            userInputs['confirm'] = null;
+          } else {
+            userInputs["confirm"] = confirm;
+          }
+        },
+        showError:
+            (userInputs['confirm'] == null || passwordsDontMatch) && showErrors,
+        errorMessage: errorMessages["confirm"],
+      );
 
   AppBar get _appBar => AppBar(
-    leading: BackButton(
-      color: Colors.redAccent,
-      onPressed: _navigateBack,
-    ),
-  );
+        leading: BackButton(
+          color: Colors.redAccent,
+          onPressed: _navigateBack,
+        ),
+      );
 
   void _handleRegistration() async {
     if (!passwordsDontMatch) {
@@ -90,10 +93,11 @@ class _SignUpPageState extends State<SignUpPage> {
         _showSpinner = true;
       });
       if (userInputs["email"] != null && userInputs["password"] != null) {
-        var result = await AuthenticationService().onEmailAndPasswordSignUp(userInputs["email"]!, userInputs["password"]!);
+        var result = await AuthenticationService().onEmailAndPasswordSignUp(
+            userInputs["email"]!, userInputs["password"]!);
         setState(() => _showSpinner = false);
         if (result is String) {
-          switch(result) {
+          switch (result) {
             case 'weak-password':
               setState(() {
                 errorMessages["password"] = "This password is too weak";
@@ -120,8 +124,7 @@ class _SignUpPageState extends State<SignUpPage> {
               break;
           }
         } else {
-          // await UserData().setLocation();
-          Navigator.pushNamed(context, UserEditPage.id);
+          Navigator.pushNamed(context, VerificationPage.id);
         }
       } else {
         setState(() {
@@ -145,44 +148,51 @@ class _SignUpPageState extends State<SignUpPage> {
     Navigator.pop(context);
   }
 
-
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return PageBackground(
       appBar: _appBar,
-        body: ModalProgressHUD(
-          inAsyncCall: _showSpinner,
-          color: kDarkTransparent,
-          progressIndicator:
+      body: ModalProgressHUD(
+        inAsyncCall: _showSpinner,
+        color: kDarkTransparent,
+        progressIndicator:
             const CircularProgressIndicator(color: Colors.redAccent),
-          child: SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  const SizedBox(height: 25,),
-                  Container(
-                    height: 100,
-                    width: 100,
-                    color: Colors.redAccent,
-                  ),
-                  const SizedBox(height: 75,),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      emailField,
-                      passwordField,
-                      confirmField
-                    ],
-                  ),
-                  const SizedBox(height: 25,),
-                  GradientButton(title: "Sign Up", onPressed: _handleRegistration)
-                ],
-              ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                const SizedBox(
+                  height: 25,
+                ),
+                Container(
+                  height: 100,
+                  width: 100,
+                  color: Colors.redAccent,
+                ),
+                const SizedBox(
+                  height: 75,
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[emailField, passwordField, confirmField],
+                ),
+                const SizedBox(
+                  height: 25,
+                ),
+                GradientButton(title: "Sign Up", onPressed: _handleRegistration)
+              ],
             ),
           ),
         ),
+      ),
     );
   }
-}
 
+  @override
+  bool get wantKeepAlive =>
+      userInputs["email"] != null ||
+      userInputs["password"] != null ||
+      userInputs["confirm"] != null;
+}

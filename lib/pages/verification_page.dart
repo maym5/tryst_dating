@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
 import 'package:rendezvous_beta_v3/widgets/gradient_button.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 import '../services/authentication.dart';
 
-class VerificationPage extends StatelessWidget {
+class VerificationPage extends StatefulWidget {
   const VerificationPage({Key? key}) : super(key: key);
   static const id = "verification_page";
 
+  @override
+  State<VerificationPage> createState() => _VerificationPageState();
+}
+
+class _VerificationPageState extends State<VerificationPage> {
   Widget get _title => const Text(
     "Verify your email!",
     style: TextStyle(
@@ -31,6 +37,7 @@ class VerificationPage extends StatelessWidget {
   void _onPressed() async {
     try {
       await AuthenticationService().verifyEmail();
+      Navigator.pushNamed(context, UserEditPage.id);
     } catch(e) {
       if (e == "invalid user") {
         // what to do here?
