@@ -82,7 +82,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   }
 
   Widget get waitingAnimation => RippleAnimation(
-        color: Colors.orangeAccent,
+        color: Colors.redAccent,
         child: const DiscoverLoadingAvatar(),
         repeat: true,
         ripplesCount: 4,

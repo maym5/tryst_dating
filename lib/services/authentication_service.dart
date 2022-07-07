@@ -2,11 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthenticationService {
   AuthenticationService();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future onEmailAndPasswordLogin(String email, String password) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
     try {
-      UserCredential userCredential = await auth.signInWithEmailAndPassword(
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       return Future.value(userCredential.user);
     } on FirebaseAuthException catch (e) {
@@ -15,9 +15,8 @@ class AuthenticationService {
   }
 
   Future onEmailAndPasswordSignUp(String email, String password) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
     try {
-      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       return Future.value(userCredential.user);
     } on FirebaseAuthException catch (e) {
@@ -34,11 +33,29 @@ class AuthenticationService {
   }
 
   Future verifyEmail() {
-    User? user = FirebaseAuth.instance.currentUser;
+    User? user = currentUser;
     if (user != null && !user.emailVerified) {
+      // FirebaseAuth.instance.applyActionCode(code)
       return user.sendEmailVerification();
     } else {
       return Future.error('invalid user');
+    }
+  }
+
+  static Future<bool> checkEmailVerified() async {
+    if (currentUser != null) {
+      await currentUser!.reload();
+      return currentUser!.emailVerified;
+    } return false;
+  }
+
+  static Future<void> sendVerificationEmail() async {
+    if (currentUser != null && !currentUser!.emailVerified) {
+      try {
+        await currentUser?.sendEmailVerification();
+      } catch (e) {
+        print(e);
+      }
     }
   }
 
