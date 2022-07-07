@@ -26,8 +26,11 @@ class AuthenticationService {
   }
 
   static String? get currentUserUID {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    return auth.currentUser?.uid;
+    return currentUser?.uid;
+  }
+
+  static User? get currentUser {
+    return FirebaseAuth.instance.currentUser;
   }
 
   Future verifyEmail() {

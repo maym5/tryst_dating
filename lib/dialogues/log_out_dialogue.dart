@@ -7,7 +7,7 @@ import 'package:rendezvous_beta_v3/widgets/gradient_button.dart';
 import '../constants.dart';
 import '../models/users.dart';
 import '../pages/intro_page.dart';
-import '../services/authentication.dart';
+import '../services/authentication_service.dart';
 
 Widget buildPopUpDialogue(Animation<double> animation, BuildContext context, {required List<Widget> children, double? height}) {
   final curvedValue = Curves.easeInOutBack.transform(animation.value) - 1.0;

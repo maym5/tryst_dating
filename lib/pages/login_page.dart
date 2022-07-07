@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:rendezvous_beta_v3/services/authentication.dart';
+import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import '../constants.dart';
 import '../models/users.dart';
 import '../widgets/fields/text_input_field.dart';

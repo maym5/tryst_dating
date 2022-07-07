@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
-import 'package:rendezvous_beta_v3/services/authentication.dart';
+import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import 'package:rendezvous_beta_v3/services/messaging_service.dart';
 import 'package:rendezvous_beta_v3/widgets/chat_view/chat_bubble.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';

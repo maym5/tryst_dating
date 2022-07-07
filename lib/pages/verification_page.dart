@@ -1,8 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
 import 'package:rendezvous_beta_v3/widgets/gradient_button.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
-import '../services/authentication.dart';
+import '../services/authentication_service.dart';
 
 class VerificationPage extends StatefulWidget {
   const VerificationPage({Key? key}) : super(key: key);
@@ -13,6 +16,8 @@ class VerificationPage extends StatefulWidget {
 }
 
 class _VerificationPageState extends State<VerificationPage> {
+  late bool _showSpinner;
+
   Widget get _title => const Text(
     "Verify your email!",
     style: TextStyle(
@@ -23,10 +28,17 @@ class _VerificationPageState extends State<VerificationPage> {
 
   Widget get _description => Text(
     "It helps us keep Rendezvous a safe place to date (and you gotta do it), so click that button and join the Rendezvous community",
+    textAlign: TextAlign.center,
     style: TextStyle(
-      color: Colors.redAccent.withOpacity(0.7),
+      color: kTextStyle.color,
       fontSize: 25
     ),
+  );
+
+  Widget get _artToComLater => Container(
+    width: 150,
+    height: 150,
+    color: Colors.redAccent,
   );
 
   Widget get _button => GradientButton(
@@ -34,10 +46,27 @@ class _VerificationPageState extends State<VerificationPage> {
       onPressed: _onPressed
   );
 
+  Widget get _titleAndDescription => Column(
+    children: [
+      _title,
+      const SizedBox(height: 20),
+      _description,
+    ],
+  );
+
   void _onPressed() async {
     try {
+      setState(() => _showSpinner = true);
       await AuthenticationService().verifyEmail();
-      Navigator.pushNamed(context, UserEditPage.id);
+      setState(() => _showSpinner = false);
+      User? _user = AuthenticationService.currentUser;
+      if (_user != null && _user.emailVerified) {
+        Navigator.pushNamed(context, UserEditPage.id);
+      } else if (_user == null) {
+        // there is no user
+      } else {
+        // user already verified
+      }
     } catch(e) {
       if (e == "invalid user") {
         // what to do here?
@@ -47,15 +76,24 @@ class _VerificationPageState extends State<VerificationPage> {
   }
 
   @override
+  void initState() {
+    _showSpinner = false;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return PageBackground(
-        body: Column(
-          children: [
-            _title,
-            _description,
-            const SizedBox(height: 25),
-            _button
-          ],
+        body: ModalProgressHUD(
+          inAsyncCall: _showSpinner,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _artToComLater,
+              _titleAndDescription,
+              _button
+            ],
+          ),
         )
     );
   }

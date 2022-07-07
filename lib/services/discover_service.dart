@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:rendezvous_beta_v3/services/authentication.dart';
+import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import '../models/users.dart';
 
 class DiscoverService {
