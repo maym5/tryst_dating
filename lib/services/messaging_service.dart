@@ -6,7 +6,7 @@ class MessengingService {
 
   /// we want this class to return a list of messages
 
-  Future<bool> hasUnreadMessages(String targetUID) async {
+  Stream<bool> hasUnreadMessages(String targetUID) async* {
     final QuerySnapshot unreadMessages = await _db
         .collection("userData")
         .doc(AuthenticationService.currentUserUID)
@@ -16,7 +16,7 @@ class MessengingService {
         .where("sender", isEqualTo: targetUID)
         .where("read", isEqualTo: false)
         .get();
-    return unreadMessages.size != 0;
+    yield* Stream.value(unreadMessages.size != 0);
   }
 
   void sendMessage(String message, String targetUID) async {
@@ -48,17 +48,32 @@ class MessengingService {
 
   void markMessagesRead(String targetUID) async {
     // TODO: get it to work
-    final QuerySnapshot _querySnapshot = await _db
+    final QuerySnapshot _yourMessages = await _db
         .collection("userData")
         .doc(AuthenticationService.currentUserUID)
         .collection("matches")
         .doc(targetUID)
         .collection("messages")
         .get();
-    _querySnapshot.docs.forEach((doc) {
+    final QuerySnapshot _theirMessages = await _db
+        .collection("userData")
+        .doc(targetUID)
+        .collection("matches")
+        .doc(AuthenticationService.currentUserUID)
+        .collection("messages")
+        .get();
+    _yourMessages.docs.forEach((doc) {
       if (doc.exists && doc.data() != null) {
         final Map _data = doc.data() as Map;
         if (_data["sender"] != AuthenticationService.currentUserUID) {
+          doc.reference.update({"read": true});
+        }
+      }
+    });
+    _theirMessages.docs.forEach((doc) {
+      if (doc.exists && doc.data() != null) {
+        final Map _data = doc.data() as Map;
+        if (_data["sender"] != targetUID) {
           doc.reference.update({"read": true});
         }
       }

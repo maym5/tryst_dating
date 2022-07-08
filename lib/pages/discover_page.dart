@@ -36,6 +36,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
   DiscoverData get _currentDiscoverData =>
       DiscoverData.getDiscoverData(_currentDoc);
   String get _currentUID => _currentDiscoverData.uid;
+  ScrollPhysics _physics = const AlwaysScrollableScrollPhysics();
+
 
   void _onScroll() {
     // made change must test
@@ -187,9 +189,12 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   }
                   if (page < snapshot.data!.length) {
                     _updateCurrentDiscoverData(page, snapshot);
+                  } else {
+                    setState(() => _physics = const NeverScrollableScrollPhysics());
                   }
                 },
                 controller: _pageController,
+                physics: _physics,
                 scrollDirection: Axis.vertical,
                 itemCount: snapshot.data!.length + 1,
                 itemBuilder: (context, index) {
@@ -232,6 +237,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
     );
   }
 }
+
 
 
 class DiscoverLoadingAvatar extends StatelessWidget {

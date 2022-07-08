@@ -7,104 +7,6 @@ import 'package:rendezvous_beta_v3/widgets/match_card.dart';
 import 'package:rendezvous_beta_v3/widgets/match_tile.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 
-// class DatesPage extends StatefulWidget {
-//   const DatesPage({Key? key}) : super(key: key);
-//
-//   @override
-//   State<DatesPage> createState() => _DatesPageState();
-// }
-//
-// class _DatesPageState extends State<DatesPage> {
-//   final Stream<List<MatchData>?> _datesStream = MatchDataService().datesStream;
-//
-//   Widget get _emptyMessage => Container(
-//         alignment: Alignment.center,
-//         height: MediaQuery.of(context).size.height,
-//         child: const Text("Such empty, get swiping!"),
-//       );
-//
-//   Widget get _errorMessage => Container(
-//         alignment: Alignment.center,
-//         height: MediaQuery.of(context).size.height,
-//         child: const Text(
-//             "There's been an error loading your dates data, try again soon"),
-//       );
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.only(top: 15),
-//       child: StreamBuilder(
-//           stream: _datesStream,
-//           builder: (BuildContext context,
-//               AsyncSnapshot<List<MatchData>?> dateSnapshot) {
-//             if (dateSnapshot.hasData && !dateSnapshot.hasError) {
-//               return ListView.builder(
-//                   itemCount: dateSnapshot.data!.length,
-//                   itemBuilder: (context, index) =>
-//                       DateCard(data: dateSnapshot.data![index]));
-//             } else if (!dateSnapshot.hasData) {
-//               return _emptyMessage;
-//             } else {
-//               return _errorMessage;
-//             }
-//           }),
-//     );
-//   }
-// }
-//
-// class LikesPage extends StatefulWidget {
-//   const LikesPage({Key? key}) : super(key: key);
-//
-//   @override
-//   State<LikesPage> createState() => _LikesPageState();
-// }
-//
-// class _LikesPageState extends State<LikesPage> {
-//   final Stream<List<MatchData>?> _likesStream = MatchDataService().likesStream;
-//
-//   Widget get _noLikesMessage => Container(
-//         alignment: Alignment.center,
-//         height: MediaQuery.of(context).size.height,
-//         child: const Text("Don't worry, people are liking you right now!"),
-//       );
-//
-//   Widget get _errorMessage => Container(
-//         alignment: Alignment.center,
-//         height: MediaQuery.of(context).size.height,
-//         child: const Text(
-//             "There's been an error loading your match data, try again soon"),
-//       );
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.only(top: 15),
-//       child: StreamBuilder<List<MatchData>?>(
-//           stream: _likesStream,
-//           builder: (BuildContext context,
-//               AsyncSnapshot<List<MatchData>?> likeSnapshot) {
-//             if (likeSnapshot.hasData && !likeSnapshot.hasError) {
-//               // TODO: make this a reorderable gridview
-//               return GridView.builder(
-//                 itemCount: likeSnapshot.data!.length,
-//                 itemBuilder: (BuildContext context, int index) =>
-//                     MatchTile(data: likeSnapshot.data![index]),
-//                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-//                     childAspectRatio: 0.8,
-//                     crossAxisCount: 2,
-//                     mainAxisSpacing: 16.0,
-//                     crossAxisSpacing: 8.0),
-//               );
-//             } else if (!likeSnapshot.hasData) {
-//               return _noLikesMessage;
-//             } else {
-//               return _errorMessage;
-//             }
-//           }),
-//     );
-//   }
-// }
 
 class LikesPage extends StatefulWidget {
   const LikesPage({Key? key}) : super(key: key);
@@ -247,15 +149,17 @@ class _DatePageState extends State<DatePage> {
       for (DocumentSnapshot doc in dateSnapshot.data!.docs) {
         if (doc.exists && doc.data() != null) {
           final Map _data = doc.data() as Map;
-          matchData.add(MatchData(
-            name: _data["name"],
-            age: _data["age"],
-            image: _data["avatarImage"],
-            matchID: _data["matchUID"],
-            venue: _data["venue"],
-            dateType: _data["dateType"],
-            dateTime: MatchDataService.convertTimeStamp(_data["dateTime"]),
-          ));
+          if (MatchDataService.convertTimeStamp(_data["dateTime"]).isAfter(DateTime.now())) {
+            matchData.add(MatchData(
+              name: _data["name"],
+              age: _data["age"],
+              image: _data["avatarImage"],
+              matchID: _data["matchUID"],
+              venue: _data["venue"],
+              dateType: _data["dateType"],
+              dateTime: MatchDataService.convertTimeStamp(_data["dateTime"]),
+            ));
+          }
         }
       }
       return ListView.builder(
@@ -283,6 +187,7 @@ class _DatePageState extends State<DatePage> {
                 case ConnectionState.done:
                   return _dateBuilder(context, dateSnapshot);
                 case ConnectionState.waiting:
+                  // TODO: see if theres another way to do this
                   _showSpinner = true;
                   return Container();
                 case ConnectionState.none:

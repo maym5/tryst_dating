@@ -196,26 +196,27 @@ class _DateOptionsBarState extends State<DateOptionsBar> {
     // TODO: add details tap
   }
 
-  Future<bool> get _hasUnreadMessages async {
-    return await MessengingService()
-        .hasUnreadMessages(widget.matchData.matchID);
-  }
-
-  void _setUnreadMessages() async {
-    hasUnreadMessages = await _hasUnreadMessages;
-  }
+  // void _setUnreadMessages() async {
+  //   // messenging service working as expected
+  //   hasUnreadMessages = await MessengingService()
+  //       .hasUnreadMessages(widget.matchData.matchID);
+  // }
 
   Widget get _messageButton => GestureDetector(
         onTap: _onMessageTap,
         child: Stack(
           children: [
             const Icon(Icons.message, color: Colors.white),
-            Container(
-              height: 10,
-              width: 10,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: hasUnreadMessages ? Colors.red : Colors.transparent),
+            StreamBuilder(
+              stream: MessengingService()
+                .hasUnreadMessages(widget.matchData.matchID),
+              builder: (context, AsyncSnapshot<bool> snapshot) => snapshot.hasData ? Container(
+                height: 10,
+                width: 10,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: snapshot.data! ? Colors.red : Colors.transparent),
+              ) : Container(),
             )
           ],
         ),
@@ -230,11 +231,11 @@ class _DateOptionsBarState extends State<DateOptionsBar> {
         ),
       );
 
-  @override
-  void initState() {
-    _setUnreadMessages();
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   _setUnreadMessages();
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {

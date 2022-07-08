@@ -107,8 +107,8 @@ class MatchDataService {
       {required String currentDiscoverUID,
       required double userRating,
       required String name,
-        required int age,
-        required List<String> dateTypes,
+      required int age,
+      required List<String> dateTypes,
       required String image}) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
     try {
@@ -123,9 +123,9 @@ class MatchDataService {
         "userRating": userRating,
         "name": name,
         "avatarImage": image,
-        "age" : age,
-        "dateTypes" : dateTypes,
-        "seen" : true
+        "age": age,
+        "dateTypes": dateTypes,
+        "seen": true
       });
       await db
           .collection("userData")
@@ -138,9 +138,9 @@ class MatchDataService {
         "otherUserRating": userRating,
         "name": UserData.name,
         "avatarImage": UserData.imageURLs[0],
-        "age" : UserData.age,
-        "dateTypes" : UserData.dates.toList(),
-        "seen" : false
+        "age": UserData.age,
+        "dateTypes": UserData.dates.toList(),
+        "seen": false
       });
     } catch (e) {
       print(e);
@@ -167,7 +167,7 @@ class MatchDataService {
         "dateType": dateType,
         "dateTime": dateTime,
         "userRating": userRating,
-        "seen" : true,
+        "seen": true,
       });
       await db
           .collection("userData")
@@ -180,7 +180,7 @@ class MatchDataService {
         "dateType": dateType,
         "dateTime": dateTime,
         "otherUserRating": userRating,
-        "seen" : true
+        "seen": true
       });
     } catch (e) {
       print(e);
