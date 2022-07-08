@@ -32,16 +32,6 @@ class AuthenticationService {
     return FirebaseAuth.instance.currentUser;
   }
 
-  Future verifyEmail() {
-    User? user = currentUser;
-    if (user != null && !user.emailVerified) {
-      // FirebaseAuth.instance.applyActionCode(code)
-      return user.sendEmailVerification();
-    } else {
-      return Future.error('invalid user');
-    }
-  }
-
   static Future<bool> checkEmailVerified() async {
     if (currentUser != null) {
       await currentUser!.reload();
@@ -59,18 +49,7 @@ class AuthenticationService {
     }
   }
 
-// Future<void> getUserData() async {
-//   FirebaseFirestore _db = FirebaseFirestore.instance;
-//   User? user = FirebaseAuth.instance.currentUser;
-//   final DocumentSnapshot<Map<String, dynamic>> _rawData =
-//       await _db.collection("userData").doc(user?.uid).get();
-//   final Map<String, dynamic> _data = _rawData.data()!;
-//   UserData.fromJson(_data);
-//   UserImages.getImagesFromUserData();
-// }
-
   Future<void> logOut() async {
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    await auth.signOut();
+    await _auth.signOut();
   }
 }

@@ -188,9 +188,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 },
                 controller: _pageController,
                 scrollDirection: Axis.vertical,
-                itemCount: snapshot.data?.length,
+                itemCount: snapshot.data!.length + 1, // TODO: move the hasData checks up to wrap the pageview
                 itemBuilder: (BuildContext context, int index) {
-                  if (snapshot.hasData && !snapshot.hasError) {
+                  if (snapshot.hasData && !snapshot.hasError && index <= snapshot.data!.length) {
                     _displayedDoc =
                         snapshot.data![index].data() as Map<String, dynamic>;
                     if (index == 0) {
@@ -214,7 +214,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   } else if (snapshot.connectionState ==
                       ConnectionState.waiting) {
                     return waitingAnimation;
-                  } else if (!snapshot.hasData) {
+                  } else if (!snapshot.hasData || index > snapshot.data!.length) {
                     return noDataMessage;
                   } else {
                     return errorMessage;
