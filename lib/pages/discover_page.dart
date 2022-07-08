@@ -176,26 +176,29 @@ class _DiscoverPageState extends State<DiscoverPage> {
       body: StreamBuilder(
         stream: _discoverStream,
         builder: (context,
-                AsyncSnapshot<List<QueryDocumentSnapshot<Map>>> snapshot) =>
-            PageView.builder(
+            AsyncSnapshot<List<QueryDocumentSnapshot<Map>>> snapshot) {
+          if (snapshot.hasData && !snapshot.hasError) {
+            return PageView.builder(
                 onPageChanged: (int page) async {
                   if (_userRating > 5 && await matchExists) {
                     await date;
                   } else {
                     await createNewMatch;
                   }
-                  _updateCurrentDiscoverData(page, snapshot);
+                  if (page < snapshot.data!.length) {
+                    _updateCurrentDiscoverData(page, snapshot);
+                  }
                 },
                 controller: _pageController,
                 scrollDirection: Axis.vertical,
-                itemCount: snapshot.data!.length + 1, // TODO: move the hasData checks up to wrap the pageview
-                itemBuilder: (BuildContext context, int index) {
-                  if (snapshot.hasData && !snapshot.hasError && index <= snapshot.data!.length) {
+                itemCount: snapshot.data!.length + 1,
+                itemBuilder: (context, index) {
+                  if (index < snapshot.data!.length) {
                     _displayedDoc =
-                        snapshot.data![index].data() as Map<String, dynamic>;
+                    snapshot.data![index].data() as Map<String, dynamic>;
                     if (index == 0) {
                       _currentDoc =
-                          snapshot.data![0].data() as Map<String, dynamic>;
+                      snapshot.data![0].data() as Map<String, dynamic>;
                     }
                     return Stack(
                       children: [
@@ -211,19 +214,25 @@ class _DiscoverPageState extends State<DiscoverPage> {
                         ),
                       ],
                     );
-                  } else if (snapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return waitingAnimation;
-                  } else if (!snapshot.hasData || index > snapshot.data!.length) {
-                    return noDataMessage;
                   } else {
-                    return errorMessage;
+                    return noDataMessage;
                   }
-                }),
+                }
+            );
+          } else if (snapshot.connectionState ==
+              ConnectionState.waiting) {
+            return waitingAnimation;
+          } else if (!snapshot.hasData) {
+            return noDataMessage;
+          } else {
+            return errorMessage;
+          }
+        },
       ),
     );
   }
 }
+
 
 class DiscoverLoadingAvatar extends StatelessWidget {
   const DiscoverLoadingAvatar({Key? key}) : super(key: key);
