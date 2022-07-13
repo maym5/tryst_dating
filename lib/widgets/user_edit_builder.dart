@@ -43,7 +43,7 @@ class UserEditBuilder extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(35),
         child: GradientButton(
-            title: homePage ? "Back to rating" : "Check out your profile",
+            title: homePage ? "Save Changes" : "Check out your profile",
             onPressed: onButtonPress
         ),
       ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../animations/bounce_animation.dart';
 import '../constants.dart';
 

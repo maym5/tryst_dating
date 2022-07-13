@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
@@ -75,6 +77,7 @@ class _ChatViewState extends State<ChatView> {
                   setState(() {
                     _messageText = "";
                     _textController.text = _messageText;
+                    _scrollDown();
                   });
                 },
                 child: Text("SEND",
@@ -85,6 +88,7 @@ class _ChatViewState extends State<ChatView> {
       );
 
   late final Stream<QuerySnapshot> _messagesStream;
+  final ScrollController _controller = ScrollController();
 
   @override
   void initState() {
@@ -93,8 +97,17 @@ class _ChatViewState extends State<ChatView> {
     super.initState();
   }
 
+  void _scrollDown() {
+    if (_controller.hasClients) {
+      _controller.jumpTo(_controller.position.maxScrollExtent + 200);
+    } else {
+      Timer(const Duration(milliseconds: 400), () => _scrollDown());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) => _scrollDown());
     return PageBackground(
       appBar: _appBar,
       body: Column(
@@ -104,6 +117,7 @@ class _ChatViewState extends State<ChatView> {
           MessagesStreamBuilder(
             stream: _messagesStream,
             name: widget.name,
+            controller: _controller,
           ),
           _chatBox
         ],
@@ -114,22 +128,17 @@ class _ChatViewState extends State<ChatView> {
 
 class MessagesStreamBuilder extends StatefulWidget {
   const MessagesStreamBuilder(
-      {Key? key, required this.stream, required this.name})
+      {Key? key, required this.stream, required this.name, required this.controller})
       : super(key: key);
   final Stream<QuerySnapshot> stream;
   final String name;
+  final ScrollController controller;
 
   @override
   State<MessagesStreamBuilder> createState() => _MessagesStreamBuilderState();
 }
 
 class _MessagesStreamBuilderState extends State<MessagesStreamBuilder> {
-  final ScrollController _scrollController = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +156,8 @@ class _MessagesStreamBuilderState extends State<MessagesStreamBuilder> {
           }
           return Expanded(
             child: ListView.builder(
-                controller: _scrollController,
+                controller: widget.controller,
+                physics: const BouncingScrollPhysics(),
                 itemCount: messagesData.length,
                 itemBuilder: (context, index) {
                   if (messagesData[index].sender ==
