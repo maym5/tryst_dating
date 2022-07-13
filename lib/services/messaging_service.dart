@@ -4,10 +4,8 @@ import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 class MessengingService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  /// we want this class to return a list of messages
-
-  Stream<bool> hasUnreadMessages(String targetUID) async* {
-    final QuerySnapshot unreadMessages = await _db
+  Stream<QuerySnapshot> unreadMessages(String targetUID) async* {
+    yield* _db
         .collection("userData")
         .doc(AuthenticationService.currentUserUID)
         .collection("matches")
@@ -15,8 +13,7 @@ class MessengingService {
         .collection("messages")
         .where("sender", isEqualTo: targetUID)
         .where("read", isEqualTo: false)
-        .get();
-    yield* Stream.value(unreadMessages.size != 0);
+        .get().asStream();
   }
 
   void sendMessage(String message, String targetUID) async {
@@ -47,7 +44,6 @@ class MessengingService {
   }
 
   void markMessagesRead(String targetUID) async {
-    // TODO: get it to work
     final QuerySnapshot _yourMessages = await _db
         .collection("userData")
         .doc(AuthenticationService.currentUserUID)

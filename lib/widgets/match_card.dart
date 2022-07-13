@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/services/messaging_service.dart';
@@ -8,7 +9,6 @@ import 'package:intl/intl.dart';
 import '../services/match_data_service.dart';
 
 class DateCard extends StatefulWidget {
-  // TODO: figure out how to check if they have unread messages
   const DateCard({Key? key, required this.data}) : super(key: key);
   final MatchData data;
 
@@ -180,27 +180,23 @@ class DateOptionsBar extends StatefulWidget {
 }
 
 class _DateOptionsBarState extends State<DateOptionsBar> {
-  bool hasUnreadMessages = false;
+  late Stream<QuerySnapshot> unreadMessages =
+      MessengingService().unreadMessages(widget.matchData.matchID);
 
   void _onMessageTap() {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => ChatView(
-                image: widget.matchData.image!,
-                name: widget.matchData.name,
-                match: widget.matchData.matchID)));
+          builder: (context) => ChatView(
+              image: widget.matchData.image!,
+              name: widget.matchData.name,
+              match: widget.matchData.matchID),
+        ));
   }
 
   void _onDetailsTap() {
     // TODO: add details tap
   }
-
-  // void _setUnreadMessages() async {
-  //   // messenging service working as expected
-  //   hasUnreadMessages = await MessengingService()
-  //       .hasUnreadMessages(widget.matchData.matchID);
-  // }
 
   Widget get _messageButton => GestureDetector(
         onTap: _onMessageTap,
@@ -208,15 +204,22 @@ class _DateOptionsBarState extends State<DateOptionsBar> {
           children: [
             const Icon(Icons.message, color: Colors.white),
             StreamBuilder(
-              stream: MessengingService()
-                .hasUnreadMessages(widget.matchData.matchID),
-              builder: (context, AsyncSnapshot<bool> snapshot) => snapshot.hasData ? Container(
-                height: 10,
-                width: 10,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: snapshot.data! ? Colors.red : Colors.transparent),
-              ) : Container(),
+              stream: unreadMessages,
+              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) =>
+                  snapshot.hasData && snapshot.data!.size != 0
+                      ? Container(
+                          height: 10,
+                          width: 10,
+                          decoration: const BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.red),
+                        )
+                      : Container(
+                          height: 10,
+                          width: 10,
+                          decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.transparent),
+                        ),
             )
           ],
         ),
@@ -230,12 +233,6 @@ class _DateOptionsBarState extends State<DateOptionsBar> {
           size: 25,
         ),
       );
-
-  // @override
-  // void initState() {
-  //   _setUnreadMessages();
-  //   super.initState();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -308,11 +305,7 @@ class MatchDateType extends StatelessWidget {
 }
 
 class NameAndButtons extends StatelessWidget {
-  const NameAndButtons(
-      {Key? key,
-      required this.data
-      })
-      : super(key: key);
+  const NameAndButtons({Key? key, required this.data}) : super(key: key);
   final MatchData data;
   // final String name;
   // final String? dateType;

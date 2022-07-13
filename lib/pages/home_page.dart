@@ -5,9 +5,10 @@ import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
 
 class HomePage extends StatelessWidget {
   static const id = "home_page";
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key, this.initialPage = 1}) : super(key: key);
+  final int initialPage;
 
-  PageController get _controller => PageController(initialPage: 1);
+  PageController get _controller => PageController(initialPage: initialPage);
 
   void _userEditButtonPress() {
     _controller.animateToPage(1, duration: const Duration(milliseconds: 200), curve: Curves.easeInSine);

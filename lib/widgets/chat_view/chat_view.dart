@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
+import 'package:rendezvous_beta_v3/pages/home_page.dart';
 import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import 'package:rendezvous_beta_v3/services/messaging_service.dart';
 import 'package:rendezvous_beta_v3/widgets/chat_view/chat_bubble.dart';
@@ -30,6 +31,11 @@ class _ChatViewState extends State<ChatView> {
             color: Colors.redAccent,
             onPressed: () {
               Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const HomePage(initialPage: 2)));
             },
           ),
           centerTitle: true,
@@ -144,7 +150,8 @@ class _MessagesStreamBuilderState extends State<MessagesStreamBuilder> {
                 controller: _scrollController,
                 itemCount: messagesData.length,
                 itemBuilder: (context, index) {
-                  if (messagesData[index].sender == AuthenticationService.currentUserUID) {
+                  if (messagesData[index].sender ==
+                      AuthenticationService.currentUserUID) {
                     return OutBubble(message: messagesData[index].message);
                   } else {
                     return InBubble(message: messagesData[index].message);
