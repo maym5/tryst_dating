@@ -1,17 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
+import 'package:rendezvous_beta_v3/models/dates_model.dart';
 import 'package:rendezvous_beta_v3/services/authentication_service.dart';
-import 'package:rendezvous_beta_v3/services/google_places_service.dart';
 import 'package:rendezvous_beta_v3/services/match_data_service.dart';
 import 'package:rendezvous_beta_v3/widgets/discover_view/discover_view.dart';
 import 'package:rendezvous_beta_v3/widgets/like_widget.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
-import '../dialogues/date_time_dialogue.dart';
 import '../models/users.dart';
 import '../services/discover_service.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
-import 'dart:math';
 
 class DiscoverPage extends StatefulWidget {
   static const id = "discover_page";
@@ -27,7 +25,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
   late PageController _pageController;
   late ValueNotifier<double> _animation;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  DateTime? _dateTime;
   late Map<String, dynamic> _displayedDoc;
   late Map<String, dynamic> _currentDoc;
   final Stream<List<QueryDocumentSnapshot<Map>>> _discoverStream = DiscoverService().discoverStream;
@@ -76,13 +73,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
     });
   }
 
-  void setDateTime(DateTime date, TimeOfDay time) {
-    setState(() {
-      _dateTime =
-          DateTime(date.year, date.month, date.day, time.hour, time.minute);
-    });
-  }
-
   Widget get waitingAnimation => RippleAnimation(
         color: Colors.redAccent,
         child: const DiscoverLoadingAvatar(),
@@ -123,43 +113,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   }
 
   Future<void> get date async {
-    List<String> commonDateTypes = _currentDiscoverData.dates
-        .where((element) => UserData.dates.contains(element))
-        .toList();
-    final String _dateType =
-        commonDateTypes[Random().nextInt(commonDateTypes.length)];
-    final Map _venueData = await GooglePlacesService(
-            venueType: _dateType) // might be empty handle that case
-        .venue;
-    final DocumentSnapshot _matchSnapshot =
-        await _db.collection("userData").doc(_currentUID).get();
-    final Map _matchData = _matchSnapshot.data() as Map;
-    if (_venueData["status"] == "OK") {
-      await DateTimeDialogue(setDateTime: setDateTime).buildCalendarDialogue(
-          context,
-          matchName: _matchData["name"],
-          venueName: _venueData["name"]);
-      if (_dateTime != null &&
-          await GooglePlacesService.checkDateTime(_dateTime!, _venueData)) {
-        await MatchDataService.updateMatchData(
-            otherUserUID: _currentUID,
-            dateType: _dateType,
-            dateTime: _dateTime!,
-            venue: _venueData["name"],
-            userRating: _userRating);
-      }
-    } else {
-      if (!await GooglePlacesService.checkDateTime(_dateTime!, _venueData)) {
-        await DateTimeDialogue(setDateTime: setDateTime).buildCalendarDialogue(
-            context,
-            venueName: _venueData["name"],
-            pickAnother: true,
-            matchName: _matchData["name"]);
-      } else {
-        print("there was an error");
-        // TODO: error dialogue
-      }
-    }
+    await DatesModel(otherDiscoverData: _currentDiscoverData).getDate(context, _userRating);
   }
 
   Future<void> get createNewMatch async {

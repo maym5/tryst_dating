@@ -48,11 +48,11 @@ class _LikesPageState extends State<LikesPage> {
     if (likeSnapshot.hasData &&
         !likeSnapshot.hasError &&
         likeSnapshot.data?.size != 0) {
-      final List<MatchData> matchData = [];
+      final List<DateData> matchData = [];
       for (DocumentSnapshot doc in likeSnapshot.data!.docs) {
         if (doc.exists && doc.data() != null) {
           final Map _data = doc.data() as Map;
-          matchData.add(MatchData(
+          matchData.add(DateData(
               name: _data["name"],
               matchID: _data["matchUID"],
               image: _data["avatarImage"],
@@ -145,12 +145,12 @@ class _DatePageState extends State<DatePage> {
     if (dateSnapshot.hasData &&
         !dateSnapshot.hasError &&
         dateSnapshot.data!.size != 0) {
-      final List<MatchData> matchData = [];
+      final List<DateData> matchData = [];
       for (DocumentSnapshot doc in dateSnapshot.data!.docs) {
         if (doc.exists && doc.data() != null) {
           final Map _data = doc.data() as Map;
           if (MatchDataService.convertTimeStamp(_data["dateTime"]).isAfter(DateTime.now())) {
-            matchData.add(MatchData(
+            matchData.add(DateData(
               name: _data["name"],
               age: _data["age"],
               image: _data["avatarImage"],

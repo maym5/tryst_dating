@@ -188,8 +188,8 @@ class MatchDataService {
   }
 }
 
-class MatchData {
-  MatchData(
+class DateData {
+  DateData(
       {required this.name,
       required this.matchID,
       this.image,

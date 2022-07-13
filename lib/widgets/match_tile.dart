@@ -9,7 +9,8 @@ import '../services/google_places_service.dart';
 
 class MatchTile extends StatefulWidget {
   const MatchTile({Key? key, required this.data}) : super(key: key);
-  final MatchData data;
+  final DateData data;
+  // TODO: figure out how to use DatesModel here aka use discoverData not match
 
   @override
   State<MatchTile> createState() => _MatchTileState();

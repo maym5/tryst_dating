@@ -8,6 +8,7 @@ const kNameTextStyle = TextStyle(
   fontWeight: FontWeight.w400,
   fontFamily: 'Raleway',
 );
+
 const kAgeTextStyle = TextStyle(
   color: Colors.white,
   fontSize: 30.0,
@@ -63,7 +64,8 @@ const kTextFieldDecoration = InputDecoration(
     borderRadius: BorderRadius.all(Radius.circular(32.0)),
   ),
 );
-SliderThemeData kSliderTheme = SliderThemeData(
+
+final SliderThemeData kSliderTheme = SliderThemeData(
   rangeTickMarkShape: const RoundRangeSliderTickMarkShape(tickMarkRadius: 6),
   inactiveTickMarkColor: Colors.white30,
   activeTickMarkColor: Colors.redAccent,
@@ -74,7 +76,6 @@ SliderThemeData kSliderTheme = SliderThemeData(
   overlayColor: Colors.redAccent.withOpacity(0.1),
   disabledThumbColor: kGreyWithAlpha,
 );
-
 
 const kPricePickerPadding = EdgeInsets.fromLTRB(10, 30, 10, 0);
 

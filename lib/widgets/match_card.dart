@@ -10,7 +10,7 @@ import '../services/match_data_service.dart';
 
 class DateCard extends StatefulWidget {
   const DateCard({Key? key, required this.data}) : super(key: key);
-  final MatchData data;
+  final DateData data;
 
   @override
   State<DateCard> createState() => _DateCardState();
@@ -173,7 +173,7 @@ class DateInfo extends StatelessWidget {
 class DateOptionsBar extends StatefulWidget {
   const DateOptionsBar({Key? key, required this.matchData}) : super(key: key);
   // final bool hasUnreadMessages;
-  final MatchData matchData;
+  final DateData matchData;
 
   @override
   State<DateOptionsBar> createState() => _DateOptionsBarState();
@@ -306,7 +306,7 @@ class MatchDateType extends StatelessWidget {
 
 class NameAndButtons extends StatelessWidget {
   const NameAndButtons({Key? key, required this.data}) : super(key: key);
-  final MatchData data;
+  final DateData data;
   // final String name;
   // final String? dateType;
   // final bool confirmedDate;

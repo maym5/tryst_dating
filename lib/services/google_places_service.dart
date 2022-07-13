@@ -52,7 +52,7 @@ class GooglePlacesService {
       final Response result = await dio.get(_path);
       final _data = result.data;
       print(_data);
-      if (result.statusCode! >= 200 &&  result.statusCode! < 300) {
+      if (result.statusCode! >= 200 && result.statusCode! < 300) {
         return {
           "name": _data["result"]["name"],
           "openHours": _data["result"]["opening_hours"]["periods"],
@@ -86,7 +86,9 @@ class GooglePlacesService {
       final _close = DateTime(
           dateTime.year,
           dateTime.month,
-          int.parse(_closeTime.substring(0, 2)) < 12 ? dateTime.day + 1 : dateTime.day,
+          int.parse(_closeTime.substring(0, 2)) < 12
+              ? dateTime.day + 1
+              : dateTime.day,
           int.parse(_closeTime.substring(0, 2)),
           int.parse(_closeTime.substring(2)));
       if (dateTime.isBefore(_close) && dateTime.isAfter(_open)) {
@@ -94,7 +96,6 @@ class GooglePlacesService {
       }
       return false;
     } catch (e) {
-      print(e);
       return false;
     }
   }
