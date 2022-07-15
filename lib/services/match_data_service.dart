@@ -19,72 +19,6 @@ class MatchDataService {
     }
   }
 
-  // Stream<List<MatchData>?> get likesStream async* {
-  //   Stream<QuerySnapshot> _data = _db
-  //       .collection("userData")
-  //       .doc(currentUserUID)
-  //       .collection("matches")
-  //       .where("match", isEqualTo: false)
-  //       .snapshots();
-  //   final List<MatchData> result = <MatchData>[];
-  //   await for (QuerySnapshot snapshot in _data) {
-  //     if (snapshot.docs.isNotEmpty) {
-  //       for (QueryDocumentSnapshot doc in snapshot.docs) {
-  //         if (doc.exists && doc.data() != null) {
-  //           Map<String, dynamic> _matchData =
-  //               doc.data() as Map<String, dynamic>;
-  //           final String _matchUID = _matchData["matchUID"];
-  //           final DocumentSnapshot _matchUserData =
-  //               await _db.collection("userData").doc(_matchUID).get();
-  //           if (_matchUserData.exists && _matchUserData.data() != null) {
-  //             final Map _userData = _matchUserData.data() as Map;
-  //             result.add(MatchData(
-  //                 name: _userData["name"],
-  //                 age: _userData["age"],
-  //                 matchID: _matchUID,
-  //                 image: _userData["imageURLs"][0],
-  //                 dateTypes: _userData["dates"]));
-  //             yield result;
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-  //
-  // Stream<List<MatchData>?> get datesStream async* {
-  //   Stream<QuerySnapshot> _data = _db
-  //       .collection("userData")
-  //       .doc(currentUserUID)
-  //       .collection("matches")
-  //       .where("match", isEqualTo: true)
-  //       .snapshots();
-  //   final List<MatchData> result = <MatchData>[];
-  //   await for (QuerySnapshot snapshot in _data) {
-  //     if (snapshot.docs.isNotEmpty) {
-  //       for (QueryDocumentSnapshot doc in snapshot.docs) {
-  //         if (doc.exists && doc.data() != null) {
-  //           final Map _matchData = doc.data() as Map;
-  //           final String _matchUID = _matchData["matchUID"];
-  //           final DocumentSnapshot _matchUserData =
-  //               await _db.collection("userData").doc(_matchUID).get();
-  //           if (_matchUserData.exists && _matchUserData.data() != null) {
-  //             final Map _userData = _matchUserData.data() as Map;
-  //             result.add(MatchData(
-  //                 name: _userData["name"],
-  //                 matchID: _matchUID,
-  //                 venue: _matchData["venue"],
-  //                 dateType: _matchData["dateType"],
-  //                 dateTime: convertTimeStamp(_matchData["dateTime"]),
-  //                 image: _userData["imageURLs"][0]));
-  //             yield result;
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-
   Stream<QuerySnapshot> get likeStream async* {
     yield* _db
         .collection("userData")
@@ -186,6 +120,21 @@ class MatchDataService {
       print(e);
     }
   }
+
+ /* static Future<void> moveToOldDates({required otherUserUID}) {
+    final FirebaseFirestore db = FirebaseFirestore.instance;
+    try {
+      final _yourOldDateData = db
+          .collection("userData")
+          .doc(AuthenticationService.currentUserUID)
+          .collection("matches")
+          .doc(otherUserUID)
+          .get() as Map;
+      db.collection("userData").doc(AuthenticationService.currentUserUID).collection("pastDates").doc(otherUserUID).set({
+        "name" : _yourOldDateData["name"],
+      });
+    } catch (e) {}
+  }*/
 }
 
 class DateData {

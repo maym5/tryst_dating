@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
+import 'package:rendezvous_beta_v3/services/discover_service.dart';
 import 'package:rendezvous_beta_v3/services/match_data_service.dart';
 import 'package:rendezvous_beta_v3/widgets/match_card.dart';
 import 'package:rendezvous_beta_v3/widgets/match_tile.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
-
 
 class LikesPage extends StatefulWidget {
   const LikesPage({Key? key}) : super(key: key);
@@ -41,7 +41,8 @@ class _LikesPageState extends State<LikesPage> {
         ),
       );
 
-  CircularProgressIndicator get _spinner => const CircularProgressIndicator(color: Colors.redAccent);
+  CircularProgressIndicator get _spinner =>
+      const CircularProgressIndicator(color: Colors.redAccent);
 
   Widget _likeBuilder(
       BuildContext context, AsyncSnapshot<QuerySnapshot> likeSnapshot) {
@@ -138,7 +139,8 @@ class _DatePageState extends State<DatePage> {
         ),
       );
 
-  CircularProgressIndicator get _spinner => const CircularProgressIndicator(color: Colors.redAccent);
+  CircularProgressIndicator get _spinner =>
+      const CircularProgressIndicator(color: Colors.redAccent);
 
   Widget _dateBuilder(
       BuildContext context, AsyncSnapshot<QuerySnapshot> dateSnapshot) {
@@ -149,7 +151,8 @@ class _DatePageState extends State<DatePage> {
       for (DocumentSnapshot doc in dateSnapshot.data!.docs) {
         if (doc.exists && doc.data() != null) {
           final Map _data = doc.data() as Map;
-          if (MatchDataService.convertTimeStamp(_data["dateTime"]).isAfter(DateTime.now())) {
+          if (MatchDataService.convertTimeStamp(_data["dateTime"])
+              .isAfter(DateTime.now())) {
             matchData.add(DateData(
               name: _data["name"],
               age: _data["age"],

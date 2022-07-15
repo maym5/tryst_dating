@@ -27,14 +27,14 @@ class _DiscoverPageState extends State<DiscoverPage> {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   late Map<String, dynamic> _displayedDoc;
   late Map<String, dynamic> _currentDoc;
-  final Stream<List<QueryDocumentSnapshot<Map>>> _discoverStream = DiscoverService().discoverStream;
+  final Stream<List<QueryDocumentSnapshot<Map>>> _discoverStream =
+      DiscoverService().discoverStream;
   DiscoverData get _displayedDiscoverData =>
       DiscoverData.getDiscoverData(_displayedDoc);
   DiscoverData get _currentDiscoverData =>
       DiscoverData.getDiscoverData(_currentDoc);
   String get _currentUID => _currentDiscoverData.uid;
   ScrollPhysics _physics = const AlwaysScrollableScrollPhysics();
-
 
   void _onScroll() {
     // made change must test
@@ -113,7 +113,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
   }
 
   Future<void> get date async {
-    await DatesModel(otherDiscoverData: _currentDiscoverData).getDate(context, _userRating);
+    await DatesModel(discoverData: _currentDiscoverData)
+        .getDate(context, userRating: _userRating);
   }
 
   Future<void> get createNewMatch async {
@@ -144,7 +145,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   if (page < snapshot.data!.length) {
                     _updateCurrentDiscoverData(page, snapshot);
                   } else {
-                    setState(() => _physics = const NeverScrollableScrollPhysics());
+                    setState(
+                        () => _physics = const NeverScrollableScrollPhysics());
                   }
                 },
                 controller: _pageController,
@@ -154,10 +156,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 itemBuilder: (context, index) {
                   if (index < snapshot.data!.length) {
                     _displayedDoc =
-                    snapshot.data![index].data() as Map<String, dynamic>;
+                        snapshot.data![index].data() as Map<String, dynamic>;
                     if (index == 0) {
                       _currentDoc =
-                      snapshot.data![0].data() as Map<String, dynamic>;
+                          snapshot.data![0].data() as Map<String, dynamic>;
                     }
                     return Stack(
                       children: [
@@ -176,10 +178,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   } else {
                     return noDataMessage;
                   }
-                }
-            );
-          } else if (snapshot.connectionState ==
-              ConnectionState.waiting) {
+                });
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
             return waitingAnimation;
           } else if (!snapshot.hasData) {
             return noDataMessage;
@@ -191,8 +191,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
     );
   }
 }
-
-
 
 class DiscoverLoadingAvatar extends StatelessWidget {
   const DiscoverLoadingAvatar({Key? key}) : super(key: key);
