@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
 class PageBackground extends StatelessWidget {
-  const PageBackground({Key? key, this.appBar, this.bottomAppBar, required this.body}) : super(key: key);
+  const PageBackground({Key? key, this.appBar, this.bottomAppBar, required this.body, this.floatingActionButton, this.floatingActionButtonLocation, this.extendBodyBehindAppBar = false}) : super(key: key);
   final PreferredSizeWidget? appBar;
   final Widget? bottomAppBar;
   final Widget body;
+  final Widget? floatingActionButton;
+  final FloatingActionButtonLocation? floatingActionButtonLocation;
+  final bool extendBodyBehindAppBar;
 
 
   @override
@@ -32,8 +35,11 @@ class PageBackground extends StatelessWidget {
             return false;
           },
           child: Scaffold(
+            extendBody: extendBodyBehindAppBar,
             appBar: appBar,
             bottomNavigationBar: bottomAppBar,
+            floatingActionButton: floatingActionButton,
+            floatingActionButtonLocation: floatingActionButtonLocation,
             body: body
           ),
         ),
