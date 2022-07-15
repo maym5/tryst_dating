@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:rendezvous_beta_v3/animations/fade_in_animation.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/services/discover_service.dart';
 import 'package:rendezvous_beta_v3/services/match_data_service.dart';
@@ -142,18 +143,42 @@ class _DatePageState extends State<DatePage> {
   CircularProgressIndicator get _spinner =>
       const CircularProgressIndicator(color: Colors.redAccent);
 
+  Widget get _customDivider => Expanded(
+          child: Divider(
+        thickness: 1,
+        color: kTextStyle.color,
+        height: 10,
+        indent: 10,
+        endIndent: 10,
+      ));
+
+  Row get _pastDatesDivider => Row(
+    mainAxisSize: MainAxisSize.max,
+    children: [
+      _customDivider,
+      Padding(
+        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+        child: Text("Past Dates",
+            style: kTextStyle.copyWith(fontSize: 25),
+            textAlign: TextAlign.center),
+      ),
+      _customDivider
+    ],
+  );
+
   Widget _dateBuilder(
       BuildContext context, AsyncSnapshot<QuerySnapshot> dateSnapshot) {
     if (dateSnapshot.hasData &&
         !dateSnapshot.hasError &&
         dateSnapshot.data!.size != 0) {
-      final List<DateData> matchData = [];
+      final List<DateData> upcomingDates = [];
+      final List<DateData> pastDates = [];
       for (DocumentSnapshot doc in dateSnapshot.data!.docs) {
         if (doc.exists && doc.data() != null) {
           final Map _data = doc.data() as Map;
           if (MatchDataService.convertTimeStamp(_data["dateTime"])
               .isAfter(DateTime.now())) {
-            matchData.add(DateData(
+            upcomingDates.add(DateData(
               name: _data["name"],
               age: _data["age"],
               image: _data["avatarImage"],
@@ -162,12 +187,35 @@ class _DatePageState extends State<DatePage> {
               dateType: _data["dateType"],
               dateTime: MatchDataService.convertTimeStamp(_data["dateTime"]),
             ));
+          } else {
+            pastDates.add(DateData(
+                name: _data["name"],
+                age: _data["age"],
+                image: _data["avatarImage"],
+                matchID: _data["matchUID"],
+                venue: _data["venue"],
+                dateType: _data["dateType"],
+                dateTime:
+                    MatchDataService.convertTimeStamp(_data["dateTime"])));
           }
         }
       }
       return ListView.builder(
-          itemCount: matchData.length,
-          itemBuilder: (context, index) => DateCard(data: matchData[index]));
+          itemCount: upcomingDates.length + pastDates.length,
+          itemBuilder: (context, index) {
+            if (index < upcomingDates.length) {
+              return DateCard(data: upcomingDates[index]);
+            } else if (index == upcomingDates.length) {
+              return Column(
+                children: [
+                  _pastDatesDivider,
+                  DateCard(data: pastDates[0])
+                ],
+              );
+            } else {
+              return DateCard(data: pastDates[index - upcomingDates.length]);
+            }
+          });
     } else if (!dateSnapshot.hasData || dateSnapshot.data!.size == 0) {
       return _emptyMessage;
     } else {
