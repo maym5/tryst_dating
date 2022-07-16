@@ -11,7 +11,6 @@ import '../services/authentication_service.dart';
 
 Widget buildPopUpDialogue(Animation<double> animation, BuildContext context, {required List<Widget> children, double? height}) {
   final curvedValue = Curves.easeInOutBack.transform(animation.value) - 1.0;
-  // TODO: added a center here must test
   return Transform(
     transform: Matrix4.translationValues(0.0, curvedValue * 100, 0.0),
     child: BackdropFilter(

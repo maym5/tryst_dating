@@ -59,8 +59,9 @@ class MatchDataService {
         "avatarImage": image,
         "age": age,
         "dateTypes": dateTypes,
-        "seen": true
+        "seen": true,
       });
+      // what the hell is seen doing??
       await db
           .collection("userData")
           .doc(currentDiscoverUID)
@@ -102,6 +103,7 @@ class MatchDataService {
         "dateTime": dateTime,
         "userRating": userRating,
         "seen": true,
+        "agreedToDate" : [AuthenticationService.currentUserUID]
       });
       await db
           .collection("userData")
@@ -114,14 +116,33 @@ class MatchDataService {
         "dateType": dateType,
         "dateTime": dateTime,
         "otherUserRating": userRating,
-        "seen": true
+        "seen": true,
+        "agreedToDate" : [AuthenticationService.currentUserUID]
       });
     } catch (e) {
       print(e);
     }
   }
 
- /* static Future<void> moveToOldDates({required otherUserUID}) {
+  static Future<void> confirmDate({required String otherUserUID}) async {
+    final FirebaseFirestore db = FirebaseFirestore.instance;
+    try {
+      await db
+          .collection("userData")
+          .doc(AuthenticationService.currentUserUID)
+          .collection("matches")
+          .doc(otherUserUID)
+          .update({"agreedToDate" : [AuthenticationService.currentUserUID, otherUserUID]});
+      await db
+          .collection("userData")
+          .doc(otherUserUID)
+          .collection("matches")
+          .doc(AuthenticationService.currentUserUID)
+          .update({"agreedToDate" : [AuthenticationService.currentUserUID, otherUserUID]});
+    } catch (e) {}
+  }
+
+  /* static Future<void> moveToOldDates({required otherUserUID}) {
     final FirebaseFirestore db = FirebaseFirestore.instance;
     try {
       final _yourOldDateData = db
@@ -146,7 +167,8 @@ class DateData {
       this.age,
       this.venue,
       this.dateType,
-      this.dateTypes});
+      this.dateTypes,
+      this.agreedToDate});
   final String name;
   final int? age;
   final String? image;
@@ -155,4 +177,5 @@ class DateData {
   final String? dateType;
   final List? dateTypes;
   final String matchID;
+  final List<String>? agreedToDate;
 }

@@ -2,10 +2,12 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
+import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import 'package:rendezvous_beta_v3/services/messaging_service.dart';
 import 'package:rendezvous_beta_v3/widgets/chat_view/chat_view.dart';
 import 'package:rendezvous_beta_v3/widgets/tile_card.dart';
 import 'package:intl/intl.dart';
+import '../animations/bounce_animation.dart';
 import '../services/match_data_service.dart';
 
 class DateCard extends StatefulWidget {
@@ -59,11 +61,28 @@ class _DateCardState extends State<DateCard>
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 175,
-      child: TileCard(
-        padding: const EdgeInsets.all(0),
-        child: ui,
+    return GestureDetector(
+      onTapDown: (TapDownDetails details) async {
+        if (!widget.data.agreedToDate!.contains(AuthenticationService.currentUserUID)) {
+          setState(() => _controller.forward());
+          await MatchDataService.confirmDate(otherUserUID: widget.data.matchID);
+        }
+      },
+      onTapUp: (TapUpDetails details) {
+        setState(() => _controller.reverse());
+      },
+      child: BounceAnimation(
+        controller: _controller,
+        child: Container(
+          height: 175,
+          color: widget.data.agreedToDate!.length == 2
+              ? Colors.transparent
+              : kDarkTransparent,
+          child: TileCard(
+            padding: const EdgeInsets.all(0),
+            child: ui,
+          ),
+        ),
       ),
     );
   }

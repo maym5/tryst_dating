@@ -39,10 +39,3 @@ class PickAnotherDayDialogue extends StatelessWidget {
       ],
   );
 }
-
-// Future<void> buildPickAnotherDay(BuildContext context, {required String venueName}) async {
-//   await showGeneralDialog(
-//       context: context,
-//       pageBuilder: (context, animation, _) =>
-//   );
-// }

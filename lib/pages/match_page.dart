@@ -185,7 +185,8 @@ class _DatePageState extends State<DatePage> {
               matchID: _data["matchUID"],
               venue: _data["venue"],
               dateType: _data["dateType"],
-              dateTime: MatchDataService.convertTimeStamp(_data["dateTime"]),
+              dateTime: MatchDataService.convertTimeStamp(_data["dateTime"],),
+              agreedToDate: _data["agreedToDate"]
             ));
           } else {
             pastDates.add(DateData(
@@ -196,7 +197,9 @@ class _DatePageState extends State<DatePage> {
                 venue: _data["venue"],
                 dateType: _data["dateType"],
                 dateTime:
-                    MatchDataService.convertTimeStamp(_data["dateTime"])));
+                    MatchDataService.convertTimeStamp(_data["dateTime"]),
+                agreedToDate: _data["agreedToDate"]
+            ));
           }
         }
       }
