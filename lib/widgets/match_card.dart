@@ -21,6 +21,7 @@ class DateCard extends StatefulWidget {
 class _DateCardState extends State<DateCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  late bool _canTap;
 
   Widget get _circleAvatar => Align(
         alignment: const Alignment(.75, 0.25),
@@ -50,6 +51,9 @@ class _DateCardState extends State<DateCard>
   void initState() {
     _controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 200));
+    _canTap = !widget.data.agreedToDate!
+        .contains(AuthenticationService.currentUserUID);
+
     super.initState();
   }
 
@@ -63,24 +67,26 @@ class _DateCardState extends State<DateCard>
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: (TapDownDetails details) async {
-        if (!widget.data.agreedToDate!.contains(AuthenticationService.currentUserUID)) {
-          setState(() => _controller.forward());
+        if (_canTap) {
+          _controller.forward();
           await MatchDataService.confirmDate(otherUserUID: widget.data.matchID);
         }
       },
       onTapUp: (TapUpDetails details) {
-        setState(() => _controller.reverse());
+        if (_canTap) {
+          _controller.reverse();
+        }
       },
       child: BounceAnimation(
         controller: _controller,
-        child: Container(
-          height: 175,
-          color: widget.data.agreedToDate!.length == 2
-              ? Colors.transparent
-              : kDarkTransparent,
-          child: TileCard(
-            padding: const EdgeInsets.all(0),
-            child: ui,
+        child: Opacity(
+          opacity: widget.data.agreedToDate!.length == 2 ? 1 : 0.5,
+          child: SizedBox(
+            height: 175,
+            child: TileCard(
+              padding: const EdgeInsets.all(0),
+              child: ui,
+            ),
           ),
         ),
       ),

@@ -177,5 +177,5 @@ class DateData {
   final String? dateType;
   final List? dateTypes;
   final String matchID;
-  final List<String>? agreedToDate;
+  final List? agreedToDate;
 }
