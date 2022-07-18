@@ -61,7 +61,6 @@ class MatchDataService {
         "dateTypes": dateTypes,
         "seen": true,
       });
-      // what the hell is seen doing??
       await db
           .collection("userData")
           .doc(currentDiscoverUID)
@@ -103,7 +102,7 @@ class MatchDataService {
         "dateTime": dateTime,
         "userRating": userRating,
         "seen": true,
-        "agreedToDate" : [AuthenticationService.currentUserUID]
+        "agreedToDate": [AuthenticationService.currentUserUID]
       });
       await db
           .collection("userData")
@@ -117,7 +116,7 @@ class MatchDataService {
         "dateTime": dateTime,
         "otherUserRating": userRating,
         "seen": true,
-        "agreedToDate" : [AuthenticationService.currentUserUID]
+        "agreedToDate": [AuthenticationService.currentUserUID]
       });
       return true;
     } catch (e) {
@@ -134,14 +133,39 @@ class MatchDataService {
           .doc(AuthenticationService.currentUserUID)
           .collection("matches")
           .doc(otherUserUID)
-          .update({"agreedToDate" : [AuthenticationService.currentUserUID, otherUserUID]});
+          .update({
+        "agreedToDate": [AuthenticationService.currentUserUID, otherUserUID]
+      });
       await db
           .collection("userData")
           .doc(otherUserUID)
           .collection("matches")
           .doc(AuthenticationService.currentUserUID)
-          .update({"agreedToDate" : [AuthenticationService.currentUserUID, otherUserUID]});
+          .update({
+        "agreedToDate": [AuthenticationService.currentUserUID, otherUserUID]
+      });
     } catch (e) {}
+  }
+
+  static Future<bool> deleteDate({required String otherUserUID}) async {
+    final FirebaseFirestore db = FirebaseFirestore.instance;
+    try {
+      await db
+          .collection("userData")
+          .doc(AuthenticationService.currentUserUID)
+          .collection("matches")
+          .doc(otherUserUID)
+          .delete();
+      await db
+          .collection("userData")
+          .doc(otherUserUID)
+          .collection("matches")
+          .doc(AuthenticationService.currentUserUID)
+          .delete();
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   /* static Future<void> moveToOldDates({required otherUserUID}) {

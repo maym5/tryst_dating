@@ -99,7 +99,7 @@ class DatesModel {
                     dateTime: _dateTime!,
                     venueName: _venueData["venue"]["name"],
                     animation: animation,
-                    matchName: _matchData["name"]) : ErrorDialogue(animation: animation))); // replace with error dialogue
+                    matchName: _matchData["name"]) : ErrorDialogue(animation: animation)));
       } else if (_dateTime == null) {
         showGeneralDialog(context: context, pageBuilder: (context, animation, _) => CancelDialogue(animation: animation));
       } else if (!await GooglePlacesService.checkDateTime(

@@ -75,7 +75,6 @@ class PreferredAgeSlider extends StatelessWidget {
 }
 
 class SliderField extends StatefulWidget {
-  // TODO: if initial values make them show up red
   const SliderField(
       {Key? key,
       required this.title,

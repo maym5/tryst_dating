@@ -174,7 +174,8 @@ class _DatePageState extends State<DatePage> {
         if (doc.exists && doc.data() != null) {
           final Map _data = doc.data() as Map;
           final List _agreedToDate = _data["agreedToDate"];
-          if (_agreedToDate.length != 2) {
+          if (_agreedToDate.length != 2 && MatchDataService.convertTimeStamp(_data["dateTime"])
+              .isAfter(DateTime.now())) {
             pendingDates.add(DateData(
                 name: _data["name"],
                 age: _data["age"],
@@ -199,7 +200,8 @@ class _DatePageState extends State<DatePage> {
                   _data["dateTime"],
                 ),
                 agreedToDate: _data["agreedToDate"]));
-          } else {
+          } else if (MatchDataService.convertTimeStamp(_data["dateTime"])
+              .isBefore(DateTime.now()) && _agreedToDate.length == 2) {
             pastDates.add(DateData(
                 name: _data["name"],
                 age: _data["age"],
@@ -209,6 +211,9 @@ class _DatePageState extends State<DatePage> {
                 dateType: _data["dateType"],
                 dateTime: MatchDataService.convertTimeStamp(_data["dateTime"]),
                 agreedToDate: _data["agreedToDate"]));
+          } else {
+            // could be weird behavior since we don't await
+            MatchDataService.deleteDate(otherUserUID: _data["matchUID"]);
           }
         }
       }

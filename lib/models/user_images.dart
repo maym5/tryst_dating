@@ -7,8 +7,6 @@ import 'users.dart';
 import 'package:collection/collection.dart';
 
 class UserImages with ChangeNotifier {
-  // TODO: fix this model to incorporate ref URL's from storage bucket so we can have initial values
-  // maybe just make the cloud the model
   UserImages();
 
   static List userImages = List.filled(9, null);

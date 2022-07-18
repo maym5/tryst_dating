@@ -2,9 +2,12 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
+import 'package:rendezvous_beta_v3/dialogues/cancel_dialogue.dart';
+import 'package:rendezvous_beta_v3/dialogues/error_dialogue.dart';
 import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import 'package:rendezvous_beta_v3/services/messaging_service.dart';
 import 'package:rendezvous_beta_v3/widgets/chat_view/chat_view.dart';
+import 'package:rendezvous_beta_v3/widgets/fields/photo_picker.dart';
 import 'package:rendezvous_beta_v3/widgets/tile_card.dart';
 import 'package:intl/intl.dart';
 import '../animations/bounce_animation.dart';
@@ -196,9 +199,8 @@ class DateInfo extends StatelessWidget {
 }
 
 class DateOptionsBar extends StatefulWidget {
-  const DateOptionsBar({Key? key, required this.matchData}) : super(key: key);
-  // final bool hasUnreadMessages;
-  final DateData matchData;
+  const DateOptionsBar({Key? key, required this.data}) : super(key: key);
+  final DateData data;
 
   @override
   State<DateOptionsBar> createState() => _DateOptionsBarState();
@@ -206,21 +208,24 @@ class DateOptionsBar extends StatefulWidget {
 
 class _DateOptionsBarState extends State<DateOptionsBar> {
   late Stream<QuerySnapshot> unreadMessages =
-      MessengingService().unreadMessages(widget.matchData.matchID);
+      MessengingService().unreadMessages(widget.data.matchID);
 
   void _onMessageTap() {
     Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => ChatView(
-              image: widget.matchData.image!,
-              name: widget.matchData.name,
-              match: widget.matchData.matchID),
+              image: widget.data.image!,
+              name: widget.data.name,
+              match: widget.data.matchID),
         ));
   }
 
   void _onDetailsTap() {
-    // TODO: add details tap
+    showModalBottomSheet(
+        context: context,
+        builder: (context) =>
+            DetailsBottomSheet(matchUID: widget.data.matchID));
   }
 
   Widget get _messageButton => GestureDetector(
@@ -332,9 +337,6 @@ class MatchDateType extends StatelessWidget {
 class NameAndButtons extends StatelessWidget {
   const NameAndButtons({Key? key, required this.data}) : super(key: key);
   final DateData data;
-  // final String name;
-  // final String? dateType;
-  // final bool confirmedDate;
 
   @override
   Widget build(BuildContext context) {
@@ -357,11 +359,38 @@ class NameAndButtons extends StatelessWidget {
             width: 10,
           ),
           Flexible(
-            child: DateOptionsBar(matchData: data),
+            child: DateOptionsBar(data: data),
             flex: 1,
           )
         ],
       ),
     );
+  }
+}
+
+class DetailsBottomSheet extends StatelessWidget {
+  const DetailsBottomSheet({Key? key, required this.matchUID})
+      : super(key: key);
+  final String matchUID;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomBottomSheet(
+        iconOne: Icons.delete,
+        iconTwo: Icons.calendar_today,
+        titleOne: "Delete this date",
+        titleTwo: "Reschedule this date",
+        onTileOneTap: () async {
+          await MatchDataService.deleteDate(otherUserUID: matchUID).then(
+              (deleted) => showGeneralDialog(
+                  context: context,
+                  pageBuilder: (context, animation, _) => deleted
+                      ? CancelDialogue(animation: animation)
+                      : ErrorDialogue(animation: animation)));
+        },
+        onTileTwoTap: () {
+          // TODO: figure this out
+          // what to do here ??
+        });
   }
 }
