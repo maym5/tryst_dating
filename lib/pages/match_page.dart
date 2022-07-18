@@ -1,9 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:rendezvous_beta_v3/animations/fade_in_animation.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
-import 'package:rendezvous_beta_v3/services/discover_service.dart';
 import 'package:rendezvous_beta_v3/services/match_data_service.dart';
 import 'package:rendezvous_beta_v3/widgets/match_card.dart';
 import 'package:rendezvous_beta_v3/widgets/match_tile.dart';
@@ -18,7 +15,6 @@ class LikesPage extends StatefulWidget {
 
 class _LikesPageState extends State<LikesPage> {
   final Stream<QuerySnapshot> _likesStream = MatchDataService().likeStream;
-  bool _showSpinner = false;
 
   Widget get _noLikesMessage => Container(
         alignment: Alignment.center,
@@ -42,8 +38,11 @@ class _LikesPageState extends State<LikesPage> {
         ),
       );
 
-  CircularProgressIndicator get _spinner =>
-      const CircularProgressIndicator(color: Colors.redAccent);
+  Widget get _loading => const SizedBox(
+    height: 200,
+    width: 200,
+    child: CircularProgressIndicator(color: Colors.redAccent),
+  );
 
   Widget _likeBuilder(
       BuildContext context, AsyncSnapshot<QuerySnapshot> likeSnapshot) {
@@ -83,26 +82,21 @@ class _LikesPageState extends State<LikesPage> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 15),
-      child: ModalProgressHUD(
-        progressIndicator: _spinner,
-        inAsyncCall: _showSpinner,
-        child: StreamBuilder<QuerySnapshot>(
-            stream: _likesStream,
-            builder: (BuildContext context,
-                AsyncSnapshot<QuerySnapshot> likeSnapshot) {
-              switch (likeSnapshot.connectionState) {
-                case ConnectionState.none:
-                  return _noInternet;
-                case ConnectionState.waiting:
-                  _showSpinner = true;
-                  return Container();
-                case ConnectionState.active:
-                  return _likeBuilder(context, likeSnapshot);
-                case ConnectionState.done:
-                  return _likeBuilder(context, likeSnapshot);
-              }
-            }),
-      ),
+      child: StreamBuilder<QuerySnapshot>(
+          stream: _likesStream,
+          builder: (BuildContext context,
+              AsyncSnapshot<QuerySnapshot> likeSnapshot) {
+            switch (likeSnapshot.connectionState) {
+              case ConnectionState.none:
+                return _noInternet;
+              case ConnectionState.waiting:
+                return _loading;
+              case ConnectionState.active:
+                return _likeBuilder(context, likeSnapshot);
+              case ConnectionState.done:
+                return _likeBuilder(context, likeSnapshot);
+            }
+          }),
     );
   }
 }
@@ -116,7 +110,6 @@ class DatePage extends StatefulWidget {
 
 class _DatePageState extends State<DatePage> {
   final Stream<QuerySnapshot> _datesStream = MatchDataService().dateData;
-  bool _showSpinner = false;
 
   Widget get _emptyMessage => Container(
         alignment: Alignment.center,
@@ -140,8 +133,11 @@ class _DatePageState extends State<DatePage> {
         ),
       );
 
-  CircularProgressIndicator get _spinner =>
-      const CircularProgressIndicator(color: Colors.redAccent);
+  Widget get _loading => const SizedBox(
+    height: 200,
+    width: 200,
+    child: CircularProgressIndicator(color: Colors.redAccent),
+  );
 
   Widget get _customDivider => Expanded(
           child: Divider(
@@ -152,19 +148,19 @@ class _DatePageState extends State<DatePage> {
         endIndent: 10,
       ));
 
-  Row get _pastDatesDivider => Row(
-    mainAxisSize: MainAxisSize.max,
-    children: [
-      _customDivider,
-      Padding(
-        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-        child: Text("Past Dates",
-            style: kTextStyle.copyWith(fontSize: 25),
-            textAlign: TextAlign.center),
-      ),
-      _customDivider
-    ],
-  );
+  Row _dividerBuilder(String text) => Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          _customDivider,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+            child: Text(text,
+                style: kTextStyle.copyWith(fontSize: 25),
+                textAlign: TextAlign.center),
+          ),
+          _customDivider
+        ],
+      );
 
   Widget _dateBuilder(
       BuildContext context, AsyncSnapshot<QuerySnapshot> dateSnapshot) {
@@ -173,21 +169,36 @@ class _DatePageState extends State<DatePage> {
         dateSnapshot.data!.size != 0) {
       final List<DateData> upcomingDates = [];
       final List<DateData> pastDates = [];
+      final List<DateData> pendingDates = [];
       for (DocumentSnapshot doc in dateSnapshot.data!.docs) {
         if (doc.exists && doc.data() != null) {
           final Map _data = doc.data() as Map;
-          if (MatchDataService.convertTimeStamp(_data["dateTime"])
+          final List _agreedToDate = _data["agreedToDate"];
+          if (_agreedToDate.length != 2) {
+            pendingDates.add(DateData(
+                name: _data["name"],
+                age: _data["age"],
+                image: _data["avatarImage"],
+                matchID: _data["matchUID"],
+                venue: _data["venue"],
+                dateType: _data["dateType"],
+                dateTime: MatchDataService.convertTimeStamp(
+                  _data["dateTime"],
+                ),
+                agreedToDate: _data["agreedToDate"]));
+          } else if (MatchDataService.convertTimeStamp(_data["dateTime"])
               .isAfter(DateTime.now())) {
             upcomingDates.add(DateData(
-              name: _data["name"],
-              age: _data["age"],
-              image: _data["avatarImage"],
-              matchID: _data["matchUID"],
-              venue: _data["venue"],
-              dateType: _data["dateType"],
-              dateTime: MatchDataService.convertTimeStamp(_data["dateTime"],),
-              agreedToDate: _data["agreedToDate"]
-            ));
+                name: _data["name"],
+                age: _data["age"],
+                image: _data["avatarImage"],
+                matchID: _data["matchUID"],
+                venue: _data["venue"],
+                dateType: _data["dateType"],
+                dateTime: MatchDataService.convertTimeStamp(
+                  _data["dateTime"],
+                ),
+                agreedToDate: _data["agreedToDate"]));
           } else {
             pastDates.add(DateData(
                 name: _data["name"],
@@ -196,10 +207,8 @@ class _DatePageState extends State<DatePage> {
                 matchID: _data["matchUID"],
                 venue: _data["venue"],
                 dateType: _data["dateType"],
-                dateTime:
-                    MatchDataService.convertTimeStamp(_data["dateTime"]),
-                agreedToDate: _data["agreedToDate"]
-            ));
+                dateTime: MatchDataService.convertTimeStamp(_data["dateTime"]),
+                agreedToDate: _data["agreedToDate"]));
           }
         }
       }
@@ -211,12 +220,23 @@ class _DatePageState extends State<DatePage> {
             } else if (index == upcomingDates.length) {
               return Column(
                 children: [
-                  _pastDatesDivider,
+                  _dividerBuilder("Past Dates"),
                   DateCard(data: pastDates[0])
                 ],
               );
-            } else {
+            } else if (index < upcomingDates.length + pastDates.length) {
               return DateCard(data: pastDates[index - upcomingDates.length]);
+            } else if (index == upcomingDates.length + pastDates.length) {
+              return Column(
+                children: [
+                  _dividerBuilder("Pending Dates"),
+                  DateCard(data: pendingDates[0]),
+                ],
+              );
+            } else {
+              return DateCard(
+                  data: pendingDates[
+                      index - (upcomingDates.length + pastDates.length)]);
             }
           });
     } else if (!dateSnapshot.hasData || dateSnapshot.data!.size == 0) {
@@ -230,27 +250,21 @@ class _DatePageState extends State<DatePage> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 15),
-      child: ModalProgressHUD(
-        inAsyncCall: _showSpinner,
-        progressIndicator: _spinner,
-        child: StreamBuilder<QuerySnapshot>(
-            stream: _datesStream,
-            builder: (BuildContext context,
-                AsyncSnapshot<QuerySnapshot> dateSnapshot) {
-              switch (dateSnapshot.connectionState) {
-                case ConnectionState.done:
-                  return _dateBuilder(context, dateSnapshot);
-                case ConnectionState.waiting:
-                  // TODO: see if theres another way to do this
-                  _showSpinner = true;
-                  return Container();
-                case ConnectionState.none:
-                  return _noInternet;
-                case ConnectionState.active:
-                  return _dateBuilder(context, dateSnapshot);
-              }
-            }),
-      ),
+      child: StreamBuilder<QuerySnapshot>(
+          stream: _datesStream,
+          builder: (BuildContext context,
+              AsyncSnapshot<QuerySnapshot> dateSnapshot) {
+            switch (dateSnapshot.connectionState) {
+              case ConnectionState.done:
+                return _dateBuilder(context, dateSnapshot);
+              case ConnectionState.waiting:
+                return _loading;
+              case ConnectionState.none:
+                return _noInternet;
+              case ConnectionState.active:
+                return _dateBuilder(context, dateSnapshot);
+            }
+          }),
     );
   }
 }
