@@ -39,8 +39,8 @@ class _LikesPageState extends State<LikesPage> {
       );
 
   Widget get _loading => const SizedBox(
-    height: 200,
-    width: 200,
+    height: 15,
+    width: 15,
     child: CircularProgressIndicator(color: Colors.redAccent),
   );
 
@@ -134,8 +134,8 @@ class _DatePageState extends State<DatePage> {
       );
 
   Widget get _loading => const SizedBox(
-    height: 200,
-    width: 200,
+    height: 15,
+    width: 15,
     child: CircularProgressIndicator(color: Colors.redAccent),
   );
 
