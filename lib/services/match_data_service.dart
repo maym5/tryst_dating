@@ -82,7 +82,7 @@ class MatchDataService {
     }
   }
 
-  static Future<void> updateMatchData({
+  static Future<bool> updateMatchData({
     required otherUserUID,
     required String dateType,
     required DateTime dateTime,
@@ -119,8 +119,10 @@ class MatchDataService {
         "seen": true,
         "agreedToDate" : [AuthenticationService.currentUserUID]
       });
+      return true;
     } catch (e) {
       print(e);
+      return false;
     }
   }
 
