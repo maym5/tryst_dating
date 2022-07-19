@@ -39,12 +39,12 @@ class _LikesPageState extends State<LikesPage> {
       );
 
   Widget get _loading => const Center(
-    child: SizedBox(
-      height: 40,
-      width: 40,
-      child: CircularProgressIndicator(color: Colors.redAccent),
-    ),
-  );
+        child: SizedBox(
+          height: 40,
+          width: 40,
+          child: CircularProgressIndicator(color: Colors.redAccent),
+        ),
+      );
 
   Widget _likeBuilder(
       BuildContext context, AsyncSnapshot<QuerySnapshot> likeSnapshot) {
@@ -136,12 +136,13 @@ class _DatePageState extends State<DatePage> {
       );
 
   Widget get _loading => const Center(
-    child: SizedBox(
-      height: 40,
-      width: 40,
-      child: CircularProgressIndicator(color: Colors.redAccent, strokeWidth: 4),
-    ),
-  );
+        child: SizedBox(
+          height: 40,
+          width: 40,
+          child: CircularProgressIndicator(
+              color: Colors.redAccent, strokeWidth: 4),
+        ),
+      );
 
   Widget get _customDivider => Expanded(
           child: Divider(
@@ -178,8 +179,9 @@ class _DatePageState extends State<DatePage> {
         if (doc.exists && doc.data() != null) {
           final Map _data = doc.data() as Map;
           final List _agreedToDate = _data["agreedToDate"];
-          if (_agreedToDate.length != 2 && MatchDataService.convertTimeStamp(_data["dateTime"])
-              .isAfter(DateTime.now())) {
+          if (_agreedToDate.length != 2 &&
+              MatchDataService.convertTimeStamp(_data["dateTime"])
+                  .isAfter(DateTime.now())) {
             pendingDates.add(DateData(
                 name: _data["name"],
                 age: _data["age"],
@@ -205,7 +207,8 @@ class _DatePageState extends State<DatePage> {
                 ),
                 agreedToDate: _data["agreedToDate"]));
           } else if (MatchDataService.convertTimeStamp(_data["dateTime"])
-              .isBefore(DateTime.now()) && _agreedToDate.length == 2) {
+                  .isBefore(DateTime.now()) &&
+              _agreedToDate.length == 2) {
             pastDates.add(DateData(
                 name: _data["name"],
                 age: _data["age"],
@@ -222,11 +225,12 @@ class _DatePageState extends State<DatePage> {
         }
       }
       return ListView.builder(
-          itemCount: upcomingDates.length + pastDates.length,
+          itemCount:
+              upcomingDates.length + pastDates.length + pendingDates.length,
           itemBuilder: (context, index) {
             if (index < upcomingDates.length) {
               return DateCard(data: upcomingDates[index]);
-            } else if (index == upcomingDates.length) {
+            } else if (index == upcomingDates.length && pastDates.isNotEmpty) {
               return Column(
                 children: [
                   _dividerBuilder("Past Dates"),
@@ -235,7 +239,7 @@ class _DatePageState extends State<DatePage> {
               );
             } else if (index < upcomingDates.length + pastDates.length) {
               return DateCard(data: pastDates[index - upcomingDates.length]);
-            } else if (index == upcomingDates.length + pastDates.length) {
+            } else if (index == upcomingDates.length + pastDates.length && pendingDates.isNotEmpty) {
               return Column(
                 children: [
                   _dividerBuilder("Pending Dates"),
