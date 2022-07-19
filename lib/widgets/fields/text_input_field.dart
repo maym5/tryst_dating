@@ -16,7 +16,7 @@ class TextInputField extends StatefulWidget {
     this.obscureText = false,
     this.hintText,
     this.initialValue,
-    this.controller
+    this.controller,
   }) : super(key: key);
   final String title;
   final String? errorMessage;

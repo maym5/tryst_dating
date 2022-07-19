@@ -29,9 +29,12 @@ class _LoginPageState extends State<LoginPage> {
   };
   late bool showErrors;
   late bool _showSpinner;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   TextInputField get _emailField => TextInputField(
         title: "Email",
+        controller: emailController,
         onChanged: (email) {
           setState(() {
             if (email == "") {
@@ -47,6 +50,7 @@ class _LoginPageState extends State<LoginPage> {
 
   TextInputField get _passwordField => TextInputField(
     title: "Password",
+    controller: passwordController,
     obscureText: true,
     onChanged: (password) {
       setState(() {
@@ -71,6 +75,8 @@ class _LoginPageState extends State<LoginPage> {
   void _handleSignIn() async {
     setState(() => _showSpinner = true);
     if (loginInputs['password'] != null && loginInputs['email'] != null) {
+      emailController.text = loginInputs["email"]!;
+      passwordController.text = loginInputs["password"]!;
       var result = await AuthenticationService().onEmailAndPasswordLogin(loginInputs['email']!, loginInputs['password']!);
       setState(() => _showSpinner = false);
       if (result is String) {

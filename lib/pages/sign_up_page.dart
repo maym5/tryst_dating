@@ -30,12 +30,16 @@ class _SignUpPageState extends State<SignUpPage>
   };
   late bool showErrors;
   late bool _showSpinner;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmController = TextEditingController();
 
   bool get passwordsDontMatch =>
       userInputs['password'] != userInputs["confirm"];
 
   TextInputField get emailField => TextInputField(
         title: "Email",
+        controller: emailController,
         onChanged: (email) {
           if (email == "") {
             userInputs['email'] = null;
@@ -51,6 +55,7 @@ class _SignUpPageState extends State<SignUpPage>
 
   TextInputField get passwordField => TextInputField(
         title: "Password",
+        controller: passwordController,
         obscureText: true,
         onChanged: (password) {
           if (password == "") {
@@ -67,6 +72,7 @@ class _SignUpPageState extends State<SignUpPage>
 
   TextInputField get confirmField => TextInputField(
         title: "Confirm Password",
+        controller: confirmController,
         obscureText: true,
         onChanged: (confirm) {
           if (confirm == "") {
@@ -93,7 +99,10 @@ class _SignUpPageState extends State<SignUpPage>
         _showSpinner = true;
       });
       if (userInputs["email"] != null && userInputs["password"] != null) {
-        var result = await AuthenticationService().onEmailAndPasswordSignUp(
+        emailController.text = userInputs["email"]!;
+        passwordController.text = userInputs["password"]!;
+        confirmController.text = userInputs["confirm"]!;
+         var result = await AuthenticationService().onEmailAndPasswordSignUp(
             userInputs["email"]!, userInputs["password"]!);
         setState(() => _showSpinner = false);
         if (result is String) {
