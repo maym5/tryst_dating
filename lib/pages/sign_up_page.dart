@@ -112,38 +112,60 @@ class _SignUpPageState extends State<SignUpPage> {
               setState(() {
                 errorMessages["password"] = "This password is too weak";
                 errors["password"] = true;
+                errors["email"] = false;
+                errors["confirm"] = false;
               });
               break;
             case "email-already-in-use":
               setState(() {
                 errorMessages["email"] = "That email is already in use";
                 errors["email"] = true;
+                errors["password"] = false;
+                errors["confirm"] = false;
               });
               break;
             case "invalid-email":
               setState(() {
                 errorMessages["email"] = "Please enter a valid email";
                 errors["email"] = true;
+                errors["password"] = false;
+                errors["confirm"] = false;
               });
               break;
             default:
               setState(() {
                 errorMessages["email"] = result;
                 errors["email"] = true;
+                errors["password"] = false;
+                errors["confirm"] = false;
               });
               break;
           }
         } else {
           Navigator.pushNamed(context, VerificationPage.id);
         }
-      } else {
+      } else if (userInputs["email"] == "") {
         setState(() {
           _showSpinner = false;
           errors["email"] = true;
+          errors["password"] = false;
+          errors["confirm"] = false;
+        });
+      } else {
+        setState(() {
+          _showSpinner = false;
+          errors["password"] = true;
+          errors["email"] = false;
+          errors["confirm"] = false;
         });
       }
     } else {
-      errors["confirm"] = true;
+      setState(() {
+        _showSpinner = false;
+        errors["confirm"] = true;
+        errors["password"] = false;
+        errors["email"] = false;
+      });
     }
   }
 
