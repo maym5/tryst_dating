@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:rendezvous_beta_v3/animations/fade_in_animation.dart';
 import 'package:rendezvous_beta_v3/animations/text_fade_in.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/pages/home_page.dart';
@@ -40,11 +41,27 @@ class _LoadingPageState extends State<LoadingPage> {
   Widget build(BuildContext context) {
     return PageBackground(
       body: Center(
-        child: ShaderMask(
-          blendMode: BlendMode.srcIn,
-          shaderCallback: (bounds) => kButtonGradient
-              .createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-          child: TextFadeIn(text: "Rendezvous", style: kTextStyle.copyWith(fontSize: 50)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FadeInAnimation(
+              delay: 1500,
+              verticalOffset: -0.35,
+              horizontalOffset: 0,
+              child: Container(
+                height: 100,
+                width: 100,
+                color: Colors.redAccent,
+              ),
+            ),
+            const SizedBox(height: 25,),
+            ShaderMask(
+              blendMode: BlendMode.srcIn,
+              shaderCallback: (bounds) => kButtonGradient
+                  .createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+              child: TextFadeIn(text: "Rendezvous", style: kTextStyle.copyWith(fontSize: 50)),
+            ),
+          ],
         ),
       ),
     );

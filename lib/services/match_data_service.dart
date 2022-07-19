@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import 'dart:async';
-
 import '../models/users.dart';
 
 class MatchDataService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+  // TODO: add proper error catching
 
   static DateTime convertTimeStamp(dynamic dateValue) {
     if (dateValue is DateTime) {
