@@ -81,6 +81,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomAppBar: _bottomAppBar,
       body: PageView(
+        onPageChanged: (page) {
+          setState(() => _currentPage = page);
+        },
         controller: _controller,
         children: <Widget>[
           UserEditPage(

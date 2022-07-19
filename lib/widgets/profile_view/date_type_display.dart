@@ -29,7 +29,7 @@ class DateTypeDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: const Alignment(-0.9, 0.85),
+      alignment: kUserInfoAlignment,
       child: FractionallySizedBox(
         widthFactor: 0.8,
         heightFactor: _heightFactor,
