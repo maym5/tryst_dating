@@ -19,15 +19,17 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
 
   Map<String, String?> loginInputs = {
-    "email" : null,
-    "password" : null
+    "email" : "",
+    "password" : ""
   };
 
   Map<String, String> errorMessages = {
     "email" : "Please enter a valid email",
-    "password" : "Please enter a valid email"
+    "password" : "Please enter a valid password"
   };
-  late bool showErrors;
+
+  late bool showEmailError;
+  late  bool showPasswordError;
   late bool _showSpinner;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -44,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
             }
           });
         },
-        showError: loginInputs['email'] == null && showErrors,
+        showError: loginInputs['email'] == null || showEmailError,
     errorMessage: errorMessages['email'],
       );
 
@@ -61,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
         }
       });
     },
-    showError: loginInputs['password'] == null && showErrors,
+    showError: loginInputs['password'] == null || showPasswordError,
     errorMessage: errorMessages["password"],
   );
 
@@ -74,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _handleSignIn() async {
     setState(() => _showSpinner = true);
-    if (loginInputs['password'] != null && loginInputs['email'] != null) {
+    if (loginInputs['password'] != "" && loginInputs['email'] != "") {
       emailController.text = loginInputs["email"]!;
       passwordController.text = loginInputs["password"]!;
       var result = await AuthenticationService().onEmailAndPasswordLogin(loginInputs['email']!, loginInputs['password']!);
@@ -84,25 +86,25 @@ class _LoginPageState extends State<LoginPage> {
           case 'invalid-email':
             setState(() {
               errorMessages["email"] = "Enter a valid email";
-              showErrors = true;
+              showEmailError = true;
             });
             break;
           case 'user-not-found':
             setState(() {
               errorMessages["email"] = "Cannot find user with that email";
-              showErrors = true;
+              showEmailError = true;
             });
             break;
           case 'wrong-password':
             setState(() {
               errorMessages["password"] = "Please enter a valid email";
-              showErrors = true;
+              showEmailError = true;
             });
             break;
           case 'too-many-requests':
             setState(() {
-              errorMessages["email"] = "Too many requests, try again later";
-              showErrors = true;
+              errorMessages["password"] = "Too many requests, try again later";
+              showPasswordError = true;
             });
             break;
         }
@@ -111,13 +113,20 @@ class _LoginPageState extends State<LoginPage> {
         await UserData().getUserData();
         Navigator.pushNamed(context, HomePage.id);
       }
+    } else if (loginInputs['password'] == "") {
+      setState(() => _showSpinner = false);
+      loginInputs['password'] = null;
+    } else {
+      setState(() => _showSpinner = false);
+      loginInputs['email'] = null;
     }
   }
 
   @override
   void initState() {
-    showErrors = false;
+    showEmailError = false;
     _showSpinner = false;
+    showPasswordError = false;
     super.initState();
   }
 

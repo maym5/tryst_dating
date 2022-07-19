@@ -16,17 +16,25 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+
   Map<String, String?> errorMessages = {
     "email": null,
     "password": null,
     "confirm": "Passwords don't match"
   };
+
   Map<String, String?> userInputs = {
-    "email": null,
-    "password": null,
-    "confirm": null
+    "email": "",
+    "password": "",
+    "confirm": ""
   };
-  late bool showErrors;
+
+  Map<String, bool> errors = {
+    "email" : false,
+    "password" : false,
+    "confirm" : false,
+  };
+
   late bool _showSpinner;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -45,9 +53,7 @@ class _SignUpPageState extends State<SignUpPage> {
             userInputs["email"] = email;
           }
         },
-        showError:
-            (userInputs['email'] == null || errorMessages["email"] != null) &&
-                showErrors,
+        showError: errors["email"]!,
         errorMessage: errorMessages["email"],
       );
 
@@ -62,9 +68,7 @@ class _SignUpPageState extends State<SignUpPage> {
             userInputs["password"] = password;
           }
         },
-        showError: (userInputs['password'] == null ||
-                errorMessages['password'] != null) &&
-            showErrors,
+        showError: errors["password"]!,
         errorMessage: errorMessages["password"],
       );
 
@@ -79,8 +83,7 @@ class _SignUpPageState extends State<SignUpPage> {
             userInputs["confirm"] = confirm;
           }
         },
-        showError:
-            (userInputs['confirm'] == null || passwordsDontMatch) && showErrors,
+        showError: errors["confirm"]!,
         errorMessage: errorMessages["confirm"],
       );
 
@@ -96,7 +99,7 @@ class _SignUpPageState extends State<SignUpPage> {
       setState(() {
         _showSpinner = true;
       });
-      if (userInputs["email"] != null && userInputs["password"] != null) {
+      if (userInputs["email"] != "" && userInputs["password"] != "") {
         emailController.text = userInputs["email"]!;
         passwordController.text = userInputs["password"]!;
         confirmController.text = userInputs["confirm"]!;
@@ -108,25 +111,25 @@ class _SignUpPageState extends State<SignUpPage> {
             case 'weak-password':
               setState(() {
                 errorMessages["password"] = "This password is too weak";
-                showErrors = true;
+                errors["password"] = true;
               });
               break;
             case "email-already-in-use":
               setState(() {
                 errorMessages["email"] = "That email is already in use";
-                showErrors = true;
+                errors["email"] = true;
               });
               break;
             case "invalid-email":
               setState(() {
                 errorMessages["email"] = "Please enter a valid email";
-                showErrors = true;
+                errors["email"] = true;
               });
               break;
             default:
               setState(() {
                 errorMessages["email"] = result;
-                showErrors = true;
+                errors["email"] = true;
               });
               break;
           }
@@ -136,17 +139,16 @@ class _SignUpPageState extends State<SignUpPage> {
       } else {
         setState(() {
           _showSpinner = false;
-          showErrors = true;
+          errors["email"] = true;
         });
       }
     } else {
-      setState(() => showErrors = true);
+      errors["confirm"] = true;
     }
   }
 
   @override
   void initState() {
-    showErrors = false;
     _showSpinner = false;
     super.initState();
   }
@@ -165,31 +167,31 @@ class _SignUpPageState extends State<SignUpPage> {
         progressIndicator:
             const CircularProgressIndicator(color: Colors.redAccent),
         child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                const SizedBox(
-                  height: 25,
-                ),
-                Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              const SizedBox(
+                height: 25,
+              ),
+              Flexible(
+                child: Container(
                   height: 100,
                   width: 100,
                   color: Colors.redAccent,
                 ),
-                const SizedBox(
-                  height: 75,
-                ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[emailField, passwordField, confirmField],
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                GradientButton(title: "Sign Up", onPressed: _handleRegistration)
-              ],
-            ),
+              ),
+              const SizedBox(
+                height: 75,
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[emailField, passwordField, confirmField],
+              ),
+              const SizedBox(
+                height: 25,
+              ),
+              GradientButton(title: "Sign Up", onPressed: _handleRegistration)
+            ],
           ),
         ),
       ),
