@@ -16,8 +16,7 @@ class SignUpPage extends StatefulWidget {
   State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage>
-    with AutomaticKeepAliveClientMixin {
+class _SignUpPageState extends State<SignUpPage> {
   Map<String, String?> errorMessages = {
     "email": null,
     "password": null,
@@ -159,7 +158,6 @@ class _SignUpPageState extends State<SignUpPage>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return PageBackground(
       appBar: _appBar,
       body: ModalProgressHUD(
@@ -198,10 +196,4 @@ class _SignUpPageState extends State<SignUpPage>
       ),
     );
   }
-
-  @override
-  bool get wantKeepAlive =>
-      userInputs["email"] != null ||
-      userInputs["password"] != null ||
-      userInputs["confirm"] != null;
 }
