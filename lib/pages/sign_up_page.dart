@@ -47,11 +47,7 @@ class _SignUpPageState extends State<SignUpPage> {
         title: "Email",
         controller: emailController,
         onChanged: (email) {
-          if (email == "") {
-            userInputs['email'] = null;
-          } else {
-            userInputs["email"] = email;
-          }
+          userInputs["email"] = email;
         },
         showError: errors["email"]!,
         errorMessage: errorMessages["email"],
@@ -62,11 +58,7 @@ class _SignUpPageState extends State<SignUpPage> {
         controller: passwordController,
         obscureText: true,
         onChanged: (password) {
-          if (password == "") {
-            userInputs['password'] = null;
-          } else {
-            userInputs["password"] = password;
-          }
+          userInputs["password"] = password;
         },
         showError: errors["password"]!,
         errorMessage: errorMessages["password"],

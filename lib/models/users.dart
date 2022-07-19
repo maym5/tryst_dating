@@ -37,7 +37,6 @@ class UserData with ChangeNotifier {
       'minPrice': minPrice,
       "maxPrice": maxPrice,
       'imageURLs': imageURLs,
-      "location" : location,
       "uid": AuthenticationService.currentUserUID
     };
   }
@@ -74,11 +73,12 @@ class UserData with ChangeNotifier {
     final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
     User? _user = retrieveUser();
     if (_user != null) {
-      await UserImages.uploadImages(_user);
-      Map<String, dynamic> _userData = UserData.toJson();
-      _fireStore.collection("userData").doc(_user.uid).set(_userData);
-      await UserData().setLocation();
-      // _fireStore.collection("userData").doc(_user.uid).collection("matches");
+      try {
+        await UserImages.uploadImages(_user);
+        Map<String, dynamic> _userData = UserData.toJson();
+        _fireStore.collection("userData").doc(_user.uid).set(_userData);
+        await UserData().setLocation();
+      } catch (e) {}
     }
   }
 
@@ -145,10 +145,12 @@ class UserData with ChangeNotifier {
   Future<void> uploadUserLocation() async {
     final FirebaseFirestore _db = FirebaseFirestore.instance;
     User? _user = retrieveUser();
-    await _db.collection("userData").doc(_user?.uid).update({
-      "location":
-          GeoPoint(UserData.location!.latitude, UserData.location!.longitude)
-    });
+    try {
+      await _db.collection("userData").doc(_user?.uid).update({
+        "location":
+        GeoPoint(UserData.location!.latitude, UserData.location!.longitude)
+      });
+    } catch(e) {}
   }
 
   Future<void> setLocation() async {
