@@ -43,7 +43,6 @@ class GooglePlacesService {
   }
 
   Future<Map> get venue async {
-    print(venueType);
     String _id = await venueId;
     String _fields = "fields=name%2Copening_hours";
     String _path =
@@ -51,7 +50,6 @@ class GooglePlacesService {
     try {
       final Response result = await dio.get(_path);
       final _data = result.data;
-      print(_data);
       if (result.statusCode! >= 200 && result.statusCode! < 300) {
         return {
           "name": _data["result"]["name"],
@@ -62,7 +60,6 @@ class GooglePlacesService {
         return {"status": "not ok"};
       }
     } catch (e) {
-      print(e);
       return {"status": "not ok"};
     }
   }

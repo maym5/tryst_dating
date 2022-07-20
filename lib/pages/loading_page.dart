@@ -18,22 +18,37 @@ class LoadingPage extends StatefulWidget {
 }
 
 class _LoadingPageState extends State<LoadingPage> {
+  late bool _showIndicator;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  Future fakeDelay() async {
+
+  Future load() async {
     await Future.delayed(const Duration(seconds: 4));
     final User? currentUser = _auth.currentUser;
     if (currentUser != null) {
+      setState(() => _showIndicator = true);
       await UserData().setLocation();
       await UserData().getUserData();
+      setState(() => _showIndicator = false);
       Navigator.pushNamed(context, HomePage.id);
     } else {
       Navigator.pushNamed(context, IntroPage.id);
     }
   }
 
+  Widget get _progressIndicator => _showIndicator
+      ? const Padding(
+        padding: EdgeInsets.only(top: 15),
+        child: SizedBox(
+            child: CircularProgressIndicator(color: Colors.redAccent),
+            height: 40,
+            width: 40),
+      )
+      : Container();
+
   @override
   void initState() {
-    fakeDelay();
+    _showIndicator = false;
+    load();
     super.initState();
   }
 
@@ -54,13 +69,17 @@ class _LoadingPageState extends State<LoadingPage> {
                 color: Colors.redAccent,
               ),
             ),
-            const SizedBox(height: 25,),
+            const SizedBox(
+              height: 25,
+            ),
             ShaderMask(
               blendMode: BlendMode.srcIn,
-              shaderCallback: (bounds) => kButtonGradient
-                  .createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-              child: TextFadeIn(text: "Rendezvous", style: kTextStyle.copyWith(fontSize: 50)),
+              shaderCallback: (bounds) => kButtonGradient.createShader(
+                  Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+              child: TextFadeIn(
+                  text: "Rendezvous", style: kTextStyle.copyWith(fontSize: 50)),
             ),
+            _progressIndicator
           ],
         ),
       ),
