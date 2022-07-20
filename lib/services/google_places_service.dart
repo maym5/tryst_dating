@@ -16,7 +16,7 @@ class GooglePlacesService {
     final String _path = basePath +
         "&location=${UserData.location?.latitude}%2C${UserData.location?.longitude}" +
         "&radius=$meters" +
-        "&type=$venueType" +
+        "&keyword=$venueType" +
         "&minprice=${UserData.minPrice}" +
         "&maxprice=${UserData.maxPrice}" +
         "&key=$PLACES_API_KEY";

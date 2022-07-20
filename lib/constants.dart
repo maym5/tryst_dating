@@ -115,7 +115,7 @@ const kBioPadding = EdgeInsets.fromLTRB(10, 0, 0, 0);
 
 const kPopUpColor = Color(0xFF0A0E21);
 
-const kUserInfoAlignment = Alignment(-0.9, 0.55);
+const kUserInfoAlignment = Alignment(-0.9, 0.65);
 
 const kDarkTransparent = Color(0x44000000);
 
