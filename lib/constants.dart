@@ -150,5 +150,12 @@ final kImagePickerButtonStyle = ButtonStyle(
 
 const kWrapPadding = EdgeInsets.fromLTRB(0, 20, 0, 20);
 
+const kChatBubbleBorderRadius = BorderRadius.only(
+    topRight: Radius.circular(8),
+    bottomLeft: Radius.circular(25),
+    bottomRight: Radius.circular(25),
+    topLeft: Radius.circular(25)
+);
+
 
 

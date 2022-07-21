@@ -27,12 +27,8 @@ class InBubble extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 5),
               decoration: BoxDecoration(
                 color: Colors.grey.shade300,
-                borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(19),
-                  bottomLeft: Radius.circular(19),
-                  bottomRight: Radius.circular(19),
+                borderRadius: kChatBubbleBorderRadius,
                 ),
-              ),
               child: Text(
                 message,
                 style: const TextStyle(color: Colors.black, fontSize: 15),
@@ -63,13 +59,8 @@ class OutBubble extends StatelessWidget {
               padding: const EdgeInsets.all(15),
               margin: const EdgeInsets.only(bottom: 5),
               decoration: const BoxDecoration(
-                // color: Colors.redAccent,
                 gradient: kMessageBubbleGradient,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(19),
-                  bottomLeft: Radius.circular(19),
-                  bottomRight: Radius.circular(19),
-                ),
+                borderRadius: kChatBubbleBorderRadius,
               ),
               child: Text(
                 message,
@@ -106,5 +97,9 @@ class Triangle extends CustomPainter {
     return false;
   }
 }
-
+// const BorderRadius.only(
+// topRight: Radius.circular(19),
+// bottomLeft: Radius.circular(19),
+// bottomRight: Radius.circular(19),
+// ),
 

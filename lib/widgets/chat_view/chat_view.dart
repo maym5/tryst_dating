@@ -24,6 +24,7 @@ class ChatView extends StatefulWidget {
 class _ChatViewState extends State<ChatView> {
   String _messageText = "";
   final TextEditingController _textController = TextEditingController();
+  bool _scrolled = false;
 
   PreferredSize get _appBar => PreferredSize(
         preferredSize: const Size(double.infinity, 75),
@@ -98,8 +99,10 @@ class _ChatViewState extends State<ChatView> {
   }
 
   void _scrollDown() {
-    if (_controller.hasClients) {
-      _controller.jumpTo(_controller.position.maxScrollExtent + 200);
+    if (_controller.hasClients &&
+        _controller.position.pixels != _controller.position.maxScrollExtent) {
+      _controller.animateTo(_controller.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 100), curve: Curves.bounceIn);
     } else {
       Timer(const Duration(milliseconds: 400), () => _scrollDown());
     }
@@ -107,7 +110,10 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollDown());
+    if (!_scrolled) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollDown());
+      _scrolled = true;
+    }
     return PageBackground(
       appBar: _appBar,
       body: Column(
@@ -128,7 +134,10 @@ class _ChatViewState extends State<ChatView> {
 
 class MessagesStreamBuilder extends StatefulWidget {
   const MessagesStreamBuilder(
-      {Key? key, required this.stream, required this.name, required this.controller})
+      {Key? key,
+      required this.stream,
+      required this.name,
+      required this.controller})
       : super(key: key);
   final Stream<QuerySnapshot> stream;
   final String name;
@@ -139,7 +148,6 @@ class MessagesStreamBuilder extends StatefulWidget {
 }
 
 class _MessagesStreamBuilderState extends State<MessagesStreamBuilder> {
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
