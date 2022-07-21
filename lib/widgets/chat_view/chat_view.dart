@@ -107,7 +107,7 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance?.addPostFrameCallback((_) => _scrollDown());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollDown());
     return PageBackground(
       appBar: _appBar,
       body: Column(
