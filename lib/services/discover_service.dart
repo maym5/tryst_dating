@@ -96,23 +96,19 @@ class DiscoverService {
 
   Stream<List<QueryDocumentSnapshot<Map>>> get discoverStream async* {
     List<QueryDocumentSnapshot<Map>> result = [];
-    try {
-      await for (QueryDocumentSnapshot<Map> doc in preferenceMatches) {
-        final GeoPoint? _geoPoint = doc.data()["location"];
-        if (_geoPoint != null) {
-          if (Geolocator.distanceBetween(
-                  UserData.location!.latitude,
-                  UserData.location!.longitude,
-                  _geoPoint.latitude,
-                  _geoPoint.longitude) <=
-              (UserData.maxDistance! * 1609.34)) {
-            result.add(doc);
-            yield result;
-          }
+    await for (QueryDocumentSnapshot<Map> doc in preferenceMatches) {
+      final GeoPoint? _geoPoint = doc.data()["location"];
+      if (_geoPoint != null) {
+        if (Geolocator.distanceBetween(
+                UserData.location!.latitude,
+                UserData.location!.longitude,
+                _geoPoint.latitude,
+                _geoPoint.longitude) <=
+            (UserData.maxDistance! * 1609.34)) {
+          result.add(doc);
+          yield result;
         }
       }
-    } catch (e) {
-      print(e);
     }
   }
 }

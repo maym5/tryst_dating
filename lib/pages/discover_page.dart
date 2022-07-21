@@ -37,8 +37,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
   ScrollPhysics _physics = const AlwaysScrollableScrollPhysics();
 
   void _onScroll() {
-    // made change must test
-    // works but not ideal
     if (_pageController.page!.toInt() == _pageController.page) {
       _previousPage = _pageController.page!.toInt();
     } else if (_pageController.page! - _previousPage >= 0.3) {
@@ -119,12 +117,12 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
   Future<void> get createNewMatch async {
     await MatchDataService.setMatchData(
-        currentDiscoverUID: _currentUID,
-        userRating: _userRating,
-        image: _currentDiscoverData.images[0],
-        name: _currentDiscoverData.name,
-        age: _currentDiscoverData.age,
-        dateTypes: _currentDiscoverData.dates);
+            currentDiscoverUID: _currentUID,
+            userRating: _userRating,
+            image: _currentDiscoverData.images[0],
+            name: _currentDiscoverData.name,
+            age: _currentDiscoverData.age,
+            dateTypes: _currentDiscoverData.dates);
   }
 
   @override

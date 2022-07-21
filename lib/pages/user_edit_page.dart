@@ -31,7 +31,7 @@ class _UserEditPageState extends State<UserEditPage>{
   void onButtonPress() async {
     if (UserData.canCreateUser) {
       setState(() => showSpinners = true);
-      await UserData().uploadUserData();
+      await UserData().uploadUserData(context);
       setState(() => showSpinners = false);
       if (widget.onHomePageButtonPress != null) {
         widget.onHomePageButtonPress!();

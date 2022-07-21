@@ -39,28 +39,28 @@ class GooglePlacesService {
       // results are returned ranked by prominence, so we grab the first one
       return _venues[0]["place_id"];
     }
-    return "No venues found";
+    throw "No venues found";
   }
 
   Future<Map> get venue async {
-    String _id = await venueId;
     String _fields = "fields=name%2Copening_hours";
-    String _path =
-        detailsBasePath + _fields + "&place_id=$_id" + "&key=$PLACES_API_KEY";
     try {
+      String _id = await venueId;
+      String _path =
+          detailsBasePath + _fields + "&place_id=$_id" + "&key=$PLACES_API_KEY";
       final Response result = await dio.get(_path);
       final _data = result.data;
       if (result.statusCode! >= 200 && result.statusCode! < 300) {
         return {
           "name": _data["result"]["name"],
           "openHours": _data["result"]["opening_hours"]["periods"],
-          "status": _data["status"]
+          "status": 'ok'
         };
       } else {
-        return {"status": "not ok"};
+        return {"status": "HTML error"};
       }
     } catch (e) {
-      return {"status": "not ok"};
+      return {"status": e};
     }
   }
 

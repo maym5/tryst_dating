@@ -39,14 +39,15 @@ class AuthenticationService {
     } return false;
   }
 
-  static Future<void> sendVerificationEmail() async {
+  static Future<bool> sendVerificationEmail() async {
     if (currentUser != null && !currentUser!.emailVerified) {
       try {
         await currentUser?.sendEmailVerification();
+        return true;
       } catch (e) {
-        print(e);
+        return false;
       }
-    }
+    } return true;
   }
 
   Future<void> logOut() async {

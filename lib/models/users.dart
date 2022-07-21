@@ -2,6 +2,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rendezvous_beta_v3/dialogues/error_dialogue.dart';
 import 'package:rendezvous_beta_v3/models/user_images.dart';
 import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import '../services/discover_service.dart';
@@ -69,7 +70,7 @@ class UserData with ChangeNotifier {
     return auth.currentUser;
   }
 
-  Future<void> uploadUserData() async {
+  Future<void> uploadUserData(BuildContext context) async {
     final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
     User? _user = retrieveUser();
     if (_user != null) {
@@ -78,7 +79,12 @@ class UserData with ChangeNotifier {
         Map<String, dynamic> _userData = UserData.toJson();
         _fireStore.collection("userData").doc(_user.uid).set(_userData);
         await UserData().setLocation();
-      } catch (e) {}
+      } catch (e) {
+        showGeneralDialog(
+            context: context,
+            pageBuilder: (context, animation, _) =>
+                ErrorDialogue(animation: animation));
+      }
     }
   }
 
@@ -142,19 +148,24 @@ class UserData with ChangeNotifier {
     UserImages.getImagesFromUserData();
   }
 
-  Future<void> uploadUserLocation() async {
+  Future<bool> uploadUserLocation() async {
     final FirebaseFirestore _db = FirebaseFirestore.instance;
     User? _user = retrieveUser();
     try {
       await _db.collection("userData").doc(_user?.uid).update({
         "location":
-        GeoPoint(UserData.location!.latitude, UserData.location!.longitude)
+            GeoPoint(UserData.location!.latitude, UserData.location!.longitude)
       });
-    } catch(e) {}
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<void> setLocation() async {
     UserData.location = await UserData.userLocation;
-    UserData().uploadUserLocation();
+    UserData()
+        .uploadUserLocation()
+        .then((value) => value ? null : throw ("couldn't upload location"));
   }
 }

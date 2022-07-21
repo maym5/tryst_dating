@@ -37,7 +37,7 @@ class MatchDataService {
         .snapshots();
   }
 
-  static Future<void> setMatchData(
+  static Future<bool> setMatchData(
       {required String currentDiscoverUID,
       required double userRating,
       required String name,
@@ -76,8 +76,9 @@ class MatchDataService {
         "dateTypes": UserData.dates.toList(),
         "seen": false
       });
+      return true;
     } catch (e) {
-      print(e);
+      return false;
     }
   }
 
@@ -120,12 +121,11 @@ class MatchDataService {
       });
       return true;
     } catch (e) {
-      print(e);
       return false;
     }
   }
 
-  static Future<void> confirmDate({required String otherUserUID}) async {
+  static Future<bool> confirmDate({required String otherUserUID}) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
     try {
       await db
@@ -144,7 +144,10 @@ class MatchDataService {
           .update({
         "agreedToDate": [AuthenticationService.currentUserUID, otherUserUID]
       });
-    } catch (e) {}
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   static Future<bool> deleteDate({required String otherUserUID}) async {
@@ -167,21 +170,6 @@ class MatchDataService {
       return false;
     }
   }
-
-  /* static Future<void> moveToOldDates({required otherUserUID}) {
-    final FirebaseFirestore db = FirebaseFirestore.instance;
-    try {
-      final _yourOldDateData = db
-          .collection("userData")
-          .doc(AuthenticationService.currentUserUID)
-          .collection("matches")
-          .doc(otherUserUID)
-          .get() as Map;
-      db.collection("userData").doc(AuthenticationService.currentUserUID).collection("pastDates").doc(otherUserUID).set({
-        "name" : _yourOldDateData["name"],
-      });
-    } catch (e) {}
-  }*/
 }
 
 class DateData {

@@ -47,10 +47,12 @@ class DatesModel {
 
   Future<Map> get venueData async {
     final String _venueType = await randomDateType;
-    return {
-      "venue": await GooglePlacesService(venueType: _venueType).venue,
-      "venueType": _venueType
-    };
+    final Map _venue = await GooglePlacesService(venueType: _venueType).venue;
+    if (_venue["status"] == "ok") {
+      return {"venue": _venue, "venueType": _venueType};
+    } else {
+      throw (_venue["status"]);
+    }
   }
 
   Future<Map> get matchData async {
@@ -72,42 +74,57 @@ class DatesModel {
 
   Future<void> getDate(BuildContext context,
       {double? userRating, bool pickAnother = false}) async {
-    final Map _venueData = await venueData;
-    final Map _matchData = await matchData;
-    if (_venueData["venue"]["status"] == "OK") {
-      await DateTimeDialogue(setDateTime: setDateTime).buildCalendarDialogue(
-          context,
-          pickAnother: pickAnother,
-          matchName: _matchData["name"],
-          venueName: _venueData["venue"]["name"]);
-      if (_dateTime != null &&
-          await GooglePlacesService.checkDateTime(
-              _dateTime!, _venueData["venue"])) {
-        await MatchDataService.updateMatchData(
-                otherUserUID: discoverData != null
-                    ? discoverData!.uid
-                    : dateData != null
-                        ? dateData!.matchID
-                        : throw ("must have either discover or date data to preform this operation"),
-                dateType: _venueData['venueType'],
-                dateTime: _dateTime!,
-                venue: _venueData["venue"]["name"],
-                userRating: userRating)
-            .then((value) => showGeneralDialog(
-                context: context,
-                pageBuilder: (context, animation, _) => value ? ConfirmDialogue(
-                    dateTime: _dateTime!,
-                    venueName: _venueData["venue"]["name"],
-                    animation: animation,
-                    matchName: _matchData["name"]) : ErrorDialogue(animation: animation)));
-      } else if (_dateTime == null) {
-        showGeneralDialog(context: context, pageBuilder: (context, animation, _) => CancelDialogue(animation: animation));
-      } else if (!await GooglePlacesService.checkDateTime(
-          _dateTime!, _venueData["venue"])) {
-        getDate(context, pickAnother: true);
+    try {
+      final Map _venueData = await venueData;
+      final Map _matchData = await matchData;
+      if (_venueData["venue"]["status"] == "OK") {
+        await DateTimeDialogue(setDateTime: setDateTime).buildCalendarDialogue(
+            context,
+            pickAnother: pickAnother,
+            matchName: _matchData["name"],
+            venueName: _venueData["venue"]["name"]);
+        if (_dateTime != null &&
+            await GooglePlacesService.checkDateTime(
+                _dateTime!, _venueData["venue"])) {
+          await MatchDataService.updateMatchData(
+                  otherUserUID: discoverData != null
+                      ? discoverData!.uid
+                      : dateData != null
+                          ? dateData!.matchID
+                          : throw ("must have either discover or date data to preform this operation"),
+                  dateType: _venueData['venueType'],
+                  dateTime: _dateTime!,
+                  venue: _venueData["venue"]["name"],
+                  userRating: userRating)
+              .then((value) => showGeneralDialog(
+                  context: context,
+                  pageBuilder: (context, animation, _) => value
+                      ? ConfirmDialogue(
+                          dateTime: _dateTime!,
+                          venueName: _venueData["venue"]["name"],
+                          animation: animation,
+                          matchName: _matchData["name"])
+                      : ErrorDialogue(animation: animation)));
+        } else if (_dateTime == null) {
+          showGeneralDialog(
+              context: context,
+              pageBuilder: (context, animation, _) =>
+                  CancelDialogue(animation: animation));
+        } else if (!await GooglePlacesService.checkDateTime(
+            _dateTime!, _venueData["venue"])) {
+          getDate(context, pickAnother: true);
+        }
+      } else {
+        showGeneralDialog(
+            context: context,
+            pageBuilder: (context, animation, _) =>
+                ErrorDialogue(animation: animation));
       }
-    } else {
-      showGeneralDialog(context: context, pageBuilder: (context, animation, _) => ErrorDialogue(animation: animation));
+    } catch (e) {
+      showGeneralDialog(
+          context: context,
+          pageBuilder: (context, animation, _) =>
+              ErrorDialogue(animation: animation));
     }
   }
 }

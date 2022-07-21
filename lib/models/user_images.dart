@@ -43,8 +43,12 @@ class UserImages with ChangeNotifier {
         source: ImageSource.camera,
         imageQuality: 50,
         preferredCameraDevice: CameraDevice.front);
-    userImages[index] = image;
-    notifyListeners();
+    if (image != null) {
+      userImages[index] = image;
+      notifyListeners();
+    } else {
+      throw Exception("Unable to process that request");
+    }
   }
 
   void deleteImage(int index) {

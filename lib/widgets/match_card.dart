@@ -37,15 +37,15 @@ class _DateCardState extends State<DateCard>
       );
 
   Widget get _tapText => Align(
-    alignment: Alignment.bottomLeft,
-    child: Padding(
-      padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-      child: Text(
-        "Tap to ask out!",
-        style: kTextStyle.copyWith(color: Colors.redAccent, fontSize: 18),
-      ),
-    ),
-  );
+        alignment: Alignment.bottomLeft,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+          child: Text(
+            "Tap to ask out!",
+            style: kTextStyle.copyWith(color: Colors.redAccent, fontSize: 18),
+          ),
+        ),
+      );
 
   Widget get ui {
     return Stack(

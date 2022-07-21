@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:rendezvous_beta_v3/dialogues/error_dialogue.dart';
 import 'dart:io';
 import 'package:reorderable_grid/reorderable_grid.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +8,6 @@ import '../../constants.dart';
 import '../../models/user_images.dart';
 import '../field_title.dart';
 import '../warning_widget.dart';
-
 
 class GridBox extends StatefulWidget {
   const GridBox({Key? key, required this.index, required this.images})
@@ -90,7 +90,9 @@ class _GridBoxState extends State<GridBox> {
 }
 
 class PhotoPickerButton extends StatelessWidget {
-  const PhotoPickerButton({Key? key, required this.containsUserImage, required this.onPressed}) : super(key: key);
+  const PhotoPickerButton(
+      {Key? key, required this.containsUserImage, required this.onPressed})
+      : super(key: key);
   final bool containsUserImage;
   final void Function() onPressed;
 
@@ -111,7 +113,6 @@ class PhotoPickerButton extends StatelessWidget {
     );
   }
 }
-
 
 class CustomBottomSheet extends StatelessWidget {
   // give its own file ?
@@ -143,7 +144,8 @@ class CustomBottomSheet extends StatelessWidget {
             leading: Icon(iconOne, color: tileOneColor ?? kOffWhite),
             title: Text(
               titleOne,
-              style: kTextStyle.copyWith(color: tileOneColor ?? kOffWhite, fontSize: 15),
+              style: kTextStyle.copyWith(
+                  color: tileOneColor ?? kOffWhite, fontSize: 15),
             ),
             onTap: () {
               onTileOneTap();
@@ -179,10 +181,24 @@ class PhotoPickerBottomSheet extends StatelessWidget {
       titleOne: "Photo from gallery",
       titleTwo: "Photo from camera",
       onTileOneTap: () {
-        images.addImages(index);
+        try {
+          images.addImages(index);
+        } catch (e) {
+          showGeneralDialog(
+              context: context,
+              pageBuilder: (context, animation, _) =>
+                  ErrorDialogue(animation: animation));
+        }
       },
       onTileTwoTap: () {
-        images.addImageFromCamera(index);
+        try {
+          images.addImageFromCamera(index);
+        } catch (e) {
+          showGeneralDialog(
+              context: context,
+              pageBuilder: (context, animation, _) =>
+                  ErrorDialogue(animation: animation));
+        }
       },
     );
   }
@@ -227,7 +243,10 @@ class _PhotoPickerState extends State<PhotoPicker> {
                           key: ValueKey(index), index: index, images: images),
                       itemCount: 9,
                     ),
-                    WarningWidget(showError: widget.showError && UserImages.showImageError(), name: "Photo Picker")
+                    WarningWidget(
+                        showError:
+                            widget.showError && UserImages.showImageError(),
+                        name: "Photo Picker")
                   ],
                 ),
               ),
