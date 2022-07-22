@@ -87,6 +87,7 @@ class MatchDataService {
     required String dateType,
     required DateTime dateTime,
     required String venue,
+    required String venueID,
     double? userRating,
   }) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
@@ -102,6 +103,7 @@ class MatchDataService {
         "dateType": dateType,
         "dateTime": dateTime,
         "userRating": userRating,
+        "venueID" : venueID,
         "seen": true,
         "agreedToDate": [AuthenticationService.currentUserUID]
       });
@@ -116,6 +118,7 @@ class MatchDataService {
         "dateType": dateType,
         "dateTime": dateTime,
         "otherUserRating": userRating,
+        "venueID" : venueID,
         "seen": true,
         "agreedToDate": [AuthenticationService.currentUserUID]
       });
@@ -182,6 +185,7 @@ class MatchDataService {
   static Future<bool> deleteDate({required String otherUserUID}) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
     try {
+      // TODO: delete all of their messages cuz firebase be tripping
       await db
           .collection("userData")
           .doc(AuthenticationService.currentUserUID)
@@ -199,6 +203,32 @@ class MatchDataService {
       return false;
     }
   }
+
+  static Future<bool> rescheduleDate({required String otherUserUID, required DateTime dateTime}) async {
+    final FirebaseFirestore db = FirebaseFirestore.instance;
+    try {
+      await db
+          .collection("userData")
+          .doc(AuthenticationService.currentUserUID)
+          .collection("matches")
+          .doc(otherUserUID).update({
+        "agreedToDate" : [AuthenticationService.currentUserUID],
+        "dateTime" : dateTime,
+      });
+      await db
+          .collection("userData")
+          .doc(otherUserUID)
+          .collection("matches")
+          .doc(AuthenticationService.currentUserUID).update({
+        "agreedToDate" : [AuthenticationService.currentUserUID],
+        "dateTime" : dateTime,
+      });
+      return true;
+    } catch(e) {
+      return false;
+    }
+  }
+
 }
 
 class DateData {
@@ -211,7 +241,9 @@ class DateData {
       this.venue,
       this.dateType,
       this.dateTypes,
-      this.agreedToDate});
+      this.agreedToDate,
+        this.venueID
+      });
   final String name;
   final int? age;
   final String? image;
@@ -221,4 +253,5 @@ class DateData {
   final List? dateTypes;
   final String matchID;
   final List? agreedToDate;
+  final String? venueID;
 }

@@ -100,6 +100,7 @@ class DatesModel {
                   dateType: _venueData['venueType'],
                   dateTime: _dateTime!,
                   venue: _venueData["venue"]["name"],
+                  venueID: _venueData["venue"]["id"],
                   userRating: userRating)
               .then((value) => showGeneralDialog(
                   context: context,
@@ -126,19 +127,83 @@ class DatesModel {
                 ErrorDialogue(animation: animation));
       }
     } catch (e) {
-      await MatchDataService.createMatch(otherUserUID: discoverData != null
-          ? discoverData!.uid
-          : dateData != null
-          ? dateData!.matchID
-          : throw ("must have either discover or date data to preform this operation"));
+      await MatchDataService.createMatch(
+          otherUserUID: discoverData != null
+              ? discoverData!.uid
+              : dateData != null
+                  ? dateData!.matchID
+                  : throw ("must have either discover or date data to preform this operation"));
       showGeneralDialog(
           context: context,
           pageBuilder: (context, animation, _) => ErrorDialogue(
               animation: animation,
               errorMessage: e ==
-                      "No venues found. You're gonna have to do this one the old fashioned way"
-                  ? e.toString()
+                      "No venues found"
+                  ? e.toString() + " your gonna have to do this the old fashioned way!"
                   : null));
     }
   }
+
+  Future<void> rescheduleDate(BuildContext context,
+      {bool pickAnother = false}) async {
+    if (dateData != null && dateData?.venueID != null) {
+      final Map _venueData =
+          await GooglePlacesService().venueFromId(dateData!.venueID!);
+      final Map _matchData = await matchData;
+      if (_venueData["venue"]["status"] == "ok") {
+        await DateTimeDialogue(setDateTime: setDateTime).buildCalendarDialogue(
+            context,
+            venueName: _venueData["venue"]["name"],
+            matchName: _matchData["name"],
+            initialDialogue: false);
+        if (_dateTime != null &&
+            await GooglePlacesService.checkDateTime(
+                _dateTime!, _venueData["venue"])) {
+          await MatchDataService.rescheduleDate(
+                  otherUserUID: dateData != null
+                      ? dateData!.matchID
+                      : throw ("must have date data to preform this operation"),
+                  dateTime: _dateTime!)
+              .then((value) => showGeneralDialog(
+                  context: context,
+                  pageBuilder: (context, animation, _) => value
+                      ? CongratsDialogue(
+                          animation: animation,
+                          venueName: _venueData["venue"]["name"],
+                          matchName: _matchData["name"])
+                      : ErrorDialogue(animation: animation)));
+        } else if (_dateTime == null) {
+          showGeneralDialog(
+              context: context,
+              pageBuilder: (context, animation, _) =>
+                  CancelDialogue(animation: animation));
+        } else if (!await GooglePlacesService.checkDateTime(
+            _dateTime!, _venueData["venue"])) {
+          getDate(context, pickAnother: true);
+        }
+      } else {
+        showGeneralDialog(
+            context: context,
+            pageBuilder: (context, animation, _) =>
+                ErrorDialogue(animation: animation));
+      }
+    } else {
+      throw ("dateData required for this operation");
+    }
+  }
+
+  Future<void> deleteData(BuildContext context) async {
+    if (dateData != null) {
+      await MatchDataService.deleteDate(otherUserUID: dateData!.matchID).then(
+              (deleted) => showGeneralDialog(
+              context: context,
+              pageBuilder: (context, animation, _) => deleted
+                  ? CancelDialogue(animation: animation)
+                  : ErrorDialogue(animation: animation)));
+    } else {
+      throw("need dateData");
+    }
+  }
+
+
 }

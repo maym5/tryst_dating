@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/dialogues/cancel_dialogue.dart';
 import 'package:rendezvous_beta_v3/dialogues/error_dialogue.dart';
+import 'package:rendezvous_beta_v3/models/dates_model.dart';
 import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import 'package:rendezvous_beta_v3/services/messaging_service.dart';
 import 'package:rendezvous_beta_v3/widgets/chat_view/chat_view.dart';
@@ -235,7 +236,7 @@ class _DateOptionsBarState extends State<DateOptionsBar> {
     showModalBottomSheet(
         context: context,
         builder: (context) =>
-            DetailsBottomSheet(matchUID: widget.data.matchID));
+            DetailsBottomSheet(data: widget.data));
   }
 
   Widget get _messageButton => GestureDetector(
@@ -378,9 +379,9 @@ class NameAndButtons extends StatelessWidget {
 }
 
 class DetailsBottomSheet extends StatelessWidget {
-  const DetailsBottomSheet({Key? key, required this.matchUID})
+  const DetailsBottomSheet({Key? key, required this.data})
       : super(key: key);
-  final String matchUID;
+  final DateData data;
 
   @override
   Widget build(BuildContext context) {
@@ -390,16 +391,10 @@ class DetailsBottomSheet extends StatelessWidget {
         titleOne: "Delete this date",
         titleTwo: "Reschedule this date",
         onTileOneTap: () async {
-          await MatchDataService.deleteDate(otherUserUID: matchUID).then(
-              (deleted) => showGeneralDialog(
-                  context: context,
-                  pageBuilder: (context, animation, _) => deleted
-                      ? CancelDialogue(animation: animation)
-                      : ErrorDialogue(animation: animation)));
+          await DatesModel(dateData: data).deleteData(context);
         },
-        onTileTwoTap: () {
-          // TODO: figure this out
-          // what to do here ??
+        onTileTwoTap: () async {
+          await DatesModel(dateData: data).rescheduleDate(context);
         });
   }
 }

@@ -28,15 +28,17 @@ class DateTimeDialogue extends StatelessWidget {
   Future<void> buildCalendarDialogue(BuildContext context,
       {required String venueName,
       required String matchName,
-      bool pickAnother = false}) async {
-    await showGeneralDialog(
+      bool pickAnother = false,
+        bool initialDialogue = true,
+      }) async {
+    initialDialogue ? await showGeneralDialog(
         context: context,
         pageBuilder: (context, animation, _) => pickAnother
             ? PickAnotherDayDialogue(animation: animation, venueName: venueName)
             : CongratsDialogue(
                 animation: animation,
                 venueName: venueName,
-                matchName: matchName));
+                matchName: matchName)) : null;
 
     final DateTime now = DateTime.now();
 

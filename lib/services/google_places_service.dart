@@ -2,13 +2,13 @@ import 'package:dio/dio.dart';
 import '../models/users.dart';
 
 class GooglePlacesService {
-  GooglePlacesService({required this.venueType});
+  GooglePlacesService({this.venueType});
   final String PLACES_API_KEY = "AIzaSyCl-kVxhkNP1ySziCMs8kdkMMMbOMLlg6k";
   final String basePath =
       "https://maps.googleapis.com/maps/api/place/nearbysearch/json?";
   final String detailsBasePath =
       "https://maps.googleapis.com/maps/api/place/details/json?";
-  final String venueType;
+  final String? venueType;
   final Dio dio = Dio();
 
   Future<List> get venues async {
@@ -54,6 +54,7 @@ class GooglePlacesService {
       if (result.statusCode! >= 200 && result.statusCode! < 300) {
         return {
           "name": _data["result"]["name"],
+          "id" : _id,
           "openHours": _data["result"]["opening_hours"]["periods"],
           "status": 'ok'
         };
@@ -61,6 +62,27 @@ class GooglePlacesService {
         return {"status": "HTML error"};
       }
     } catch (e) {
+      return {"status": e};
+    }
+  }
+
+  Future<Map> venueFromId(String id) async {
+    String _fields = "fields=name%2Copening_hours";
+    try {
+      String _path = detailsBasePath + _fields + "&place_id=$id" + "&key=$PLACES_API_KEY";
+      final Response result = await dio.get(_path);
+      final _data = result.data;
+      if (result.statusCode! >= 200 && result.statusCode! < 300) {
+        return {
+          "name": _data["result"]["name"],
+          "id" : id,
+          "openHours": _data["result"]["opening_hours"]["periods"],
+          "status": 'ok'
+        };
+      } else {
+        return {"status": "HTML error"};
+      }
+    } catch(e) {
       return {"status": e};
     }
   }
