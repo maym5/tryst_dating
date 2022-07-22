@@ -175,11 +175,14 @@ class _DatePageState extends State<DatePage> {
       final List<DateData> upcomingDates = [];
       final List<DateData> pastDates = [];
       final List<DateData> pendingDates = [];
+      final List<DateData> noDateMatch = [];
       for (DocumentSnapshot doc in dateSnapshot.data!.docs) {
         if (doc.exists && doc.data() != null) {
           final Map _data = doc.data() as Map;
           final List _agreedToDate = _data["agreedToDate"];
-          if (_agreedToDate.length != 2 &&
+          if (_data["dateTime"] == null) {
+            noDateMatch.add(DateData(name: _data["name"], matchID: _data["matchUID"], image: _data["avatarImage"]));
+          } else if (_agreedToDate.length != 2 &&
               MatchDataService.convertTimeStamp(_data["dateTime"])
                   .isAfter(DateTime.now())) {
             pendingDates.add(DateData(
@@ -226,7 +229,7 @@ class _DatePageState extends State<DatePage> {
       }
       return ListView.builder(
           itemCount:
-              upcomingDates.length + pastDates.length + pendingDates.length,
+              upcomingDates.length + pastDates.length + pendingDates.length + noDateMatch.length,
           itemBuilder: (context, index) {
             if (index < upcomingDates.length) {
               return DateCard(data: upcomingDates[index]);
@@ -246,10 +249,21 @@ class _DatePageState extends State<DatePage> {
                   DateCard(data: pendingDates[0]),
                 ],
               );
-            } else {
+            } else if (index < upcomingDates.length + pastDates.length + pendingDates.length) {
               return DateCard(
                   data: pendingDates[
                       index - (upcomingDates.length + pastDates.length)]);
+            } else if (index == upcomingDates.length + pastDates.length + pendingDates.length && noDateMatch.isNotEmpty) {
+              return Column(
+                children: [
+                  _dividerBuilder("Venueless matches"),
+                  DateCard(data: noDateMatch[0]),
+                ],
+              );
+            } else {
+              return DateCard(
+                  data: noDateMatch[
+                  index - (upcomingDates.length + pastDates.length + pendingDates.length)]);
             }
           });
     } else if (!dateSnapshot.hasData || dateSnapshot.data!.size == 0) {

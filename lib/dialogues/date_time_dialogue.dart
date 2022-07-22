@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/dialogues/log_out_dialogue.dart';
 import 'package:rendezvous_beta_v3/dialogues/pick_another_day_dialogue.dart';
@@ -34,48 +36,116 @@ class DateTimeDialogue extends StatelessWidget {
             : CongratsDialogue(
                 animation: animation,
                 venueName: venueName,
-                matchName: matchName,
-                setDateTime: setDateTime));
+                matchName: matchName));
 
     final DateTime now = DateTime.now();
-    final DateTime? picked = await showDatePicker(
-        selectableDayPredicate: _decideWhichDaysToEnable,
-        helpText: "Pick a day for the date",
-        confirmText: "Next",
-        context: context,
-        builder: (context, child) {
-          return Theme(
-            data: Theme.of(context).copyWith(
-                dialogBackgroundColor: kPopUpColor,
-                colorScheme: kPopUpColorScheme,
-                textButtonTheme: TextButtonThemeData(
-                    style: TextButton.styleFrom(primary: Colors.redAccent))),
-            child: child!,
-          );
-        },
-        initialDate: now,
-        firstDate: DateTime(now.year - 1),
-        lastDate: DateTime(now.year + 1));
 
-    final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialEntryMode: TimePickerEntryMode.input,
-        helpText: "Pick a time for your date",
-        confirmText: "Ask out",
-        builder: (context, child) {
-          return Theme(
-            data: Theme.of(context).copyWith(
-                dialogBackgroundColor: kDarkTransparent,
-                colorScheme: kPopUpColorScheme,
-                textButtonTheme: TextButtonThemeData(
-                    style: TextButton.styleFrom(primary: Colors.redAccent))),
-            child: child!,
-          );
-        },
-        initialTime: TimeOfDay.now());
+    DateTime? picked;
+    TimeOfDay? pickedTime;
+
+    if (Platform.isIOS) {
+      await showCupertinoModalPopup(
+          context: context,
+          builder: (context) => Center(
+            child: Container(
+              color: Colors.white,
+                  height: 300,
+                  width: 300,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        height: 220,
+                        width: 300,
+                        child: CupertinoDatePicker(
+                            use24hFormat: true,
+                            initialDateTime: now,
+                            maximumYear: 3000,
+                            minimumYear: 2000,
+                            mode: CupertinoDatePickerMode.date,
+                            onDateTimeChanged: (dateTime) {
+                              picked = dateTime;
+                            }),
+                      ),
+                      CupertinoButton(
+                          child: const Text("Pick time"),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          }
+                      )
+                    ],
+                  ),
+                ),
+          ));
+      await showCupertinoModalPopup(
+          context: context,
+          builder: (context) => Center(
+            child: Container(
+              color: Colors.white,
+                  height: 300,
+                  width: 300,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        height: 220,
+                        width: 300,
+                        child: CupertinoDatePicker(
+                            mode: CupertinoDatePickerMode.time,
+                            onDateTimeChanged: (dateTime) {
+                              pickedTime = TimeOfDay(
+                                  hour: dateTime.hour, minute: dateTime.minute);
+                            }),
+                      ),
+                      CupertinoButton(
+                          child: const Text("DONE"),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          }
+                      ),
+                    ],
+                  )
+                ),
+          ));
+    } else {
+      picked = await showDatePicker(
+          selectableDayPredicate: _decideWhichDaysToEnable,
+          helpText: "Pick a day for the date",
+          confirmText: "Next",
+          context: context,
+          builder: (context, child) {
+            return Theme(
+              data: Theme.of(context).copyWith(
+                  dialogBackgroundColor: kPopUpColor,
+                  colorScheme: kPopUpColorScheme,
+                  textButtonTheme: TextButtonThemeData(
+                      style: TextButton.styleFrom(primary: Colors.redAccent))),
+              child: child!,
+            );
+          },
+          initialDate: now,
+          firstDate: DateTime(now.year - 1),
+          lastDate: DateTime(now.year + 1));
+
+      pickedTime = await showTimePicker(
+          context: context,
+          helpText: "Pick a time for your date",
+          confirmText: "Ask out",
+          builder: (context, child) {
+            return Theme(
+              data: Theme.of(context).copyWith(
+                  dialogBackgroundColor: kDarkTransparent,
+                  colorScheme: kPopUpColorScheme,
+                  textButtonTheme: TextButtonThemeData(
+                      style: TextButton.styleFrom(primary: Colors.redAccent))),
+              child: child!,
+            );
+          },
+          initialTime: TimeOfDay.now());
+    }
 
     if (pickedTime != null && picked != null) {
-      setDateTime(picked, pickedTime);
+      setDateTime(picked!, pickedTime!);
     }
   }
 
@@ -90,13 +160,11 @@ class CongratsDialogue extends StatelessWidget {
       {Key? key,
       required this.animation,
       required this.venueName,
-      required this.matchName,
-      required this.setDateTime})
+      required this.matchName})
       : super(key: key);
   final Animation<double> animation;
   final String matchName;
   final String venueName;
-  final void Function(DateTime date, TimeOfDay time) setDateTime;
 
   @override
   Widget build(BuildContext context) => buildPopUpDialogue(

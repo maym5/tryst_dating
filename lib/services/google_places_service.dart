@@ -29,6 +29,7 @@ class GooglePlacesService {
       }
       return [];
     } catch (e) {
+      print(e);
       return [];
     }
   }

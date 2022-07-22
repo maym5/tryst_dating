@@ -150,6 +150,35 @@ class MatchDataService {
     }
   }
 
+  static Future<bool> createMatch({required String otherUserUID}) async {
+    final FirebaseFirestore db = FirebaseFirestore.instance;
+    try {
+      await db
+          .collection("userData")
+          .doc(AuthenticationService.currentUserUID)
+          .collection("matches")
+          .doc(otherUserUID)
+          .update({
+        "match": true,
+        "seen": true,
+        "agreedToDate": [AuthenticationService.currentUserUID]
+      });
+      await db
+          .collection("userData")
+          .doc(otherUserUID)
+          .collection("matches")
+          .doc(AuthenticationService.currentUserUID)
+          .update({
+        "match": true,
+        "seen": true,
+        "agreedToDate": [AuthenticationService.currentUserUID]
+      });
+      return true;
+    } catch(e) {
+      return false;
+    }
+  }
+
   static Future<bool> deleteDate({required String otherUserUID}) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
     try {

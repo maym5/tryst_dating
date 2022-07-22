@@ -45,13 +45,19 @@ class DatesModel {
   }
 
   Future<Map> get venueData async {
-    final String _venueType = await randomDateType;
-    final Map _venue = await GooglePlacesService(venueType: _venueType).venue;
-    if (_venue["status"] == "ok") {
-      return {"venue": _venue, "venueType": _venueType};
-    } else {
-      throw (_venue["status"]);
+    final List<String> _commonDates = await commonDates;
+    for (String date in _commonDates) {
+      final Map _venue = await GooglePlacesService(venueType: date).venue;
+      if (_venue["status"] == "ok") {
+        return {"venue": _venue, "venueType": date};
+      }
     }
+    throw ("No venues found");
+    // final Map _venue = await GooglePlacesService(venueType: _venueType).venue;
+    // if (_venue["status"] == "ok") {
+    //   return {"venue": _venue, "venueType": _venueType};
+    // }
+    //   throw (_venue["status"]);
   }
 
   Future<Map> get matchData async {
@@ -76,7 +82,7 @@ class DatesModel {
     try {
       final Map _venueData = await venueData;
       final Map _matchData = await matchData;
-      if (_venueData["venue"]["status"] == "OK") {
+      if (_venueData["venue"]["status"] == "ok") {
         await DateTimeDialogue(setDateTime: setDateTime).buildCalendarDialogue(
             context,
             pickAnother: pickAnother,
@@ -120,10 +126,19 @@ class DatesModel {
                 ErrorDialogue(animation: animation));
       }
     } catch (e) {
+      await MatchDataService.createMatch(otherUserUID: discoverData != null
+          ? discoverData!.uid
+          : dateData != null
+          ? dateData!.matchID
+          : throw ("must have either discover or date data to preform this operation"));
       showGeneralDialog(
           context: context,
-          pageBuilder: (context, animation, _) =>
-              ErrorDialogue(animation: animation));
+          pageBuilder: (context, animation, _) => ErrorDialogue(
+              animation: animation,
+              errorMessage: e ==
+                      "No venues found. You're gonna have to do this one the old fashioned way"
+                  ? e.toString()
+                  : null));
     }
   }
 }

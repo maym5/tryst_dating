@@ -47,16 +47,18 @@ class _DateCardState extends State<DateCard>
         ),
       );
 
+  bool get _thereIsADate => widget.data.venue != null &&  widget.data.dateTime != null && widget.data.dateType != null;
+
   Widget get ui {
     return Stack(
       children: <Widget>[
         NameAndButtons(data: widget.data),
         _circleAvatar,
-        DateInfo(
+        _thereIsADate ? DateInfo(
           venue: widget.data.venue!,
           dateTime: widget.data.dateTime!,
           dateType: widget.data.dateType!,
-        ),
+        ): Container(),
         _canTap ? _tapText : Container()
       ],
     );
@@ -66,8 +68,8 @@ class _DateCardState extends State<DateCard>
   void initState() {
     _controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 200));
-    _canTap = !widget.data.agreedToDate!
-        .contains(AuthenticationService.currentUserUID);
+    _canTap = widget.data.agreedToDate != null ? !widget.data.agreedToDate!
+        .contains(AuthenticationService.currentUserUID) : false;
     super.initState();
   }
 
@@ -94,7 +96,7 @@ class _DateCardState extends State<DateCard>
       child: BounceAnimation(
         controller: _controller,
         child: Opacity(
-          opacity: widget.data.agreedToDate!.length == 2 ? 1 : 0.5,
+          opacity: widget.data.agreedToDate == null || widget.data.agreedToDate!.length == 2 ? 1 : 0.5,
           child: SizedBox(
             height: 175,
             child: TileCard(
@@ -112,16 +114,13 @@ class MatchName extends StatelessWidget {
   const MatchName(
       {Key? key,
       required this.name,
-      this.dateType,
-      required this.confirmedDate})
+      this.dateType})
       : super(key: key);
   final String name;
   final String? dateType;
-  final bool confirmedDate;
 
   Widget get _name {
-    String? displayedName = confirmedDate ? "Date with $name" : name;
-    return Text(displayedName,
+    return Text("Date with $name",
         style: kTextStyle, softWrap: true, textAlign: TextAlign.start);
   }
 
@@ -362,7 +361,6 @@ class NameAndButtons extends StatelessWidget {
               child: MatchName(
                 name: data.name,
                 dateType: data.dateType,
-                confirmedDate: data.dateTime != null,
               ),
               flex: 4,
               fit: FlexFit.tight),
