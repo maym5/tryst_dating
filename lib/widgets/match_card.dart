@@ -394,7 +394,9 @@ class DetailsBottomSheet extends StatelessWidget {
           await DatesModel(dateData: data).deleteData(context);
         },
         onTileTwoTap: () async {
-          await DatesModel(dateData: data).rescheduleDate(context);
+          if (data.venueID != null) {
+            await DatesModel(dateData: data).rescheduleDate(context);
+          }
         });
   }
 }

@@ -5,6 +5,7 @@ import 'package:rendezvous_beta_v3/animations/text_fade_in.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/pages/home_page.dart';
 import 'package:rendezvous_beta_v3/pages/intro_page.dart';
+import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 
 import '../models/users.dart';
@@ -30,7 +31,8 @@ class _LoadingPageState extends State<LoadingPage> {
       await UserData().getUserData();
       setState(() => _showIndicator = false);
       Navigator.pushNamed(context, HomePage.id);
-    } else {
+    }
+    else {
       Navigator.pushNamed(context, IntroPage.id);
     }
   }

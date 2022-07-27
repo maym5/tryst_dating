@@ -25,20 +25,26 @@ class DateTimeDialogue extends StatelessWidget {
     return false;
   }
 
-  Future<void> buildCalendarDialogue(BuildContext context,
-      {required String venueName,
-      required String matchName,
-      bool pickAnother = false,
-        bool initialDialogue = true,
-      }) async {
-    initialDialogue ? await showGeneralDialog(
-        context: context,
-        pageBuilder: (context, animation, _) => pickAnother
-            ? PickAnotherDayDialogue(animation: animation, venueName: venueName)
-            : CongratsDialogue(
-                animation: animation,
-                venueName: venueName,
-                matchName: matchName)) : null;
+  Future<void> buildCalendarDialogue(
+    BuildContext context, {
+    required String venueName,
+    required String matchName,
+    required List openHours,
+    bool pickAnother = false,
+    bool initialDialogue = true,
+  }) async {
+    initialDialogue
+        ? await showGeneralDialog(
+            context: context,
+            pageBuilder: (context, animation, _) => pickAnother
+                ? PickAnotherDayDialogue(
+                    animation: animation, venueName: venueName)
+                : CongratsDialogue(
+                    openHours: openHours,
+                    animation: animation,
+                    venueName: venueName,
+                    matchName: matchName))
+        : null;
 
     final DateTime now = DateTime.now();
 
@@ -49,8 +55,8 @@ class DateTimeDialogue extends StatelessWidget {
       await showCupertinoModalPopup(
           context: context,
           builder: (context) => Center(
-            child: Container(
-              color: Colors.white,
+                child: Container(
+                  color: Colors.white,
                   height: 300,
                   width: 300,
                   child: Column(
@@ -73,42 +79,41 @@ class DateTimeDialogue extends StatelessWidget {
                           child: const Text("Pick time"),
                           onPressed: () {
                             Navigator.pop(context);
-                          }
-                      )
+                          })
                     ],
                   ),
                 ),
-          ));
+              ));
       await showCupertinoModalPopup(
           context: context,
           builder: (context) => Center(
-            child: Container(
-              color: Colors.white,
-                  height: 300,
-                  width: 300,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(
-                        height: 220,
-                        width: 300,
-                        child: CupertinoDatePicker(
-                            mode: CupertinoDatePickerMode.time,
-                            onDateTimeChanged: (dateTime) {
-                              pickedTime = TimeOfDay(
-                                  hour: dateTime.hour, minute: dateTime.minute);
+                child: Container(
+                    color: Colors.white,
+                    height: 300,
+                    width: 300,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          height: 220,
+                          width: 300,
+                          child: CupertinoDatePicker(
+                              minuteInterval: 5,
+                              mode: CupertinoDatePickerMode.time,
+                              onDateTimeChanged: (dateTime) {
+                                pickedTime = TimeOfDay(
+                                    hour: dateTime.hour,
+                                    minute: dateTime.minute);
+                              }),
+                        ),
+                        CupertinoButton(
+                            child: const Text("DONE"),
+                            onPressed: () {
+                              Navigator.pop(context);
                             }),
-                      ),
-                      CupertinoButton(
-                          child: const Text("DONE"),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          }
-                      ),
-                    ],
-                  )
-                ),
-          ));
+                      ],
+                    )),
+              ));
     } else {
       picked = await showDatePicker(
           selectableDayPredicate: _decideWhichDaysToEnable,
@@ -158,21 +163,34 @@ class DateTimeDialogue extends StatelessWidget {
 }
 
 class CongratsDialogue extends StatelessWidget {
+  // TODO: pass a function so we know if they said yes or no
   const CongratsDialogue(
       {Key? key,
       required this.animation,
       required this.venueName,
-      required this.matchName})
+      required this.matchName,
+      required this.openHours})
       : super(key: key);
   final Animation<double> animation;
   final String matchName;
   final String venueName;
+  final List openHours;
+
+  Widget get _openText {
+    final List<Text> children = [];
+    for (String dayText in openHours) {
+      children.add(Text(dayText, style: kTextStyle.copyWith(fontSize: 14)));
+    }
+    return Column(
+      children: children,
+    );
+  }
 
   @override
   Widget build(BuildContext context) => buildPopUpDialogue(
         animation,
         context,
-        height: 400,
+        height: 600,
         children: [
           Text(
             "Congrats you've got a date with $matchName at $venueName!",
@@ -180,11 +198,14 @@ class CongratsDialogue extends StatelessWidget {
             textAlign: TextAlign.center,
             style: kTextStyle.copyWith(fontSize: 20),
           ),
+          SizedBox(
+              child: FittedBox(child: _openText, fit: BoxFit.cover),
+              height: 200),
           const SizedBox(height: 10),
           GradientButton(
             title: "Pick a time!",
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.pop(context);
             },
           ),
           const SizedBox(height: 10),

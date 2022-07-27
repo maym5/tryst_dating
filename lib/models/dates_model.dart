@@ -87,7 +87,8 @@ class DatesModel {
             context,
             pickAnother: pickAnother,
             matchName: _matchData["name"],
-            venueName: _venueData["venue"]["name"]);
+            venueName: _venueData["venue"]["name"],
+            openHours: _venueData["venue"]["weekdayText"]);
         if (_dateTime != null &&
             await GooglePlacesService.checkDateTime(
                 _dateTime!, _venueData["venue"])) {
@@ -118,6 +119,7 @@ class DatesModel {
                   CancelDialogue(animation: animation));
         } else if (!await GooglePlacesService.checkDateTime(
             _dateTime!, _venueData["venue"])) {
+          _dateTime = null;
           getDate(context, pickAnother: true);
         }
       } else {
@@ -127,6 +129,7 @@ class DatesModel {
                 ErrorDialogue(animation: animation));
       }
     } catch (e) {
+      print(e);
       await MatchDataService.createMatch(
           otherUserUID: discoverData != null
               ? discoverData!.uid
@@ -137,9 +140,9 @@ class DatesModel {
           context: context,
           pageBuilder: (context, animation, _) => ErrorDialogue(
               animation: animation,
-              errorMessage: e ==
-                      "No venues found"
-                  ? e.toString() + " your gonna have to do this the old fashioned way!"
+              errorMessage: e == "No venues found"
+                  ? e.toString() +
+                      " your gonna have to do this the old fashioned way!"
                   : null));
     }
   }
@@ -155,6 +158,7 @@ class DatesModel {
             context,
             venueName: _venueData["venue"]["name"],
             matchName: _matchData["name"],
+            openHours: _venueData["venue"]["weekdayText"],
             initialDialogue: false);
         if (_dateTime != null &&
             await GooglePlacesService.checkDateTime(
@@ -170,7 +174,9 @@ class DatesModel {
                       ? CongratsDialogue(
                           animation: animation,
                           venueName: _venueData["venue"]["name"],
-                          matchName: _matchData["name"])
+                          matchName: _matchData["name"],
+                          openHours: _venueData["venue"]["weekdayText"],
+                        )
                       : ErrorDialogue(animation: animation)));
         } else if (_dateTime == null) {
           showGeneralDialog(
@@ -195,15 +201,13 @@ class DatesModel {
   Future<void> deleteData(BuildContext context) async {
     if (dateData != null) {
       await MatchDataService.deleteDate(otherUserUID: dateData!.matchID).then(
-              (deleted) => showGeneralDialog(
+          (deleted) => showGeneralDialog(
               context: context,
               pageBuilder: (context, animation, _) => deleted
                   ? CancelDialogue(animation: animation)
                   : ErrorDialogue(animation: animation)));
     } else {
-      throw("need dateData");
+      throw ("need dateData");
     }
   }
-
-
 }

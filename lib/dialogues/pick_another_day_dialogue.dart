@@ -25,7 +25,7 @@ class PickAnotherDayDialogue extends StatelessWidget {
         GradientButton(
           title: "Pick a time!",
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.pop(context);
             // put the dialogue here
           },
         ),

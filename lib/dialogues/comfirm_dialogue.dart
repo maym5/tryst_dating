@@ -33,7 +33,7 @@ class ConfirmDialogue extends StatelessWidget {
         GradientButton(
           title: "Okay",
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.pop(context);
           },
         ),
       ]);

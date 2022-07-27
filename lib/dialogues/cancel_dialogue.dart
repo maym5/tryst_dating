@@ -21,7 +21,7 @@ class CancelDialogue extends StatelessWidget {
         GradientButton(
           title: "Hell yeah",
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.pop(context);
           },
         ),
       ],

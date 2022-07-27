@@ -56,6 +56,7 @@ class GooglePlacesService {
           "name": _data["result"]["name"],
           "id" : _id,
           "openHours": _data["result"]["opening_hours"]["periods"],
+          "weekdayText" : _data["result"]["opening_hours"]["weekday_text"],
           "status": 'ok'
         };
       } else {
@@ -67,6 +68,7 @@ class GooglePlacesService {
   }
 
   Future<Map> venueFromId(String id) async {
+    // TODO: add the open hours to a dialogue so users know
     String _fields = "fields=name%2Copening_hours";
     try {
       String _path = detailsBasePath + _fields + "&place_id=$id" + "&key=$PLACES_API_KEY";
@@ -77,6 +79,7 @@ class GooglePlacesService {
           "name": _data["result"]["name"],
           "id" : id,
           "openHours": _data["result"]["opening_hours"]["periods"],
+          "weekdayText" : _data["result"]["opening_hours"]["weekday_text"],
           "status": 'ok'
         };
       } else {
