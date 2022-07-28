@@ -36,13 +36,10 @@ class _VerificationPageState extends State<VerificationPage> {
     ),
   );
 
-  Widget get _artToComLater => Container(
-    width: 150,
-    height: 150,
-    color: Colors.redAccent,
-  );
+  Widget get _art => Image.asset("assets/images/flying_email.png", height: 300);
 
   Widget get _titleAndDescription => Column(
+    mainAxisSize: MainAxisSize.min,
     children: [
       _title,
       const SizedBox(height: 20),
@@ -81,12 +78,17 @@ class _VerificationPageState extends State<VerificationPage> {
   @override
   Widget build(BuildContext context) {
     return PageBackground(
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _artToComLater,
-            _titleAndDescription,
-          ],
+      decoration: kWelcomePageDecoration,
+        body: Align(
+          alignment: const Alignment(0, -0.3),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            // mainAxisAlignment: MainAxisAlignment,
+            children: [
+              _art,
+              _titleAndDescription,
+            ],
+          ),
         )
     );
   }

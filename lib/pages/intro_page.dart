@@ -16,19 +16,6 @@ class IntroPage extends StatelessWidget {
   Widget get _rebecca => Transform.rotate(angle: -pi/10,
   child: const IntroPic(image: AssetImage("assets/images/rebecca.jpeg")));
 
-  Widget get _imageStack => Padding(
-    padding: const EdgeInsets.only(bottom: 25.0),
-    child: SizedBox(
-      width: double.infinity,
-      child: Stack(
-        children: [
-          Positioned(child: _caitlin, right: 50),
-          Align(child: _rebecca, alignment: const Alignment(-0.5, 0),)
-        ],
-      ),
-    ),
-  );
-
   Widget get _image => SizedBox(height: 300, width: double.infinity, child: Image.asset("assets/images/love.png"),);
 
   Widget loginButton(BuildContext context) => Padding(
