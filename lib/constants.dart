@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-const kTileBackGroundColor = Color(0xFF1F1B24);
+const kTileBackGroundColor = Color(0xFF040D20);
+
+// Color(0xFF1F1B24)
 
 const kNameTextStyle = TextStyle(
   color: Colors.white,
@@ -99,16 +101,17 @@ const kDateTypeGridDelegate = SliverGridDelegateWithFixedCrossAxisCount(
     crossAxisCount: 3);
 
 const kRatingCircleGradient = LinearGradient(
-    colors: [Colors.redAccent, Colors.pink],
-    stops: [0.2, 0.6]);
+    colors: [Color(0xFFFD297B), Color(0xFFFF5864), Color(0xFFFF655B)],
+    stops: [0.2, 0.4, 0.9]);
 
 const kMessageBubbleGradient = LinearGradient(
-    colors: [Colors.pink, Colors.redAccent, Colors.red],
+    // colors: [Colors.pink, Colors.redAccent, Colors.red],
+  colors: [Color(0xFFFD297B), Color(0xFFFF5864), Color(0xFFFF655B)],
     stops: [0.2, 0.4, 0.9],
 );
 
 const kButtonGradient = LinearGradient(
-    colors: [Colors.red, Colors.redAccent, Colors.pink],
+    colors: [Color(0xFFFD297B), Color(0xFFFF5864), Color(0xFFFF655B)],
     stops: [0.2, 0.4, 0.9]);
 
 const kBioPadding = EdgeInsets.fromLTRB(10, 0, 0, 0);
@@ -119,7 +122,7 @@ const kUserInfoAlignment = Alignment(-0.9, 0.65);
 
 const kDarkTransparent = Color(0x44000000);
 
-const kPopUpColorScheme = ColorScheme.dark(
+const kPopUpColorScheme = ColorScheme.light(
   primary: Colors.redAccent,
   onPrimary: Colors.white,
   onSurface: Colors.white,
@@ -156,6 +159,60 @@ const kChatBubbleBorderRadius = BorderRadius.only(
     bottomRight: Radius.circular(25),
     topLeft: Radius.circular(25)
 );
+
+const kIntroPageBackgroundDecoration = BoxDecoration(
+  gradient: LinearGradient(
+    end: Alignment.bottomRight,
+    begin: Alignment.topLeft,
+    colors: [
+      Color(0xFF010332),
+      Color(0xFF100328),
+      Color(0xFF29011C),
+      Color(0xFF43000D),
+      Color(0xFF530005)
+    ],
+    stops: [
+      0.12, 0.4, 0.8, 0.9, 1
+    ],
+  ),
+);
+
+const kWelcomePageDecoration = BoxDecoration(
+  gradient: LinearGradient(
+    end: Alignment.bottomRight,
+    begin: Alignment.topLeft,
+    colors: [
+      kTileBackGroundColor,
+      Color(0xFF29011C),
+      Color(0xFF43000D),
+      Color(0xFF530005)
+    ],
+    stops: [
+      0.4, 0.8, 0.9, 1
+    ],
+  ),
+);
+
+// BoxDecoration(
+// gradient: LinearGradient(
+// begin: Alignment.topLeft,
+// end: Alignment.bottomRight,
+// colors: [
+// Color(0xFFFD297B),
+// Color(0xFFFF655B),
+// Color(0xFFFF655B),
+// ],
+// stops: [
+// 0.12, 0.8, 1
+// ],
+// ),
+// );
+
+const kPageBackgroundDecoration = BoxDecoration(
+  color: kEggShell
+);
+
+const kEggShell = Color(0xFFF9FEFF);
 
 
 

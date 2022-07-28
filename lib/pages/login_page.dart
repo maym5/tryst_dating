@@ -68,6 +68,7 @@ class _LoginPageState extends State<LoginPage> {
   );
 
   AppBar get _appBar => AppBar(
+    backgroundColor: Colors.transparent,
     leading: BackButton(
       onPressed: _navigateBack,
       color: Colors.redAccent,

@@ -29,6 +29,8 @@ class IntroPage extends StatelessWidget {
     ),
   );
 
+  Widget get _image => SizedBox(height: 300, width: double.infinity, child: Image.asset("assets/images/love.png"),);
+
   Widget loginButton(BuildContext context) => Padding(
     padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
     child: GradientButton(
@@ -66,11 +68,12 @@ class IntroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PageBackground(
+      decoration: kWelcomePageDecoration,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _imageStack,
+            _image,
             _title,
             _introParagraph,
             loginButton(context),

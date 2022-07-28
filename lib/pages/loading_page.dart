@@ -5,7 +5,6 @@ import 'package:rendezvous_beta_v3/animations/text_fade_in.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/pages/home_page.dart';
 import 'package:rendezvous_beta_v3/pages/intro_page.dart';
-import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 
 import '../models/users.dart';
@@ -57,6 +56,7 @@ class _LoadingPageState extends State<LoadingPage> {
   @override
   Widget build(BuildContext context) {
     return PageBackground(
+      intro: true,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -68,7 +68,7 @@ class _LoadingPageState extends State<LoadingPage> {
               child: Container(
                 height: 100,
                 width: 100,
-                color: Colors.redAccent,
+                color: Colors.white54,
               ),
             ),
             const SizedBox(
@@ -88,3 +88,11 @@ class _LoadingPageState extends State<LoadingPage> {
     );
   }
 }
+
+// ShaderMask(
+// blendMode: BlendMode.srcIn,
+// shaderCallback: (bounds) => kButtonGradient.createShader(
+// Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+// child: TextFadeIn(
+// text: "Rendezvous", style: kTextStyle.copyWith(fontSize: 50)),
+// ),

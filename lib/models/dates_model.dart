@@ -129,7 +129,6 @@ class DatesModel {
                 ErrorDialogue(animation: animation));
       }
     } catch (e) {
-      print(e);
       await MatchDataService.createMatch(
           otherUserUID: discoverData != null
               ? discoverData!.uid

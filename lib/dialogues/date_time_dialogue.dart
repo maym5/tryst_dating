@@ -8,9 +8,9 @@ import 'package:rendezvous_beta_v3/widgets/gradient_button.dart';
 import '../constants.dart';
 
 class DateTimeDialogue extends StatelessWidget {
-  const DateTimeDialogue({Key? key, required this.setDateTime})
-      : super(key: key);
+  DateTimeDialogue({Key? key, required this.setDateTime}) : super(key: key);
   final void Function(DateTime date, TimeOfDay time) setDateTime;
+  bool yesOrNo = false;
 
   bool _decideWhichDaysToEnable(DateTime day) {
     // if it is after yesterday: okay
@@ -23,6 +23,10 @@ class DateTimeDialogue extends StatelessWidget {
       return true;
     }
     return false;
+  }
+
+  void _setYesOrNo(bool input) {
+    yesOrNo = input;
   }
 
   Future<void> buildCalendarDialogue(
@@ -38,12 +42,14 @@ class DateTimeDialogue extends StatelessWidget {
             context: context,
             pageBuilder: (context, animation, _) => pickAnother
                 ? PickAnotherDayDialogue(
-                    animation: animation, venueName: venueName)
+                    animation: animation, venueName: venueName, openHours: openHours)
                 : CongratsDialogue(
                     openHours: openHours,
                     animation: animation,
                     venueName: venueName,
-                    matchName: matchName))
+                    matchName: matchName,
+                    yesOrNo: _setYesOrNo,
+                  ))
         : null;
 
     final DateTime now = DateTime.now();
@@ -51,7 +57,7 @@ class DateTimeDialogue extends StatelessWidget {
     DateTime? picked;
     TimeOfDay? pickedTime;
 
-    if (Platform.isIOS) {
+    if (Platform.isIOS && yesOrNo == true) {
       await showCupertinoModalPopup(
           context: context,
           builder: (context) => Center(
@@ -67,7 +73,6 @@ class DateTimeDialogue extends StatelessWidget {
                         width: 300,
                         child: CupertinoDatePicker(
                             use24hFormat: true,
-                            initialDateTime: now,
                             maximumYear: 3000,
                             minimumYear: 2000,
                             mode: CupertinoDatePickerMode.date,
@@ -99,6 +104,7 @@ class DateTimeDialogue extends StatelessWidget {
                           width: 300,
                           child: CupertinoDatePicker(
                               minuteInterval: 5,
+                              initialDateTime: now.add(Duration(minutes: 5 - now.minute % 5)),
                               mode: CupertinoDatePickerMode.time,
                               onDateTimeChanged: (dateTime) {
                                 pickedTime = TimeOfDay(
@@ -114,7 +120,7 @@ class DateTimeDialogue extends StatelessWidget {
                       ],
                     )),
               ));
-    } else {
+    } else if (Platform.isAndroid && yesOrNo == true) {
       picked = await showDatePicker(
           selectableDayPredicate: _decideWhichDaysToEnable,
           helpText: "Pick a day for the date",
@@ -169,17 +175,18 @@ class CongratsDialogue extends StatelessWidget {
       required this.animation,
       required this.venueName,
       required this.matchName,
-      required this.openHours})
+      required this.openHours, this.yesOrNo})
       : super(key: key);
   final Animation<double> animation;
   final String matchName;
   final String venueName;
   final List openHours;
+  final void Function(bool)? yesOrNo;
 
   Widget get _openText {
     final List<Text> children = [];
     for (String dayText in openHours) {
-      children.add(Text(dayText, style: kTextStyle.copyWith(fontSize: 14)));
+      children.add(Text(dayText, style: kTextStyle.copyWith(fontSize: 17)));
     }
     return Column(
       children: children,
@@ -199,12 +206,13 @@ class CongratsDialogue extends StatelessWidget {
             style: kTextStyle.copyWith(fontSize: 20),
           ),
           SizedBox(
-              child: FittedBox(child: _openText, fit: BoxFit.cover),
+              child: FittedBox(child: _openText, fit: BoxFit.scaleDown),
               height: 200),
           const SizedBox(height: 10),
           GradientButton(
             title: "Pick a time!",
             onPressed: () {
+              yesOrNo!(true);
               Navigator.pop(context);
             },
           ),
@@ -212,6 +220,7 @@ class CongratsDialogue extends StatelessWidget {
           GradientButton(
             title: "Nah, I'll pass",
             onPressed: () {
+              yesOrNo!(false);
               Navigator.pop(context);
             },
           )

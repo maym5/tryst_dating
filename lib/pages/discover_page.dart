@@ -191,6 +191,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
 }
 
 class DiscoverLoadingAvatar extends StatelessWidget {
+  // TODO: cache this image in loading so its always there
   const DiscoverLoadingAvatar({Key? key}) : super(key: key);
 
   @override
@@ -200,6 +201,7 @@ class DiscoverLoadingAvatar extends StatelessWidget {
         decoration: const BoxDecoration(
             shape: BoxShape.circle, gradient: kButtonGradient),
         child: CircleAvatar(
+          backgroundColor: kGreyWithAlpha,
           radius: 50,
           backgroundImage: NetworkImage(UserData.imageURLs[0]),
         ),
