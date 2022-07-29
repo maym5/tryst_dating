@@ -10,11 +10,6 @@ class IntroPage extends StatelessWidget {
   static const id = "intro_page";
   const IntroPage({Key? key}) : super(key: key);
 
-  Widget get _caitlin => Transform.rotate(angle: pi/10,
-  child: const IntroPic(image: AssetImage("assets/images/caitlin_image2.jpg")));
-
-  Widget get _rebecca => Transform.rotate(angle: -pi/10,
-  child: const IntroPic(image: AssetImage("assets/images/rebecca.jpeg")));
 
   Widget get _image => SizedBox(height: 300, width: double.infinity, child: Image.asset("assets/images/love.png"),);
 

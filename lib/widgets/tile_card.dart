@@ -11,10 +11,12 @@ class TileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return FadeInAnimation(
       child: Card(
+        elevation: 25,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(25),
         ),
         color: kTileBackGroundColor,
+        surfaceTintColor: Color(0xFF404E5F),
         child: Padding(
           padding: padding,
           child: child,

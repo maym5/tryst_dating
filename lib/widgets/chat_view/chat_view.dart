@@ -29,6 +29,7 @@ class _ChatViewState extends State<ChatView> {
   PreferredSize get _appBar => PreferredSize(
         preferredSize: const Size(double.infinity, 75),
         child: AppBar(
+          backgroundColor: Colors.transparent,
           toolbarHeight: 75,
           leading: BackButton(
             color: Colors.redAccent,
@@ -115,6 +116,7 @@ class _ChatViewState extends State<ChatView> {
       _scrolled = true;
     }
     return PageBackground(
+      decoration: kWelcomePageDecoration,
       appBar: _appBar,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -153,7 +155,7 @@ class _MessagesStreamBuilderState extends State<MessagesStreamBuilder> {
     return StreamBuilder(
       stream: widget.stream,
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasData && !snapshot.hasError) {
+        if (snapshot.hasData && !snapshot.hasError && snapshot.data!.size != 0) {
           final messages = snapshot.data!.docs;
           List<MessengerData> messagesData = [];
           for (var message in messages) {
@@ -176,13 +178,19 @@ class _MessagesStreamBuilderState extends State<MessagesStreamBuilder> {
                   }
                 }),
           );
-        } else if (!snapshot.hasData) {
-          return Container(
-            alignment: Alignment.center,
-            child: Text(
-                "Get the ball rolling and send ${widget.name} a message!",
-                textAlign: TextAlign.center,
-                style: kTextStyle),
+        } else if (!snapshot.hasData || snapshot.data!.size == 0) {
+          return Padding(
+            padding: const EdgeInsets.only(top: 50),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset("assets/images/mail_box.png", height: 300, width: double.infinity,),
+                Text(
+                  "Get the ball rolling and send ${widget.name} a message!",
+                  textAlign: TextAlign.center,
+                  style: kTextStyle),
+              ]
+            ),
           );
           // no data
         } else {

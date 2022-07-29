@@ -17,19 +17,15 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
-  Map<String, String?> loginInputs = {
-    "email" : "",
-    "password" : ""
-  };
+  Map<String, String?> loginInputs = {"email": "", "password": ""};
 
   Map<String, String> errorMessages = {
-    "email" : "Please enter a valid email",
-    "password" : "Please enter a valid password"
+    "email": "Please enter a valid email",
+    "password": "Please enter a valid password"
   };
 
   late bool showEmailError;
-  late  bool showPasswordError;
+  late bool showPasswordError;
   late bool _showSpinner;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -47,40 +43,41 @@ class _LoginPageState extends State<LoginPage> {
           });
         },
         showError: loginInputs['email'] == null || showEmailError,
-    errorMessage: errorMessages['email'],
+        errorMessage: errorMessages['email'],
       );
 
   TextInputField get _passwordField => TextInputField(
-    title: "Password",
-    controller: passwordController,
-    obscureText: true,
-    onChanged: (password) {
-      setState(() {
-        if (password == "") {
-          loginInputs['password'] = null;
-        } else {
-          loginInputs["password"] = password;
-        }
-      });
-    },
-    showError: loginInputs['password'] == null || showPasswordError,
-    errorMessage: errorMessages["password"],
-  );
+        title: "Password",
+        controller: passwordController,
+        obscureText: true,
+        onChanged: (password) {
+          setState(() {
+            if (password == "") {
+              loginInputs['password'] = null;
+            } else {
+              loginInputs["password"] = password;
+            }
+          });
+        },
+        showError: loginInputs['password'] == null || showPasswordError,
+        errorMessage: errorMessages["password"],
+      );
 
   AppBar get _appBar => AppBar(
-    backgroundColor: Colors.transparent,
-    leading: BackButton(
-      onPressed: _navigateBack,
-      color: Colors.redAccent,
-    ),
-  );
+        backgroundColor: Colors.transparent,
+        leading: BackButton(
+          onPressed: _navigateBack,
+          color: Colors.redAccent,
+        ),
+      );
 
   void _handleSignIn() async {
     setState(() => _showSpinner = true);
     if (loginInputs['password'] != "" && loginInputs['email'] != "") {
       emailController.text = loginInputs["email"]!;
       passwordController.text = loginInputs["password"]!;
-      var result = await AuthenticationService().onEmailAndPasswordLogin(loginInputs['email']!, loginInputs['password']!);
+      var result = await AuthenticationService().onEmailAndPasswordLogin(
+          loginInputs['email']!, loginInputs['password']!);
       setState(() => _showSpinner = false);
       if (result is String) {
         switch (result) {
@@ -138,33 +135,36 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return PageBackground(
+      decoration: kWelcomePageDecoration,
       appBar: _appBar,
       body: ModalProgressHUD(
         inAsyncCall: _showSpinner,
         color: kDarkTransparent,
-        progressIndicator: const CircularProgressIndicator(color: Colors.redAccent),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Flexible(
-              child: Container(
-                height: 100,
-                width: 100,
-                color: Colors.redAccent,
+        progressIndicator:
+            const CircularProgressIndicator(color: Colors.redAccent),
+        child: SingleChildScrollView(
+          child: Column(
+            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Image.asset("assets/images/login.png",
+                  height: 250, width: double.infinity),
+              const Text(
+                "Log in and get back to dating, not swiping",
+                style: TextStyle(color: Colors.redAccent, fontSize: 35),
+                softWrap: true,
+                textAlign: TextAlign.center,
               ),
-            ),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                _emailField,
-                _passwordField
-              ],
-            ),
-            GradientButton(
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[_emailField, _passwordField],
+              ),
+              SizedBox(height: 15,),
+              GradientButton(
                 title: "Login",
                 onPressed: _handleSignIn,
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

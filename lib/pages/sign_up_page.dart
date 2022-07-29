@@ -79,12 +79,16 @@ class _SignUpPageState extends State<SignUpPage> {
         errorMessage: errorMessages["confirm"],
       );
 
-  AppBar get _appBar => AppBar(
-        leading: BackButton(
-          color: Colors.redAccent,
-          onPressed: _navigateBack,
+  PreferredSizeWidget get _appBar => PreferredSize(
+    preferredSize: Size(double.infinity, 30),
+    child: AppBar(
+      backgroundColor: Colors.transparent,
+          leading: BackButton(
+            color: Colors.redAccent,
+            onPressed: _navigateBack,
+          ),
         ),
-      );
+  );
 
   void _handleRegistration() async {
     if (!passwordsDontMatch) {
@@ -181,31 +185,21 @@ class _SignUpPageState extends State<SignUpPage> {
         progressIndicator:
             const CircularProgressIndicator(color: Colors.redAccent),
         child: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              const SizedBox(
-                height: 25,
-              ),
-              Flexible(
-                child: Container(
-                  height: 100,
-                  width: 100,
-                  color: Colors.redAccent,
+          child: SingleChildScrollView(
+            child: Column(
+              // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Image.asset("assets/images/sign_up.png", height: 250, width: double.infinity,),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[emailField, passwordField, confirmField],
                 ),
-              ),
-              const SizedBox(
-                height: 75,
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[emailField, passwordField, confirmField],
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              GradientButton(title: "Sign Up", onPressed: _handleRegistration)
-            ],
+                const SizedBox(
+                  height: 15,
+                ),
+                GradientButton(title: "Sign Up", onPressed: _handleRegistration)
+              ],
+            ),
           ),
         ),
       ),

@@ -16,17 +16,22 @@ class LikesPage extends StatefulWidget {
 class _LikesPageState extends State<LikesPage> {
   final Stream<QuerySnapshot> _likesStream = MatchDataService().likeStream;
 
-  Widget get _noLikesMessage => Container(
-        alignment: Alignment.center,
-        height: MediaQuery.of(context).size.height,
-        child: const Text("Don't worry, people are liking you right now!"),
-      );
+  Widget get _noLikesMessage => Padding(
+    padding: const EdgeInsets.only(top: 25),
+    child: Column(
+          children: [
+            Image.asset("assets/images/love.png", height: 250),
+            SizedBox(height: 50,),
+            Text("Don't worry, people are liking you right now!", style: kTextStyle.copyWith(fontSize: 24), softWrap: true, textAlign: TextAlign.center,),
+          ]
+        ),
+  );
 
   Widget get _errorMessage => Container(
         alignment: Alignment.center,
         height: MediaQuery.of(context).size.height,
-        child: const Text(
-            "There's been an error loading your match data, try again soon"),
+        child: Text(
+            "There's been an error loading your match data, try again soon", style: kTextStyle.copyWith(fontSize: 24),),
       );
 
   Widget get _noInternet => Container(
@@ -332,6 +337,7 @@ class _MatchPageState extends State<MatchPage>
   @override
   Widget build(BuildContext context) {
     return PageBackground(
+      decoration: kWelcomePageDecoration,
       appBar: AppBar(
         backgroundColor: Colors.black45,
         leading: const BackButton(color: Colors.transparent),

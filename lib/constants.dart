@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const kTileBackGroundColor = Color(0xFF040D20);
+const kTileBackGroundColor = Color(0xFF001631);
 
 // Color(0xFF1F1B24)
 
@@ -111,7 +111,7 @@ const kMessageBubbleGradient = LinearGradient(
 );
 
 const kButtonGradient = LinearGradient(
-    colors: [Color(0xFFFD297B), Color(0xFFFF5864), Color(0xFFFF655B)],
+    colors: [Color(0xFFFD297B), Color(0xFFFF5864), Colors.redAccent],
     stops: [0.2, 0.4, 0.9]);
 
 const kBioPadding = EdgeInsets.fromLTRB(10, 0, 0, 0);
@@ -182,7 +182,7 @@ const kWelcomePageDecoration = BoxDecoration(
     end: Alignment.bottomRight,
     begin: Alignment.topLeft,
     colors: [
-      kTileBackGroundColor,
+      Color(0xFF040D20),
       Color(0xFF29011C),
       Color(0xFF43000D),
       Color(0xFF530005)
