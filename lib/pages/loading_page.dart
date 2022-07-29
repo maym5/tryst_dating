@@ -31,20 +31,19 @@ class _LoadingPageState extends State<LoadingPage> {
       await UserData().getUserData();
       setState(() => _showIndicator = false);
       Navigator.pushNamed(context, HomePage.id);
-    }
-    else {
+    } else {
       Navigator.pushNamed(context, IntroPage.id);
     }
   }
 
   Widget get _progressIndicator => _showIndicator
       ? const Padding(
-        padding: EdgeInsets.only(top: 15),
-        child: SizedBox(
-            child: CircularProgressIndicator(color: Colors.redAccent),
-            height: 40,
-            width: 40),
-      )
+          padding: EdgeInsets.only(top: 15),
+          child: SizedBox(
+              child: CircularProgressIndicator(color: Colors.redAccent),
+              height: 40,
+              width: 40),
+        )
       : Container();
 
   @override
@@ -66,10 +65,10 @@ class _LoadingPageState extends State<LoadingPage> {
               delay: 1500,
               verticalOffset: -0.35,
               horizontalOffset: 0,
-              child: Container(
-                height: 100,
-                width: 100,
-                color: Colors.white54,
+              child: Image.asset(
+                "assets/images/rendezvous_logo.png",
+                height: 300,
+                width: 300,
               ),
             ),
             const SizedBox(
