@@ -179,6 +179,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return PageBackground(
       appBar: _appBar,
+      decoration: kWelcomePageDecoration,
       body: ModalProgressHUD(
         inAsyncCall: _showSpinner,
         color: kDarkTransparent,

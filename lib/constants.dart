@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-const kTileBackGroundColor = Color(0xFF001631);
-
+const kTileBackGroundColor = Colors.white10;
+// Color(0xFF001631);
 // Color(0xFF1F1B24)
 
 const kNameTextStyle = TextStyle(

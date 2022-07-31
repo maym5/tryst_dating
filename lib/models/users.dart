@@ -21,6 +21,7 @@ class UserData with ChangeNotifier {
   static int? maxPrice;
   static List<String> imageURLs = [];
   static Position? location;
+  static Map<String, dynamic>? tokenData;
 
   UserData();
 
@@ -38,7 +39,7 @@ class UserData with ChangeNotifier {
       'minPrice': minPrice,
       "maxPrice": maxPrice,
       'imageURLs': imageURLs,
-      "uid": AuthenticationService.currentUserUID
+      "uid": AuthenticationService.currentUserUID,
     };
   }
 
@@ -48,6 +49,19 @@ class UserData with ChangeNotifier {
       result.add(item.toString());
     }
     return result;
+  }
+
+  static Future<void> uploadTokenData() async {
+    final FirebaseFirestore _db = FirebaseFirestore.instance;
+    final String? _uid = AuthenticationService.currentUserUID;
+    if (tokenData != null && _uid != null) {
+      await _db
+          .collection("userData")
+          .doc(_uid)
+          .collection("tokens")
+          .doc(tokenData!["token"])
+          .set(tokenData!);
+    }
   }
 
   static void fromJson(Map<String, dynamic> incomingData) {
@@ -76,9 +90,10 @@ class UserData with ChangeNotifier {
     if (_user != null) {
       try {
         await UserImages.uploadImages(_user);
-        Map<String, dynamic> _userData = UserData.toJson();
+        Map<String, dynamic> _userData = toJson();
         _fireStore.collection("userData").doc(_user.uid).set(_userData);
-        await UserData().setLocation();
+        await setLocation();
+        await uploadTokenData();
       } catch (e) {
         showGeneralDialog(
             context: context,
@@ -164,8 +179,7 @@ class UserData with ChangeNotifier {
 
   Future<void> setLocation() async {
     UserData.location = await UserData.userLocation;
-    UserData()
-        .uploadUserLocation()
+    uploadUserLocation()
         .then((value) => value ? null : throw ("couldn't upload location"));
   }
 }

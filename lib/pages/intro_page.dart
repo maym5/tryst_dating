@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/pages/login_page.dart';
@@ -52,15 +51,17 @@ class IntroPage extends StatelessWidget {
     return PageBackground(
       decoration: kWelcomePageDecoration,
       body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _image,
-            _title,
-            _introParagraph,
-            loginButton(context),
-            signUpButton(context),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _image,
+              _title,
+              _introParagraph,
+              loginButton(context),
+              signUpButton(context),
+            ],
+          ),
         ),
       ),
     );
