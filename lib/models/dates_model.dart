@@ -129,6 +129,7 @@ class DatesModel {
                 ErrorDialogue(animation: animation));
       }
     } catch (e) {
+      // TODO: Unhandled Exception: Null check operator used on a null value
       await MatchDataService.createMatch(
           otherUserUID: discoverData != null
               ? discoverData!.uid

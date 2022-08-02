@@ -6,11 +6,11 @@ import 'package:rendezvous_beta_v3/models/users.dart';
 
 class PushNotificationService {
   PushNotificationService();
-  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
 
 
 
-  Future initialize() async {
+  static Future initialize() async {
+    final FirebaseMessaging _fcm = FirebaseMessaging.instance;
     if (Platform.isIOS) {
       _fcm.requestPermission();
     }
@@ -21,16 +21,18 @@ class PushNotificationService {
       UserData.tokenData = {
         "token" : await _fcm.getToken(),
         "device" : Platform.operatingSystem,
-        "created" : FieldValue.serverTimestamp()
+        "createdAt" : FieldValue.serverTimestamp()
       };
 
 
       _fcm.getInitialMessage().then((RemoteMessage? message) {
         // TODO: implement
+        print("initial message: $message");
       });
 
 
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        print("onMessage: $message");
         RemoteNotification? notification = message.notification;
         if (Platform.isIOS && notification != null) {
           AppleNotification appleNotification = notification.apple!;
@@ -41,6 +43,7 @@ class PushNotificationService {
 
 
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        print("onMessageOpenedApp: $message");
         // TODO: implement
       });
     }

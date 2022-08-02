@@ -9,6 +9,7 @@ import 'package:rendezvous_beta_v3/pages/match_page.dart';
 import 'package:rendezvous_beta_v3/pages/sign_up_page.dart';
 import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
 import 'package:rendezvous_beta_v3/pages/verification_page.dart';
+import 'package:rendezvous_beta_v3/services/push_notifications_service.dart';
 import 'package:rendezvous_beta_v3/widgets/profile_view/profile_view.dart';
 import 'firebase_options.dart';
 
@@ -17,6 +18,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform
   );
+  await PushNotificationService.initialize();
   runApp(const Rendezvous());
 }
 
