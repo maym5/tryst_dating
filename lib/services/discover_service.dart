@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import '../models/users.dart';
+import 'dart:math';
 
 class DiscoverService {
   DiscoverService();
@@ -22,9 +22,25 @@ class DiscoverService {
     return uids;
   }
 
-  Stream<QueryDocumentSnapshot<Map>> get preferenceMatches async* {
+  Stream<List<QueryDocumentSnapshot<Map>>> get discoverStreamTwo async* {
+    // this does it all now
+    List<QueryDocumentSnapshot<Map>> discover = [];
     FirebaseFirestore _db = FirebaseFirestore.instance;
     final discoverRef = _db.collection("userData");
+    final Map<String, double> _searchRadius = _userSearchRect;
+
+    final QuerySnapshot withinLat = await discoverRef
+        .where("latitude", isGreaterThan: _searchRadius["minLat"])
+        .where("latitude", isLessThan: _searchRadius["maxLat"])
+        .get();
+    final Set<String> withinLatUID = getQueryUID(withinLat);
+
+    final QuerySnapshot withinLong = await discoverRef
+        .where("longitude", isGreaterThan: _searchRadius["minLon"])
+        .where("longitude", isLessThan: _searchRadius["maxLon"])
+        .get();
+    final Set<String> withinLongUID = getQueryUID(withinLong);
+
     final QuerySnapshot dateMatches = await discoverRef
         .where("dates", arrayContainsAny: currentUserData["dates"])
         .get();
@@ -66,7 +82,12 @@ class DiscoverService {
     for (QueryDocumentSnapshot doc in dateMatches.docs) {
       final Map _data = doc.data() as Map;
       final _uid = _data["uid"];
-      if (ageMatchUID.contains(_uid) &&
+      // withinLatUID.contains(_uid) &&
+      //     withinLongUID.contains(_uid) &&
+      if (
+      withinLatUID.contains(_uid) &&
+          withinLongUID.contains(_uid) &&
+          ageMatchUID.contains(_uid) &&
           genderMatchUID.contains(_uid) &&
           (maxPriceUID.contains(_uid) || minPriceUID.contains(_uid)) &&
           notYouUID.contains(_uid) &&
@@ -74,10 +95,28 @@ class DiscoverService {
         final QueryDocumentSnapshot<Map> result =
             doc as QueryDocumentSnapshot<Map>;
         if (await youMatchTheirPreferences(_uid)) {
-          yield result;
+          discover.add(result);
+          yield discover;
         }
       }
     }
+  }
+
+  Map<String, double> get _userSearchRect {
+    final double _radius = UserData.maxDistance! /
+        3958.8; // the radius of earth in miles is 3958.8
+    final double _minLat = UserData.location!.latitude - _radius;
+    final double _maxLat = UserData.location!.latitude + _radius;
+    final double _deltaLon =
+        asin(sin(_radius) / cos(UserData.location!.latitude));
+    final _minLon = UserData.location!.longitude - _deltaLon;
+    final _maxLon = UserData.location!.longitude + _deltaLon;
+    return {
+      "minLat": _minLat,
+      "maxLat": _maxLat,
+      "minLon": _minLon,
+      "maxLon": _maxLon
+    };
   }
 
   Future<bool> youMatchTheirPreferences(String uid) async {
@@ -94,23 +133,23 @@ class DiscoverService {
     return false;
   }
 
-  Stream<List<QueryDocumentSnapshot<Map>>> get discoverStream async* {
-    List<QueryDocumentSnapshot<Map>> result = [];
-    await for (QueryDocumentSnapshot<Map> doc in preferenceMatches) {
-      final GeoPoint? _geoPoint = doc.data()["location"];
-      if (_geoPoint != null) {
-        if (Geolocator.distanceBetween(
-                UserData.location!.latitude,
-                UserData.location!.longitude,
-                _geoPoint.latitude,
-                _geoPoint.longitude) <=
-            (UserData.maxDistance! * 1609.34)) {
-          result.add(doc);
-          yield result;
-        }
-      }
-    }
-  }
+  // Stream<List<QueryDocumentSnapshot<Map>>> get discoverStream async* {
+  //   List<QueryDocumentSnapshot<Map>> result = [];
+  //   await for (QueryDocumentSnapshot<Map> doc in discoverStreamTwo) {
+  //     final GeoPoint? _geoPoint = doc.data()["location"];
+  //     if (_geoPoint != null) {
+  //       if (Geolocator.distanceBetween(
+  //               UserData.location!.latitude,
+  //               UserData.location!.longitude,
+  //               _geoPoint.latitude,
+  //               _geoPoint.longitude) <=
+  //           (UserData.maxDistance! * 1609.34)) {
+  //         result.add(doc);
+  //         yield result;
+  //       }
+  //     }
+  //   }
+  // }
 }
 
 class DiscoverData {

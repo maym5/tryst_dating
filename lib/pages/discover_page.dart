@@ -28,7 +28,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   late Map<String, dynamic> _displayedDoc;
   late Map<String, dynamic> _currentDoc;
   final Stream<List<QueryDocumentSnapshot<Map>>> _discoverStream =
-      DiscoverService().discoverStream;
+      DiscoverService().discoverStreamTwo;
   DiscoverData get _displayedDiscoverData =>
       DiscoverData.getDiscoverData(_displayedDoc);
   DiscoverData get _currentDiscoverData =>
