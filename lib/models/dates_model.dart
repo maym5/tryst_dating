@@ -124,21 +124,21 @@ class DatesModel {
             pageBuilder: (context, animation, _) =>
                 ErrorDialogue(animation: animation));
       }
-    } catch (e, stacktrace) {
-      // TODO: Unhandled Exception: Null check operator used on a null value
+    } catch (e) {
       await MatchDataService.createMatch(
           otherUserUID: discoverData != null
               ? discoverData!.uid
               : dateData != null
                   ? dateData!.matchID
-                  : throw ("must have either discover or date data to preform this operation")).then((value) => showGeneralDialog(
-          context: context,
-          pageBuilder: (context, animation, _) => ErrorDialogue(
-              animation: animation,
-              errorMessage: e == "No venues found"
-                  ? e.toString() +
-                      " you're gonna have to do this the old fashioned way!"
-                  : null)));
+                  : throw ("must have either discover or date data to preform this operation"));
+      // .then((value) => showGeneralDialog(
+      //     context: context,
+      //     pageBuilder: (context, animation, _) => ErrorDialogue(
+      //         animation: animation,
+      //         errorMessage: e == "No venues found"
+      //             ? e.toString() +
+      //                 " you're gonna have to do this the old fashioned way!"
+      //             : null)));
     }
   }
 

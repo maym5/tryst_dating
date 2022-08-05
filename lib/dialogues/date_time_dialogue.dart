@@ -72,6 +72,7 @@ class DateTimeDialogue extends StatelessWidget {
                         height: 220,
                         width: 300,
                         child: CupertinoDatePicker(
+                            backgroundColor: kPopUpColor,
                             use24hFormat: true,
                             maximumYear: 3000,
                             minimumYear: 2000,
@@ -103,6 +104,7 @@ class DateTimeDialogue extends StatelessWidget {
                           height: 220,
                           width: 300,
                           child: CupertinoDatePicker(
+                            backgroundColor: kPopUpColor,
                               minuteInterval: 5,
                               initialDateTime: now.add(Duration(minutes: 5 - now.minute % 5)),
                               mode: CupertinoDatePickerMode.time,
@@ -169,7 +171,6 @@ class DateTimeDialogue extends StatelessWidget {
 }
 
 class CongratsDialogue extends StatelessWidget {
-  // TODO: pass a function so we know if they said yes or no
   const CongratsDialogue(
       {Key? key,
       required this.animation,
