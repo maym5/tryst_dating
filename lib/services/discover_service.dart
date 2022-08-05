@@ -22,7 +22,22 @@ class DiscoverService {
     return uids;
   }
 
-  Stream<List<QueryDocumentSnapshot<Map>>> get discoverStreamTwo async* {
+  Set<QueryDocumentSnapshot> peopleInArea(QuerySnapshot lat, QuerySnapshot long) {
+    final Set<QueryDocumentSnapshot> result = {};
+    final List<QueryDocumentSnapshot> _latDocs = lat.docs;
+    final Set<String> _longUIDs = getQueryUID(long);
+    for (QueryDocumentSnapshot snapshot in _latDocs) {
+      if (snapshot.exists) {
+        final Map _data = snapshot.data() as Map;
+        if (_longUIDs.contains(_data["uid"])) {
+          result.add(snapshot);
+        }
+      }
+    }
+    return result;
+  }
+
+  Stream<List<QueryDocumentSnapshot<Map>>> get discoverStream async* {
     // this does it all now
     List<QueryDocumentSnapshot<Map>> discover = [];
     FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -33,17 +48,17 @@ class DiscoverService {
         .where("latitude", isGreaterThan: _searchRadius["minLat"])
         .where("latitude", isLessThan: _searchRadius["maxLat"])
         .get();
-    final Set<String> withinLatUID = getQueryUID(withinLat);
 
     final QuerySnapshot withinLong = await discoverRef
         .where("longitude", isGreaterThan: _searchRadius["minLon"])
         .where("longitude", isLessThan: _searchRadius["maxLon"])
         .get();
-    final Set<String> withinLongUID = getQueryUID(withinLong);
+    final Set<QueryDocumentSnapshot> areaMatch = peopleInArea(withinLat, withinLong);
 
     final QuerySnapshot dateMatches = await discoverRef
         .where("dates", arrayContainsAny: currentUserData["dates"])
         .get();
+    final Set<String> dateMatchesUID = getQueryUID(dateMatches);
 
     final ageMatch = await discoverRef
         .where("age", isGreaterThanOrEqualTo: currentUserData["minAge"])
@@ -79,14 +94,11 @@ class DiscoverService {
         getQueryUID(alreadySeen, matchData: true);
 
     // check that they aren't matched
-    for (QueryDocumentSnapshot doc in dateMatches.docs) {
+    for (QueryDocumentSnapshot doc in areaMatch) {
       final Map _data = doc.data() as Map;
       final _uid = _data["uid"];
-      // withinLatUID.contains(_uid) &&
-      //     withinLongUID.contains(_uid) &&
       if (
-      withinLatUID.contains(_uid) &&
-          withinLongUID.contains(_uid) &&
+      dateMatchesUID.contains(_uid) &&
           ageMatchUID.contains(_uid) &&
           genderMatchUID.contains(_uid) &&
           (maxPriceUID.contains(_uid) || minPriceUID.contains(_uid)) &&
