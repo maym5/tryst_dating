@@ -2,8 +2,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
-import 'package:rendezvous_beta_v3/dialogues/cancel_dialogue.dart';
-import 'package:rendezvous_beta_v3/dialogues/error_dialogue.dart';
 import 'package:rendezvous_beta_v3/models/dates_model.dart';
 import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import 'package:rendezvous_beta_v3/services/messaging_service.dart';
@@ -92,6 +90,7 @@ class _DateCardState extends State<DateCard>
       onTapUp: (TapUpDetails details) {
         if (_canTap) {
           _controller.reverse();
+          setState(() => _canTap = false);
         }
       },
       child: BounceAnimation(

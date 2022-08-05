@@ -29,7 +29,6 @@ class GooglePlacesService {
       }
       return [];
     } catch (e) {
-      print("venueError: $e");
       return [];
     }
   }

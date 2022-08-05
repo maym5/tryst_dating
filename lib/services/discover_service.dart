@@ -144,24 +144,6 @@ class DiscoverService {
     }
     return false;
   }
-
-  // Stream<List<QueryDocumentSnapshot<Map>>> get discoverStream async* {
-  //   List<QueryDocumentSnapshot<Map>> result = [];
-  //   await for (QueryDocumentSnapshot<Map> doc in discoverStreamTwo) {
-  //     final GeoPoint? _geoPoint = doc.data()["location"];
-  //     if (_geoPoint != null) {
-  //       if (Geolocator.distanceBetween(
-  //               UserData.location!.latitude,
-  //               UserData.location!.longitude,
-  //               _geoPoint.latitude,
-  //               _geoPoint.longitude) <=
-  //           (UserData.maxDistance! * 1609.34)) {
-  //         result.add(doc);
-  //         yield result;
-  //       }
-  //     }
-  //   }
-  // }
 }
 
 class DiscoverData {

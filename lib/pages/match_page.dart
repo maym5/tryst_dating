@@ -17,21 +17,28 @@ class _LikesPageState extends State<LikesPage> {
   final Stream<QuerySnapshot> _likesStream = MatchDataService().likeStream;
 
   Widget get _noLikesMessage => Padding(
-    padding: const EdgeInsets.only(top: 25),
-    child: Column(
-          children: [
-            Image.asset("assets/images/love.png", height: 250),
-            SizedBox(height: 50,),
-            Text("Don't worry, people are liking you right now!", style: kTextStyle.copyWith(fontSize: 24), softWrap: true, textAlign: TextAlign.center,),
-          ]
-        ),
-  );
+        padding: const EdgeInsets.only(top: 25),
+        child: Column(children: [
+          Image.asset("assets/images/love.png", height: 250),
+          SizedBox(
+            height: 50,
+          ),
+          Text(
+            "Don't worry, people are liking you right now!",
+            style: kTextStyle.copyWith(fontSize: 24),
+            softWrap: true,
+            textAlign: TextAlign.center,
+          ),
+        ]),
+      );
 
   Widget get _errorMessage => Container(
         alignment: Alignment.center,
         height: MediaQuery.of(context).size.height,
         child: Text(
-            "There's been an error loading your match data, try again soon", style: kTextStyle.copyWith(fontSize: 24),),
+          "There's been an error loading your match data, try again soon",
+          style: kTextStyle.copyWith(fontSize: 24),
+        ),
       );
 
   Widget get _noInternet => Container(
@@ -186,7 +193,11 @@ class _DatePageState extends State<DatePage> {
           final Map _data = doc.data() as Map;
           final List _agreedToDate = _data["agreedToDate"];
           if (_data["dateTime"] == null) {
-            noDateMatch.add(DateData(name: _data["name"], matchID: _data["matchUID"], image: _data["avatarImage"]));
+            noDateMatch.add(DateData(
+                name: _data["name"],
+                matchID: _data["matchUID"],
+                image: _data["avatarImage"],
+                agreedToDate: _data["agreedToDate"]));
           } else if (_agreedToDate.length != 2 &&
               MatchDataService.convertTimeStamp(_data["dateTime"])
                   .isAfter(DateTime.now())) {
@@ -233,8 +244,10 @@ class _DatePageState extends State<DatePage> {
         }
       }
       return ListView.builder(
-          itemCount:
-              upcomingDates.length + pastDates.length + pendingDates.length + noDateMatch.length,
+          itemCount: upcomingDates.length +
+              pastDates.length +
+              pendingDates.length +
+              noDateMatch.length,
           itemBuilder: (context, index) {
             if (index < upcomingDates.length) {
               return DateCard(data: upcomingDates[index]);
@@ -247,18 +260,24 @@ class _DatePageState extends State<DatePage> {
               );
             } else if (index < upcomingDates.length + pastDates.length) {
               return DateCard(data: pastDates[index - upcomingDates.length]);
-            } else if (index == upcomingDates.length + pastDates.length && pendingDates.isNotEmpty) {
+            } else if (index == upcomingDates.length + pastDates.length &&
+                pendingDates.isNotEmpty) {
               return Column(
                 children: [
                   _dividerBuilder("Pending Dates"),
                   DateCard(data: pendingDates[0]),
                 ],
               );
-            } else if (index < upcomingDates.length + pastDates.length + pendingDates.length) {
+            } else if (index <
+                upcomingDates.length + pastDates.length + pendingDates.length) {
               return DateCard(
                   data: pendingDates[
                       index - (upcomingDates.length + pastDates.length)]);
-            } else if (index == upcomingDates.length + pastDates.length + pendingDates.length && noDateMatch.isNotEmpty) {
+            } else if (index ==
+                    upcomingDates.length +
+                        pastDates.length +
+                        pendingDates.length &&
+                noDateMatch.isNotEmpty) {
               return Column(
                 children: [
                   _dividerBuilder("Venueless matches"),
@@ -267,8 +286,10 @@ class _DatePageState extends State<DatePage> {
               );
             } else {
               return DateCard(
-                  data: noDateMatch[
-                  index - (upcomingDates.length + pastDates.length + pendingDates.length)]);
+                  data: noDateMatch[index -
+                      (upcomingDates.length +
+                          pastDates.length +
+                          pendingDates.length)]);
             }
           });
     } else if (!dateSnapshot.hasData || dateSnapshot.data!.size == 0) {

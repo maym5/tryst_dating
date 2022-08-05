@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/dialogues/cancel_dialogue.dart';
@@ -39,15 +38,12 @@ class DatesModel {
     return commonDates;
   }
 
-  Future<String> get randomDateType async {
-    final List<String> _commonDates = await commonDates;
-    return _commonDates[Random().nextInt(_commonDates.length)];
-  }
-
   Future<Map> get venueData async {
     final List<String> _commonDates = await commonDates;
     for (String date in _commonDates) {
       final Map _venue = await GooglePlacesService(venueType: date).venue;
+      // print(_venue["name"]);
+      // print(_venue["status"]);
       if (_venue["status"] == "ok") {
         return {"venue": _venue, "venueType": date};
       }
@@ -128,22 +124,21 @@ class DatesModel {
             pageBuilder: (context, animation, _) =>
                 ErrorDialogue(animation: animation));
       }
-    } catch (e) {
+    } catch (e, stacktrace) {
       // TODO: Unhandled Exception: Null check operator used on a null value
       await MatchDataService.createMatch(
           otherUserUID: discoverData != null
               ? discoverData!.uid
               : dateData != null
                   ? dateData!.matchID
-                  : throw ("must have either discover or date data to preform this operation"));
-      showGeneralDialog(
+                  : throw ("must have either discover or date data to preform this operation")).then((value) => showGeneralDialog(
           context: context,
           pageBuilder: (context, animation, _) => ErrorDialogue(
               animation: animation,
               errorMessage: e == "No venues found"
                   ? e.toString() +
-                      " your gonna have to do this the old fashioned way!"
-                  : null));
+                      " you're gonna have to do this the old fashioned way!"
+                  : null)));
     }
   }
 
@@ -200,12 +195,7 @@ class DatesModel {
 
   Future<void> deleteData(BuildContext context) async {
     if (dateData != null) {
-      await MatchDataService.deleteDate(otherUserUID: dateData!.matchID).then(
-          (deleted) => showGeneralDialog(
-              context: context,
-              pageBuilder: (context, animation, _) => deleted
-                  ? CancelDialogue(animation: animation)
-                  : ErrorDialogue(animation: animation)));
+      await MatchDataService.deleteDate(otherUserUID: dateData!.matchID);
     } else {
       throw ("need dateData");
     }
