@@ -1,3 +1,5 @@
+import 'dart:js_util/js_util_wasm.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import 'dart:async';
@@ -5,7 +7,6 @@ import '../models/users.dart';
 
 class MatchDataService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  // TODO: add proper error catching
 
   static DateTime convertTimeStamp(dynamic dateValue) {
     if (dateValue is DateTime) {
@@ -185,7 +186,6 @@ class MatchDataService {
   static Future<bool> deleteDate({required String otherUserUID}) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
     try {
-      // TODO: delete all of their messages cuz firebase be tripping
       await db
           .collection("userData")
           .doc(AuthenticationService.currentUserUID)

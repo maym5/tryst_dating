@@ -18,6 +18,8 @@ class PushNotificationService {
     if (_status.authorizationStatus != AuthorizationStatus.denied) {
       // do some shit
 
+      _fcm.setAutoInitEnabled(true);
+
       UserData.tokenData = {
         "token" : await _fcm.getToken(),
         "device" : Platform.operatingSystem,
