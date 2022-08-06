@@ -26,6 +26,8 @@ class PushNotificationService {
         "createdAt" : FieldValue.serverTimestamp()
       };
 
+      UserData.uploadTokenData();
+
 
       _fcm.getInitialMessage().then((RemoteMessage? message) {
         // TODO: implement

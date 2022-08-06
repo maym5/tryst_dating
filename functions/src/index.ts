@@ -5,22 +5,23 @@ admin.initializeApp();
 const db = admin.firestore();
 const fcm = admin.messaging();
 
-export const sendToToken = functions.firestore
-       .document("userData/{userId}/matches/{matchId}/messages/{messageId}")
-       .onCreate(async snapshot => {
-       const message = snapshot.data();
+export const sendToTokens = functions.firestore
+    .document("userData/{userId}/matches/{matchId}/messages/{messageId}")
+    .onCreate(async (snapshot) => {
+      const message = snapshot.data();
 
-       const querySnapshot = await db.collection("userData").doc(message.target).collection("tokens").get();
+      const querySnapshot = await db.collection("userData")
+          .doc(message.target).collection("tokens").get();
 
-       const tokens = querySnapshot.docs.map(snap => snap.id);
+      const tokens = querySnapshot.docs.map((snap) => snap.id);
 
-       const payload: admin.messaging.MessagingPayload = {
-       notification: {
-            title: 'New message from ${message.sender}'
-            body: message.message
-            clickAction: "FLUTTER_NOTIFICATION_CLICK"
-         }
-       };
-       fcm.sendToDevice(tokens, payload);
-     });
+      const payload: admin.messaging.MessagingPayload = {
+        notification: {
+          title: "New message from ${message.sender}",
+          body: message.message,
+          clickAction: "FLUTTER_NOTIFICATION_CLICK",
+        },
+      };
+      fcm.sendToDevice(tokens, payload);
+    });
 
