@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:rendezvous_beta_v3/services/authentication_service.dart';
+import 'package:rendezvous_beta_v3/services/push_notifications_service.dart';
 import '../constants.dart';
 import '../models/users.dart';
 import '../widgets/fields/text_input_field.dart';
@@ -109,6 +110,8 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         await UserData().setLocation();
         await UserData().getUserData();
+        // TODO: maybe change this
+        await PushNotificationService.initialize();
         Navigator.pushNamed(context, HomePage.id);
       }
     } else if (loginInputs['password'] == "") {

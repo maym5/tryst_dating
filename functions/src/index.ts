@@ -25,3 +25,10 @@ export const sendToTokens = functions.firestore
       fcm.sendToDevice(tokens, payload);
     });
 
+// could look up tokens if we put the users uid in match doc
+// export const onNewMatch = functions.firestore
+//      .document("userData/{userId}/matches/{matchId}")
+//      .onCreate(async (snapshot) => {
+//        const match = snapshot.data();
+//
+//      });
