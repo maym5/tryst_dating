@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/models/users.dart';
 
@@ -30,7 +29,7 @@ class PushNotificationService {
       UserData.uploadTokenData();
 
       _fcm.getInitialMessage().then((RemoteMessage? message) async {
-        print("initial message: $message");
+        // print("initial message: $message");
         if (message != null) {
           final _rawData = await FirebaseFirestore.instance
               .collection("userData")
@@ -58,7 +57,7 @@ class PushNotificationService {
       // });
 
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-        print("onMessageOpenedApp: $message");
+        // print("onMessageOpenedApp: $message");
         final _rawData = await FirebaseFirestore.instance
             .collection("userData")
             .doc(message.data["sender"])

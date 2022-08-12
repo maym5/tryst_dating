@@ -27,8 +27,10 @@ class InBubble extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 5),
               decoration: BoxDecoration(
                 color: Colors.grey.shade300,
-                borderRadius: kChatBubbleBorderRadius,
-                ),
+                borderRadius: kChatBubbleBorderRadius.copyWith(
+                    topLeft: const Radius.circular(8),
+                    topRight: const Radius.circular(25)),
+              ),
               child: Text(
                 message,
                 style: const TextStyle(color: Colors.black, fontSize: 15),
@@ -102,4 +104,3 @@ class Triangle extends CustomPainter {
 // bottomLeft: Radius.circular(19),
 // bottomRight: Radius.circular(19),
 // ),
-
