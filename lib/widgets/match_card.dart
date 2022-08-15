@@ -276,9 +276,12 @@ class _DateOptionsBarState extends State<DateOptionsBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[_messageButton, _detailsButton],
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[_messageButton, _detailsButton],
+      ),
     );
   }
 }
