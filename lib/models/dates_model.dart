@@ -42,18 +42,11 @@ class DatesModel {
     final List<String> _commonDates = await commonDates;
     for (String date in _commonDates) {
       final Map _venue = await GooglePlacesService(venueType: date).venue;
-      // print(_venue["name"]);
-      // print(_venue["status"]);
       if (_venue["status"] == "ok") {
         return {"venue": _venue, "venueType": date};
       }
     }
     throw ("No venues found");
-    // final Map _venue = await GooglePlacesService(venueType: _venueType).venue;
-    // if (_venue["status"] == "ok") {
-    //   return {"venue": _venue, "venueType": _venueType};
-    // }
-    //   throw (_venue["status"]);
   }
 
   Future<Map> get matchData async {

@@ -385,6 +385,7 @@ class DetailsBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomBottomSheet(
+      tileColor: kPopUpColor,
         iconOne: Icons.delete,
         iconTwo: Icons.calendar_today,
         titleOne: "Delete this date",
@@ -396,7 +397,7 @@ class DetailsBottomSheet extends StatelessWidget {
           if (data.venueID != null) {
             await DatesModel(dateData: data).rescheduleDate(context);
           } else {
-            print("venueID null");
+            // print("venueID null");
           }
         });
   }

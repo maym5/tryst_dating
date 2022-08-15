@@ -181,26 +181,30 @@ class _MessagesStreamBuilderState extends State<MessagesStreamBuilder> {
         } else if (!snapshot.hasData || snapshot.data!.size == 0) {
           return Padding(
             padding: const EdgeInsets.only(top: 50),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset("assets/images/mail_box.png", height: 300, width: double.infinity,),
-                Text(
-                  "Get the ball rolling and send ${widget.name} a message!",
-                  textAlign: TextAlign.center,
-                  style: kTextStyle),
-              ]
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset("assets/images/mail_box.png", height: 300, width: double.infinity,),
+                  Text(
+                    "Get the ball rolling and send ${widget.name} a message!",
+                    textAlign: TextAlign.center,
+                    style: kTextStyle),
+                ]
+              ),
             ),
           );
           // no data
         } else {
           // oops theres an error
-          return Container(
-            alignment: Alignment.center,
-            child: Text(
-                "Oops! There's been an error, that's our bad. Try again later",
-                textAlign: TextAlign.center,
-                style: kTextStyle),
+          return SingleChildScrollView(
+            child: Container(
+              alignment: Alignment.center,
+              child: Text(
+                  "Oops! There's been an error, that's our bad. Try again later",
+                  textAlign: TextAlign.center,
+                  style: kTextStyle),
+            ),
           );
         }
       },

@@ -121,18 +121,20 @@ class CustomBottomSheet extends StatelessWidget {
       required this.iconOne,
       required this.iconTwo,
       required this.titleOne,
-      this.tileOneColor,
+      this.tileOneIconColor,
       required this.titleTwo,
       required this.onTileOneTap,
+        this.tileColor,
       required this.onTileTwoTap})
       : super(key: key);
   final IconData iconOne;
   final IconData iconTwo;
   final String titleOne;
-  final Color? tileOneColor;
+  final Color? tileOneIconColor;
   final String titleTwo;
   final void Function() onTileOneTap;
   final void Function() onTileTwoTap;
+  final Color? tileColor;
 
   @override
   Widget build(BuildContext context) {
@@ -141,11 +143,12 @@ class CustomBottomSheet extends StatelessWidget {
       child: Wrap(
         children: <ListTile>[
           ListTile(
-            leading: Icon(iconOne, color: tileOneColor ?? kOffWhite),
+            tileColor: tileColor,
+            leading: Icon(iconOne, color: tileOneIconColor ?? kOffWhite),
             title: Text(
               titleOne,
               style: kTextStyle.copyWith(
-                  color: tileOneColor ?? kOffWhite, fontSize: 15),
+                  color: tileOneIconColor ?? kOffWhite, fontSize: 15),
             ),
             onTap: () {
               onTileOneTap();
@@ -153,6 +156,7 @@ class CustomBottomSheet extends StatelessWidget {
             },
           ),
           ListTile(
+            tileColor: tileColor,
             leading: Icon(iconTwo, color: kOffWhite),
             title: Text(titleTwo, style: kTextStyle.copyWith(fontSize: 15)),
             onTap: () {

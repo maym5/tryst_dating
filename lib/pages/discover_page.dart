@@ -192,7 +192,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
 class DiscoverLoadingAvatar extends StatelessWidget {
   const DiscoverLoadingAvatar({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Center(
