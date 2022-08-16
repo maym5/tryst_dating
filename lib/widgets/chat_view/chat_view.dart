@@ -150,6 +150,38 @@ class MessagesStreamBuilder extends StatefulWidget {
 }
 
 class _MessagesStreamBuilderState extends State<MessagesStreamBuilder> {
+
+  Widget get _emptyMessage => Expanded(
+    child: Padding(
+      padding: const EdgeInsets.only(top: 50),
+      child: SingleChildScrollView(
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset("assets/images/mail_box.png", height: 300, width: double.infinity,),
+              Text(
+                  "Get the ball rolling and send ${widget.name} a message!",
+                  textAlign: TextAlign.center,
+                  style: kTextStyle),
+            ]
+        ),
+      ),
+    ),
+  );
+
+  Widget get _errorMessage => Expanded(
+    child: SingleChildScrollView(
+      child: Container(
+        alignment: Alignment.center,
+        child: Text(
+            "Oops! There's been an error, that's our bad. Try again later",
+            textAlign: TextAlign.center,
+            style: kTextStyle),
+      ),
+    ),
+  );
+
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -179,33 +211,11 @@ class _MessagesStreamBuilderState extends State<MessagesStreamBuilder> {
                 }),
           );
         } else if (!snapshot.hasData || snapshot.data!.size == 0) {
-          return Padding(
-            padding: const EdgeInsets.only(top: 50),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset("assets/images/mail_box.png", height: 300, width: double.infinity,),
-                  Text(
-                    "Get the ball rolling and send ${widget.name} a message!",
-                    textAlign: TextAlign.center,
-                    style: kTextStyle),
-                ]
-              ),
-            ),
-          );
+          return _emptyMessage;
           // no data
         } else {
           // oops theres an error
-          return SingleChildScrollView(
-            child: Container(
-              alignment: Alignment.center,
-              child: Text(
-                  "Oops! There's been an error, that's our bad. Try again later",
-                  textAlign: TextAlign.center,
-                  style: kTextStyle),
-            ),
-          );
+          return _errorMessage;
         }
       },
     );
