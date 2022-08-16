@@ -184,6 +184,7 @@ class PhotoPickerBottomSheet extends StatelessWidget {
       iconTwo: Icons.photo_camera,
       titleOne: "Photo from gallery",
       titleTwo: "Photo from camera",
+      tileColor: kPopUpColor,
       onTileOneTap: () {
         try {
           images.addImages(index);
