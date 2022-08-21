@@ -57,7 +57,21 @@ class PushNotificationService {
       // });
 
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-        // print("onMessageOpenedApp: $message");
+        print("onMessageOpenedApp: $message");
+        final _rawData = await FirebaseFirestore.instance
+            .collection("userData")
+            .doc(message.data["sender"])
+            .get();
+        MessageNavigator(
+          name: _rawData["name"],
+          sender: message.data["sender"],
+          image: _rawData["images"][0],
+        );
+      });
+
+
+      FirebaseMessaging.onBackgroundMessage((message) async {
+        print("onBackggroundMessage: $message");
         final _rawData = await FirebaseFirestore.instance
             .collection("userData")
             .doc(message.data["sender"])

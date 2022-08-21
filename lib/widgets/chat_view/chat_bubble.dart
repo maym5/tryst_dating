@@ -71,7 +71,7 @@ class OutBubble extends StatelessWidget {
               ),
             ),
           ),
-          CustomPaint(painter: Triangle(Colors.red)),
+          CustomPaint(painter: Triangle(const Color(0xFFFF655B))),
         ],
       ),
     );
