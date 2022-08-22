@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 
 class MessengingService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
 
 
   Stream<QuerySnapshot> unreadMessages(String targetUID) async* {

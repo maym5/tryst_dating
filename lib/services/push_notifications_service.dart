@@ -11,8 +11,17 @@ class PushNotificationService {
 
   static Future<void> initialize() async {
     final FirebaseMessaging _fcm = FirebaseMessaging.instance;
-    if (Platform.isIOS) {
-      _fcm.requestPermission();
+    final NotificationSettings _initialStatus = await _fcm.getNotificationSettings();
+    if (Platform.isIOS && _initialStatus.authorizationStatus != AuthorizationStatus.authorized) {
+      await _fcm.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true
+      );
     }
     final NotificationSettings _status = await _fcm.getNotificationSettings();
     if (_status.authorizationStatus != AuthorizationStatus.denied) {
@@ -29,7 +38,6 @@ class PushNotificationService {
       UserData.uploadTokenData();
 
       _fcm.getInitialMessage().then((RemoteMessage? message) async {
-        // print("initial message: $message");
         if (message != null) {
           final _rawData = await FirebaseFirestore.instance
               .collection("userData")
@@ -43,21 +51,7 @@ class PushNotificationService {
         }
       });
 
-      // FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      //   print("onMessage: $message");
-      //   final _rawData = await FirebaseFirestore.instance
-      //       .collection("userData")
-      //       .doc(message.data["sender"])
-      //       .get();
-      //   MessageNavigator(
-      //     name: _rawData["name"],
-      //     sender: message.data["sender"],
-      //     image: _rawData["images"][0],
-      //   );
-      // });
-
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-        print("onMessageOpenedApp: $message");
         final _rawData = await FirebaseFirestore.instance
             .collection("userData")
             .doc(message.data["sender"])
@@ -69,9 +63,7 @@ class PushNotificationService {
         );
       });
 
-
       FirebaseMessaging.onBackgroundMessage((message) async {
-        print("onBackggroundMessage: $message");
         final _rawData = await FirebaseFirestore.instance
             .collection("userData")
             .doc(message.data["sender"])

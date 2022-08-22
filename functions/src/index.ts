@@ -7,28 +7,26 @@ const fcm = admin.messaging();
 
 export const sendToTokens = functions.firestore
     .document("userData/{userId}/matches/{matchId}/messages/{messageId}")
-    .onCreate(async (snapshot) => {
+    .onCreate(async (snapshot, context) => {
       const message = snapshot.data();
+      if (context.params.userId != message.target) {
+        const querySnapshot = await db.collection("userData")
+            .doc(message.target).collection("tokens").get();
 
-      const querySnapshot = await db.collection("userData")
-          .doc(message.target).collection("tokens").get();
+        const targetSnapshot = await db.collection("userData")
+            .doc(message.target).get();
 
-      const tokens = querySnapshot.docs.map((snap) => snap.id);
+        const targetData = targetSnapshot?.data();
 
-      const payload: admin.messaging.MessagingPayload = {
-        notification: {
-          title: "New message from ${message.sender}",
-          body: message.message,
-          clickAction: "FLUTTER_NOTIFICATION_CLICK",
-        },
-      };
-      fcm.sendToDevice(tokens, payload);
+        const tokens = querySnapshot.docs.map((snap) => snap.id);
+
+        const payload: admin.messaging.MessagingPayload = {
+          notification: {
+            title: targetData?.name,
+            body: message.message,
+            clickAction: "FLUTTER_NOTIFICATION_CLICK",
+          },
+        };
+        fcm.sendToDevice(tokens, payload);
+      }
     });
-
-// could look up tokens if we put the users uid in match doc
-// export const onNewMatch = functions.firestore
-//      .document("userData/{userId}/matches/{matchId}")
-//      .onCreate(async (snapshot) => {
-//        const match = snapshot.data();
-//
-//      });
