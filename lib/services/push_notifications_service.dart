@@ -52,6 +52,7 @@ class PushNotificationService {
       });
 
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+        // TODO: we have two notifications now might not work
         final _rawData = await FirebaseFirestore.instance
             .collection("userData")
             .doc(message.data["sender"])

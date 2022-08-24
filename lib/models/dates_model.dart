@@ -124,14 +124,6 @@ class DatesModel {
               : dateData != null
                   ? dateData!.matchID
                   : throw ("must have either discover or date data to preform this operation"));
-      // .then((value) => showGeneralDialog(
-      //     context: context,
-      //     pageBuilder: (context, animation, _) => ErrorDialogue(
-      //         animation: animation,
-      //         errorMessage: e == "No venues found"
-      //             ? e.toString() +
-      //                 " you're gonna have to do this the old fashioned way!"
-      //             : null)));
     }
   }
 

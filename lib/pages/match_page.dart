@@ -20,7 +20,7 @@ class _LikesPageState extends State<LikesPage> {
         padding: const EdgeInsets.only(top: 25),
         child: Column(children: [
           Image.asset("assets/images/love.png", height: 250),
-          SizedBox(
+          const SizedBox(
             height: 50,
           ),
           Text(

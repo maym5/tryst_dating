@@ -160,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[_emailField, _passwordField],
               ),
-              SizedBox(height: 15,),
+              const SizedBox(height: 15,),
               GradientButton(
                 title: "Login",
                 onPressed: _handleSignIn,

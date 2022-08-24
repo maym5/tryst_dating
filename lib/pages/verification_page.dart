@@ -83,7 +83,6 @@ class _VerificationPageState extends State<VerificationPage> {
           alignment: const Alignment(0, -0.3),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            // mainAxisAlignment: MainAxisAlignment,
             children: [
               _art,
               _titleAndDescription,

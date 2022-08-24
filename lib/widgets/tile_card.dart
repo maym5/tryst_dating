@@ -16,7 +16,7 @@ class TileCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(25),
         ),
         color: kTileBackGroundColor,
-        surfaceTintColor: Color(0xFF404E5F),
+        surfaceTintColor: const Color(0xFF404E5F),
         child: Padding(
           padding: padding,
           child: child,

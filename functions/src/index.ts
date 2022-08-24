@@ -35,7 +35,7 @@ export const newDate = functions.firestore
     .document("userData/{userId}/matches/{matchId}")
     .onCreate(async (snapshot, context) => {
       const date = snapshot.data();
-      if (context.params.userId == date.matchUID) {
+      if (context.params.userId == date.matchUID && date.match == true) {
         const querySnapshot = await db.collection("userData")
             .doc(date.matchUID).collection("tokens").get();
 
@@ -43,7 +43,7 @@ export const newDate = functions.firestore
 
         const payload: admin.messaging.MessagingPayload = {
           notification: {
-            title: "You've got a date with ${date.name}",
+            title: `You matched with ${date.name}!`,
             body: "Check it out in app",
             clickAction: "FLUTTER_NOTIFICATION_CLICK",
           },
