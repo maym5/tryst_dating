@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/pages/home_page.dart';
 import 'package:rendezvous_beta_v3/services/authentication_service.dart';
+import 'package:rendezvous_beta_v3/services/discover_service.dart';
 import 'package:rendezvous_beta_v3/services/messaging_service.dart';
 import 'package:rendezvous_beta_v3/widgets/chat_view/chat_bubble.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
+import 'package:rendezvous_beta_v3/widgets/profile_view/profile_view.dart';
 
 class ChatView extends StatefulWidget {
   const ChatView(
@@ -43,16 +45,7 @@ class _ChatViewState extends State<ChatView> {
             },
           ),
           centerTitle: true,
-          title: Column(
-            children: [
-              CircleAvatar(
-                backgroundImage: NetworkImage(widget.image),
-                radius: 20,
-              ),
-              const SizedBox(height: 10),
-              Text(widget.name, style: kTextStyle.copyWith(fontSize: 15))
-            ],
-          ),
+          title: ChatAvatar(name: widget.name, image: widget.image, userUid: widget.match)
         ),
       );
 
@@ -150,44 +143,43 @@ class MessagesStreamBuilder extends StatefulWidget {
 }
 
 class _MessagesStreamBuilderState extends State<MessagesStreamBuilder> {
-
   Widget get _emptyMessage => Expanded(
-    child: Padding(
-      padding: const EdgeInsets.only(top: 50),
-      child: SingleChildScrollView(
-        child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset("assets/images/mail_box.png", height: 300, width: double.infinity,),
-              Text(
-                  "Get the ball rolling and send ${widget.name} a message!",
-                  textAlign: TextAlign.center,
-                  style: kTextStyle),
-            ]
+        child: Padding(
+          padding: const EdgeInsets.only(top: 50),
+          child: SingleChildScrollView(
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Image.asset(
+                "assets/images/mail_box.png",
+                height: 300,
+                width: double.infinity,
+              ),
+              Text("Get the ball rolling and send ${widget.name} a message!",
+                  textAlign: TextAlign.center, style: kTextStyle),
+            ]),
+          ),
         ),
-      ),
-    ),
-  );
+      );
 
   Widget get _errorMessage => Expanded(
-    child: SingleChildScrollView(
-      child: Container(
-        alignment: Alignment.center,
-        child: Text(
-            "Oops! There's been an error, that's our bad. Try again later",
-            textAlign: TextAlign.center,
-            style: kTextStyle),
-      ),
-    ),
-  );
-
+        child: SingleChildScrollView(
+          child: Container(
+            alignment: Alignment.center,
+            child: Text(
+                "Oops! There's been an error, that's our bad. Try again later",
+                textAlign: TextAlign.center,
+                style: kTextStyle),
+          ),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: widget.stream,
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasData && !snapshot.hasError && snapshot.data!.size != 0) {
+        if (snapshot.hasData &&
+            !snapshot.hasError &&
+            snapshot.data!.size != 0) {
           final messages = snapshot.data!.docs;
           List<MessengerData> messagesData = [];
           for (var message in messages) {
@@ -218,6 +210,69 @@ class _MessagesStreamBuilderState extends State<MessagesStreamBuilder> {
           return _errorMessage;
         }
       },
+    );
+  }
+}
+
+class ChatAvatar extends StatelessWidget {
+  const ChatAvatar(
+      {Key? key,
+      required this.image,
+      required this.name,
+      required this.userUid})
+      : super(key: key);
+  final String name;
+  final String image;
+  final String userUid;
+
+  void _onTap(BuildContext context) async {
+    final FirebaseFirestore _db = FirebaseFirestore.instance;
+    final _userDataRef = await _db.collection("userData").doc(userUid).get();
+    final Map _userData = _userDataRef.data() as Map;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PageBackground(
+          body: Stack(
+            children: [
+              ProfileView(
+                userPhotos: DiscoverData.listToListOfStrings(_userData["imageURLs"]),
+                bio: _userData["bio"],
+                name: name,
+                age: _userData["age"],
+                dateTypes: DiscoverData.listToListOfStrings(_userData["dates"])
+              ),
+              Align(
+                alignment: const Alignment(-.95, -.90),
+                child: BackButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        _onTap(context);
+      },
+      child: Column(
+        children: [
+          CircleAvatar(
+            backgroundImage: NetworkImage(image),
+            radius: 20,
+          ),
+          const SizedBox(height: 10),
+          Text(name, style: kTextStyle.copyWith(fontSize: 15))
+        ],
+      ),
     );
   }
 }

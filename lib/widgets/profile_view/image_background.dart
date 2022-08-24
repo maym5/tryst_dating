@@ -92,18 +92,3 @@ class _ImageBackgroundState extends State<ImageBackground> {
     );
   }
 }
-// old XFilecode
-// if (widget.userPhotos is List<XFile?>) {
-//   List<XFile?> userImages = [];
-//   for (XFile? image in widget.userPhotos) {
-//     if (image != null) {
-//       userImages.add(image);
-//     }
-//   }
-//   return userImages.isNotEmpty
-//       ? Image(
-//           image: FileImage(File(userImages[widget.activeIndex]!.path)),
-//           fit: BoxFit.cover,
-//         )
-//       : Container();
-// } else
