@@ -110,7 +110,6 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         await UserData().setLocation();
         await UserData().getUserData();
-        // TODO: maybe change this
         await PushNotificationService.initialize();
         Navigator.pushNamed(context, HomePage.id);
       }

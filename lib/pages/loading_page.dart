@@ -5,7 +5,6 @@ import 'package:rendezvous_beta_v3/animations/text_fade_in.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/pages/home_page.dart';
 import 'package:rendezvous_beta_v3/pages/intro_page.dart';
-import 'package:rendezvous_beta_v3/pages/verification_page.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 
 import '../models/users.dart';
@@ -88,11 +87,3 @@ class _LoadingPageState extends State<LoadingPage> {
     );
   }
 }
-
-// ShaderMask(
-// blendMode: BlendMode.srcIn,
-// shaderCallback: (bounds) => kButtonGradient.createShader(
-// Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-// child: TextFadeIn(
-// text: "Rendezvous", style: kTextStyle.copyWith(fontSize: 50)),
-// ),

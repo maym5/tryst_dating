@@ -80,7 +80,7 @@ class _SignUpPageState extends State<SignUpPage> {
       );
 
   PreferredSizeWidget get _appBar => PreferredSize(
-    preferredSize: Size(double.infinity, 30),
+    preferredSize: const Size(double.infinity, 30),
     child: AppBar(
       backgroundColor: Colors.transparent,
           leading: BackButton(
