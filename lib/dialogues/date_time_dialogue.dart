@@ -7,15 +7,9 @@ import 'package:rendezvous_beta_v3/dialogues/pick_another_day_dialogue.dart';
 import 'package:rendezvous_beta_v3/widgets/gradient_button.dart';
 import '../constants.dart';
 
-class DateTimeDialogue extends StatefulWidget {
-  const DateTimeDialogue({Key? key, required this.setDateTime}) : super(key: key);
+class DateTimeDialogue extends StatelessWidget {
+  DateTimeDialogue({Key? key, required this.setDateTime}) : super(key: key);
   final void Function(DateTime date, TimeOfDay time) setDateTime;
-
-  @override
-  State<DateTimeDialogue> createState() => _DateTimeDialogueState();
-}
-
-class _DateTimeDialogueState extends State<DateTimeDialogue> {
   bool yesOrNo = false;
 
   bool _decideWhichDaysToEnable(DateTime day) {
@@ -164,7 +158,7 @@ class _DateTimeDialogueState extends State<DateTimeDialogue> {
     }
 
     if (pickedTime != null && picked != null) {
-      widget.setDateTime(picked!, pickedTime!);
+      setDateTime(picked!, pickedTime!);
     }
   }
 

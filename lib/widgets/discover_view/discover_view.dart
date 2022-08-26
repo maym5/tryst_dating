@@ -3,9 +3,12 @@ import 'package:rendezvous_beta_v3/widgets/discover_view/ratings_circle.dart';
 import '../../services/discover_service.dart';
 import '../profile_view/profile_view.dart';
 
-
 class DiscoverView extends StatefulWidget {
-  const DiscoverView({Key? key, required this.data, required this.onDragUpdate}) : super(key: key);
+  const DiscoverView(
+      {Key? key,
+      required this.data,
+      required this.onDragUpdate,})
+      : super(key: key);
   final DiscoverData data;
   final void Function(double) onDragUpdate;
 
@@ -28,17 +31,15 @@ class _DiscoverViewState extends State<DiscoverView> {
     double userDragDistance = details.delta.distance;
     double userDragDirection = details.delta.dx;
     bool safeToDrag = (_userRating +
-        (userDragDirection.sign *
-            (userDragDistance / _dragRadius))) <=
-        10 &&
+                (userDragDirection.sign * (userDragDistance / _dragRadius))) <=
+            10 &&
         _userRating +
-            (userDragDirection.sign *
-                (userDragDistance / _dragRadius)) >=
+                (userDragDirection.sign * (userDragDistance / _dragRadius)) >=
             0;
     if (safeToDrag) {
       setState(() {
         _userRating +=
-        (userDragDirection.sign * (userDragDistance / _dragRadius));
+            (userDragDirection.sign * (userDragDistance / _dragRadius));
       });
     }
     widget.onDragUpdate(_userRating);
@@ -56,7 +57,6 @@ class _DiscoverViewState extends State<DiscoverView> {
     _visible = false;
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -80,4 +80,3 @@ class _DiscoverViewState extends State<DiscoverView> {
     );
   }
 }
-
