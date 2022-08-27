@@ -213,6 +213,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
           } else if (!snapshot.hasData) {
             if (widget.firstTime) {
               return PageView(
+                scrollDirection: Axis.vertical,
                 children: [
                   const DemoProfile(),
                   noDataMessage
@@ -223,6 +224,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
           } else {
             if (widget.firstTime) {
               return PageView(
+                scrollDirection: Axis.vertical,
                 children: [
                   const DemoProfile(),
                   errorMessage
