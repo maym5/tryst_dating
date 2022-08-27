@@ -30,7 +30,7 @@ class Rendezvous extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.dark(),
-      initialRoute: TestDemoPage.id,
+      initialRoute: LoadingPage.id,
       routes: <String, WidgetBuilder> {
         IntroPage.id : (BuildContext context) => const IntroPage(),
         LoadingPage.id : (BuildContext context) => const LoadingPage(),

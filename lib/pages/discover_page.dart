@@ -4,6 +4,7 @@ import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/models/dates_model.dart';
 import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import 'package:rendezvous_beta_v3/services/match_data_service.dart';
+import 'package:rendezvous_beta_v3/widgets/discover_view/demo_profile.dart';
 import 'package:rendezvous_beta_v3/widgets/discover_view/discover_view.dart';
 import 'package:rendezvous_beta_v3/widgets/like_widget.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
@@ -13,7 +14,8 @@ import 'package:simple_ripple_animation/simple_ripple_animation.dart';
 
 class DiscoverPage extends StatefulWidget {
   static const id = "discover_page";
-  const DiscoverPage({Key? key}) : super(key: key);
+  const DiscoverPage({Key? key, this.firstTime = false}) : super(key: key);
+  final bool firstTime;
 
   @override
   _DiscoverPageState createState() => _DiscoverPageState();
@@ -117,12 +119,12 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
   Future<void> get createNewMatch async {
     await MatchDataService.setMatchData(
-            currentDiscoverUID: _currentUID,
-            userRating: _userRating,
-            image: _currentDiscoverData.images[0],
-            name: _currentDiscoverData.name,
-            age: _currentDiscoverData.age,
-            dateTypes: _currentDiscoverData.dates);
+        currentDiscoverUID: _currentUID,
+        userRating: _userRating,
+        image: _currentDiscoverData.images[0],
+        name: _currentDiscoverData.name,
+        age: _currentDiscoverData.age,
+        dateTypes: _currentDiscoverData.dates);
   }
 
   @override
@@ -150,9 +152,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 controller: _pageController,
                 physics: _physics,
                 scrollDirection: Axis.vertical,
-                itemCount: snapshot.data!.length + 1,
+                itemCount: widget.firstTime ? snapshot.data!.length + 2 : snapshot.data!.length + 1,
                 itemBuilder: (context, index) {
-                  if (index < snapshot.data!.length) {
+                  if (index < snapshot.data!.length && !widget.firstTime) {
                     _displayedDoc =
                         snapshot.data![index].data() as Map<String, dynamic>;
                     if (index == 0) {
@@ -173,6 +175,35 @@ class _DiscoverPageState extends State<DiscoverPage> {
                         ),
                       ],
                     );
+                  } else if (widget.firstTime) {
+                    if (index == 0) {
+                      return const DemoProfile();
+                    } else {
+                      if (index < snapshot.data!.length) {
+                        _displayedDoc = snapshot.data![index - 1].data()
+                            as Map<String, dynamic>;
+                        if (index == 1) {
+                          _currentDoc =
+                              snapshot.data![0].data() as Map<String, dynamic>;
+                        }
+                        return Stack(
+                          children: [
+                            DiscoverView(
+                              data: _displayedDiscoverData,
+                              onDragUpdate: setUserRating,
+                            ),
+                            Center(
+                              child: LikeWidget(
+                                animation: _animation,
+                                userRating: _userRating,
+                              ),
+                            ),
+                          ],
+                        );
+                      } else {
+                         return noDataMessage;
+                      }
+                    }
                   } else {
                     return noDataMessage;
                   }
@@ -180,8 +211,24 @@ class _DiscoverPageState extends State<DiscoverPage> {
           } else if (snapshot.connectionState == ConnectionState.waiting) {
             return waitingAnimation;
           } else if (!snapshot.hasData) {
+            if (widget.firstTime) {
+              return PageView(
+                children: [
+                  const DemoProfile(),
+                  noDataMessage
+                ],
+              );
+            }
             return noDataMessage;
           } else {
+            if (widget.firstTime) {
+              return PageView(
+                children: [
+                  const DemoProfile(),
+                  errorMessage
+                ],
+              );
+            }
             return errorMessage;
           }
         },
@@ -196,8 +243,8 @@ class DiscoverLoadingAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        decoration: const BoxDecoration(
-            shape: BoxShape.circle, color: kPopUpColor),
+        decoration:
+            const BoxDecoration(shape: BoxShape.circle, color: kPopUpColor),
         child: CircleAvatar(
           backgroundColor: kGreyWithAlpha,
           radius: 50,

@@ -8,8 +8,9 @@ import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 
 class HomePage extends StatefulWidget {
   static const id = "home_page";
-  const HomePage({Key? key, this.initialPage = 1}) : super(key: key);
+  const HomePage({Key? key, this.initialPage = 1, this.firstTime = false}) : super(key: key);
   final int initialPage;
+  final bool firstTime;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -92,7 +93,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               _navigateTo(1);
             },
           ),
-          const DiscoverPage(),
+          DiscoverPage(firstTime: widget.firstTime),
           const MatchPage(),
         ],
       ),

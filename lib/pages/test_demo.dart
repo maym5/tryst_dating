@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rendezvous_beta_v3/widgets/discover_view/demo_profile.dart';
+import 'package:rendezvous_beta_v3/pages/home_page.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 
 class TestDemoPage extends StatefulWidget {
@@ -14,7 +14,7 @@ class _TestDemoPageState extends State<TestDemoPage> {
   @override
   Widget build(BuildContext context) {
     return const PageBackground(
-        body: DemoProfile(),
+        body: HomePage(firstTime: true,),
     );
   }
 }

@@ -29,7 +29,8 @@ class _LoadingPageState extends State<LoadingPage> {
       await UserData().setLocation();
       await UserData().getUserData();
       setState(() => _showIndicator = false);
-      Navigator.pushNamed(context, HomePage.id);
+      // Navigator.pushNamed(context, HomePage.id);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage(firstTime: true,)));
     } else {
       Navigator.pushNamed(context, IntroPage.id);
     }
