@@ -55,7 +55,7 @@ class _UserEditPageState extends State<UserEditPage>{
         child: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: Colors.black45,
-          title: Text("Rendezvous", style: kTextStyle.copyWith(color: Colors.redAccent)),
+          title: Text("tryst", style: kTextStyle.copyWith(color: Colors.redAccent)),
           actions: [
             // get current user and only show this if they're on discover
             IconButton(

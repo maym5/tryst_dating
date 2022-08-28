@@ -9,7 +9,8 @@ import 'image_background.dart';
 
 class UserProfile extends StatelessWidget {
   static const id = "profile";
-  const UserProfile({Key? key}) : super(key: key);
+  const UserProfile({Key? key, this.homePage = false}) : super(key: key);
+  final bool homePage;
 
   Widget _buttons(BuildContext context) => Align(
         alignment: const Alignment(0.95, -0.8),
@@ -38,6 +39,16 @@ class UserProfile extends StatelessWidget {
         ),
       );
 
+  Widget _backButton(BuildContext context) => Align(
+    alignment: const Alignment(-0.9, -0.9),
+    child: BackButton(
+      color: Colors.white70,
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     return PageBackground(
@@ -50,7 +61,7 @@ class UserProfile extends StatelessWidget {
             age: UserData.age!,
             dateTypes: UserData.dates.toList(),
           ),
-          _buttons(context)
+          !homePage ? _buttons(context) : _backButton(context)
         ],
       ),
     );

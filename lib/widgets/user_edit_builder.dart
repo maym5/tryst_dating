@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rendezvous_beta_v3/widgets/profile_view/profile_view.dart';
 import 'fields/date_type_picker.dart';
 import 'fields/gender_field.dart';
 import 'fields/photo_picker.dart';
@@ -14,7 +15,7 @@ class UserEditBuilder extends StatelessWidget {
   final bool showErrors;
   final void Function() onButtonPress;
   final bool homePage;
-  static int itemCount = 11;
+  static int itemCount = 12;
 
 
   @override
@@ -37,16 +38,23 @@ class UserEditBuilder extends StatelessWidget {
     ];
     if (index <= fields.length - 1) {
       return TileCard(child: fields[index]);
-    } return SizedBox(
-      height: 150,
-      width: double.infinity,
-      child: Padding(
-        padding: const EdgeInsets.all(35),
+    } else if (index == fields.length) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(35, 35, 35, 10),
         child: GradientButton(
             title: homePage ? "Save Changes" : "Check out your profile",
             onPressed: onButtonPress
         ),
+      );
+    }
+    return homePage ? Padding(
+      padding: const EdgeInsets.fromLTRB(35, 0, 35, 0),
+      child: GradientButton(
+          title: "Check out profile",
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfile(homePage: homePage)));
+          }
       ),
-    );
+    ) : Container();
   }
 }

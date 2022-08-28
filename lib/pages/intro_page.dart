@@ -33,14 +33,14 @@ class IntroPage extends StatelessWidget {
         "The dating app that puts dates ahead of swipes. "
             "By generating a date idea as soon as you match to help get the ball rolling,"
             " online dating has never been easier. So what are you waiting for? Start an account and remember"
-            " every adventure starts with a Rendezvous.", style: kTextStyle.copyWith(fontSize: 18), textAlign: TextAlign.center,
+            " every love story starts with a tryst.", style: kTextStyle.copyWith(fontSize: 18), textAlign: TextAlign.center,
     ),
   );
 
   Widget get _title => const Padding(
     padding: EdgeInsets.only(bottom: 10),
     child: Text(
-      "Welcome to Rendezvous",
+      "Welcome to tryst",
       textAlign: TextAlign.center,
       style: TextStyle(color: Colors.redAccent, fontSize: 35),
     ),

@@ -78,7 +78,7 @@ class _LoadingPageState extends State<LoadingPage> {
               shaderCallback: (bounds) => kButtonGradient.createShader(
                   Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
               child: TextFadeIn(
-                  text: "Rendezvous", style: kTextStyle.copyWith(fontSize: 50)),
+                  text: "tryst", style: kTextStyle.copyWith(fontSize: 50)),
             ),
             _progressIndicator
           ],
