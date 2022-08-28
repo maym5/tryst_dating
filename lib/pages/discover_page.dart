@@ -83,7 +83,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
   Widget get noDataMessage => Center(
         child: Text(
-          "There's no one in your area, try increasing your search distance to keep rating",
+          "You've seen everyone in your area! Check in later or try increasing your search distance to keep rating",
           textAlign: TextAlign.center,
           style: kTextStyle,
           softWrap: true,
@@ -152,7 +152,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 controller: _pageController,
                 physics: _physics,
                 scrollDirection: Axis.vertical,
-                itemCount: widget.firstTime ? snapshot.data!.length + 2 : snapshot.data!.length + 1,
+                itemCount: widget.firstTime
+                    ? snapshot.data!.length + 2
+                    : snapshot.data!.length + 1,
                 itemBuilder: (context, index) {
                   if (index < snapshot.data!.length && !widget.firstTime) {
                     _displayedDoc =
@@ -201,7 +203,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                           ],
                         );
                       } else {
-                         return noDataMessage;
+                        return noDataMessage;
                       }
                     }
                   } else {
@@ -214,10 +216,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
             if (widget.firstTime) {
               return PageView(
                 scrollDirection: Axis.vertical,
-                children: [
-                  const DemoProfile(),
-                  noDataMessage
-                ],
+                children: [const DemoProfile(), noDataMessage],
               );
             }
             return noDataMessage;
@@ -225,10 +224,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
             if (widget.firstTime) {
               return PageView(
                 scrollDirection: Axis.vertical,
-                children: [
-                  const DemoProfile(),
-                  errorMessage
-                ],
+                children: [const DemoProfile(), errorMessage],
               );
             }
             return errorMessage;

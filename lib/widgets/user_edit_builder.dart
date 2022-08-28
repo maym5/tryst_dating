@@ -77,7 +77,7 @@ class UserEditBuilder extends StatelessWidget {
       ) : Container();
     }
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 35, 0, 35),
+      padding: const EdgeInsets.fromLTRB(0, 35, 0, 50),
       child: Center(
         child: Row(
           mainAxisSize: MainAxisSize.min,
