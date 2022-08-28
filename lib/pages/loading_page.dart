@@ -45,6 +45,12 @@ class _LoadingPageState extends State<LoadingPage> {
         )
       : Container();
 
+  Widget get _logo => Image.asset(
+    "assets/images/rendezvous_logo.png",
+    height: 300,
+    width: 300,
+  );
+
   @override
   void initState() {
     _showIndicator = false;
@@ -64,22 +70,15 @@ class _LoadingPageState extends State<LoadingPage> {
               delay: 1500,
               verticalOffset: -0.35,
               horizontalOffset: 0,
-              child: Image.asset(
-                "assets/images/rendezvous_logo.png",
-                height: 300,
-                width: 300,
-              ),
+              child: _logo,
             ),
             const SizedBox(
               height: 25,
             ),
-            ShaderMask(
-              blendMode: BlendMode.srcIn,
-              shaderCallback: (bounds) => kButtonGradient.createShader(
-                  Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-              child: TextFadeIn(
-                  text: "tryst", style: kTextStyle.copyWith(fontSize: 50)),
-            ),
+            TextFadeIn(
+                text: "tryst",
+                style:
+                    kTextStyle.copyWith(fontSize: 50, color: Colors.redAccent)),
             _progressIndicator
           ],
         ),

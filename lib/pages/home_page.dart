@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 onPressed: () {
                   _navigateTo(2);
                 },
-                icon: const Icon(Icons.add_business_rounded),
+                icon: const Icon(Icons.calendar_today),
                 color: _currentPage == 2 ? Colors.redAccent : Colors.white)
           ],
         ),
