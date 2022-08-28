@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/widgets/profile_view/profile_view.dart';
 import 'fields/date_type_picker.dart';
 import 'fields/gender_field.dart';
@@ -15,8 +16,26 @@ class UserEditBuilder extends StatelessWidget {
   final bool showErrors;
   final void Function() onButtonPress;
   final bool homePage;
-  static int itemCount = 12;
+  static int itemCount = 13;
 
+
+  Widget get _version => Text("version 1.0.0+1", style: kTextStyle.copyWith(fontSize: 12),);
+
+  Widget get _privacyPolicy => GestureDetector(
+    onTap: _launchPrivacyPolicy,
+    child: const Text(
+      "Privacy Policy",
+      style: TextStyle(
+          decoration: TextDecoration.underline,
+        color: Colors.redAccent,
+        fontSize: 13
+      ),
+    ),
+  );
+
+  void _launchPrivacyPolicy() {
+    // TODO: implement
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,15 +65,29 @@ class UserEditBuilder extends StatelessWidget {
             onPressed: onButtonPress
         ),
       );
+    } else if (index == fields.length + 1) {
+      return homePage ? Padding(
+        padding: const EdgeInsets.fromLTRB(35, 0, 35, 0),
+        child: GradientButton(
+            title: "Check out profile",
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfile(homePage: homePage)));
+            }
+        ),
+      ) : Container();
     }
-    return homePage ? Padding(
-      padding: const EdgeInsets.fromLTRB(35, 0, 35, 0),
-      child: GradientButton(
-          title: "Check out profile",
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfile(homePage: homePage)));
-          }
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 35, 0, 35),
+      child: Center(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _version,
+            const SizedBox(width: 10,),
+            _privacyPolicy
+          ],
+        ),
       ),
-    ) : Container();
+    );
   }
 }

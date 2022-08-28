@@ -47,41 +47,45 @@ class _UserEditPageState extends State<UserEditPage>{
 
   IconData get _optionsIcon => Platform.isIOS ? Icons.more_horiz : Icons.more_vert;
 
+  PreferredSize get _appBar => PreferredSize(
+    preferredSize: const Size(double.infinity, 50),
+    child: AppBar(
+      automaticallyImplyLeading: false,
+      backgroundColor: Colors.black45,
+      title: Text("tryst", style: kTextStyle.copyWith(color: Colors.redAccent)),
+      actions: [
+        // get current user and only show this if they're on discover
+        IconButton(
+          icon: Icon(_optionsIcon),
+          color: Colors.redAccent,
+          onPressed: () {
+            showGeneralDialog(
+              barrierColor: Colors.black.withOpacity(0.5),
+              context: context,
+              transitionBuilder: (ctx, _animation, _, child) =>
+                  LogOutDialogue(animation: _animation),
+              pageBuilder: (BuildContext context, _animation, _) {
+                return Container();
+              },
+              transitionDuration: const Duration(milliseconds: 200),
+              barrierDismissible: true,
+              barrierLabel: '',
+            );
+          },
+        )
+      ],
+    ),
+  );
+
+  CircularProgressIndicator get _indicator => const CircularProgressIndicator(color: Colors.redAccent);
+
   @override
   Widget build(BuildContext context) {
     return PageBackground(
-      appBar: PreferredSize(
-        preferredSize: const Size(double.infinity, 50),
-        child: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.black45,
-          title: Text("tryst", style: kTextStyle.copyWith(color: Colors.redAccent)),
-          actions: [
-            // get current user and only show this if they're on discover
-            IconButton(
-              icon: Icon(_optionsIcon),
-              color: Colors.redAccent,
-              onPressed: () {
-                showGeneralDialog(
-                  barrierColor: Colors.black.withOpacity(0.5),
-                  context: context,
-                  transitionBuilder: (ctx, _animation, _, child) =>
-                      LogOutDialogue(animation: _animation),
-                  pageBuilder: (BuildContext context, _animation, _) {
-                    return Container();
-                  },
-                  transitionDuration: const Duration(milliseconds: 200),
-                  barrierDismissible: true,
-                  barrierLabel: '',
-                );
-              },
-            )
-          ],
-        ),
-      ),
+      appBar: _appBar,
       body: ModalProgressHUD(
         inAsyncCall: showSpinners,
-        progressIndicator: const CircularProgressIndicator(color: Colors.redAccent),
+        progressIndicator: _indicator,
         color: kDarkTransparent,
         child: ListView.builder(
           itemCount: UserEditBuilder.itemCount,
