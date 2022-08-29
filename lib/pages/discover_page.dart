@@ -83,7 +83,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
   Widget get noDataMessage => Center(
         child: Text(
-          "You've seen everyone in your area! Check in later or try increasing your search distance to keep rating",
+          "You've seen everyone in your area! We just launched so check in later or try increasing your search distance to keep rating",
           textAlign: TextAlign.center,
           style: kTextStyle,
           softWrap: true,
