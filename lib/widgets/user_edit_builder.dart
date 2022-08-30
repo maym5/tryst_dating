@@ -112,7 +112,7 @@ class UserEditBuilder extends StatelessWidget {
             const SizedBox(
               width: 10,
             ),
-            _privacyPolicy
+            _privacyPolicy(context)
           ],
         ),
       ),
