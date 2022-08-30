@@ -126,7 +126,7 @@ class _DateTypePickerState extends State<DateTypePicker> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        const FieldTitle("How do you want to Rendezvous?"),
+        const FieldTitle("How do you want to tryst?"),
         Padding(
           padding: kWrapPadding,
           child: Wrap(
