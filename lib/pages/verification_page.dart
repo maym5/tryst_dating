@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/dialogues/error_dialogue.dart';
 import 'package:rendezvous_beta_v3/dialogues/resent_email_dialogue.dart';
+import 'package:rendezvous_beta_v3/pages/intro_page.dart';
 import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 import '../services/authentication_service.dart';
@@ -97,6 +98,17 @@ class _VerificationPageState extends State<VerificationPage> {
   Widget build(BuildContext context) {
     return PageBackground(
         decoration: kWelcomePageDecoration,
+        appBar: PreferredSize(
+          preferredSize: const Size(double.infinity, 30),
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+            leading: BackButton(
+              onPressed: () {
+                Navigator.pushNamed(context, IntroPage.id);
+              },
+            ),
+          ),
+        ),
         body: Align(
           alignment: const Alignment(0, -0.3),
           child: Column(

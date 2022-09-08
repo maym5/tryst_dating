@@ -17,6 +17,9 @@ class ResentEmailDialogue extends StatelessWidget {
             color: Colors.redAccent,
             fontSize: 25
         )),
+        const SizedBox(
+          height: 50,
+        ),
         GradientButton(title: "Okay!", onPressed: () {
           Navigator.pop(context);
         })

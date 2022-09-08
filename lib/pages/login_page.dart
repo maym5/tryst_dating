@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:rendezvous_beta_v3/pages/verification_page.dart';
 import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import 'package:rendezvous_beta_v3/services/push_notifications_service.dart';
 import '../constants.dart';
@@ -108,10 +110,14 @@ class _LoginPageState extends State<LoginPage> {
             break;
         }
       } else {
-        await UserData().setLocation();
-        await UserData().getUserData();
-        await PushNotificationService.initialize();
-        Navigator.pushNamed(context, HomePage.id);
+        if (result is User && result.emailVerified) {
+          await UserData().setLocation();
+          await UserData().getUserData();
+          await PushNotificationService.initialize();
+          Navigator.pushNamed(context, HomePage.id);
+        } else {
+          Navigator.pushNamed(context, VerificationPage.id);
+        }
       }
     } else if (loginInputs['password'] == "") {
       setState(() => _showSpinner = false);
