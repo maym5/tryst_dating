@@ -39,10 +39,7 @@ class UserEditBuilder extends StatelessWidget {
         },
         child: const Text(
           "Privacy Policy",
-          style: TextStyle(
-              decoration: TextDecoration.underline,
-              color: Colors.redAccent,
-              fontSize: 13),
+          style: kHyperLinkTextStyle,
         ),
       );
 

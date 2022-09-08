@@ -193,20 +193,10 @@ const kWelcomePageDecoration = BoxDecoration(
   ),
 );
 
-// BoxDecoration(
-// gradient: LinearGradient(
-// begin: Alignment.topLeft,
-// end: Alignment.bottomRight,
-// colors: [
-// Color(0xFFFD297B),
-// Color(0xFFFF655B),
-// Color(0xFFFF655B),
-// ],
-// stops: [
-// 0.12, 0.8, 1
-// ],
-// ),
-// );
+const kHyperLinkTextStyle = TextStyle(
+    decoration: TextDecoration.underline,
+    color: Colors.redAccent,
+    fontSize: 13);
 
 const kPageBackgroundDecoration = BoxDecoration(
   color: kEggShell
