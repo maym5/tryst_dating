@@ -5,6 +5,7 @@ import 'package:rendezvous_beta_v3/animations/text_fade_in.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/pages/home_page.dart';
 import 'package:rendezvous_beta_v3/pages/intro_page.dart';
+import 'package:rendezvous_beta_v3/pages/verification_page.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 
 import '../models/users.dart';
@@ -24,14 +25,17 @@ class _LoadingPageState extends State<LoadingPage> {
   Future load() async {
     await Future.delayed(const Duration(seconds: 4));
     final User? currentUser = _auth.currentUser;
-    if (currentUser != null) {
+    if (currentUser != null && currentUser.emailVerified) {
       setState(() => _showIndicator = true);
       await UserData().setLocation();
       await UserData().getUserData();
       setState(() => _showIndicator = false);
       Navigator.pushNamed(context, HomePage.id);
-    } else {
+    } else if (currentUser == null) {
       Navigator.pushNamed(context, IntroPage.id);
+    }
+    else {
+      Navigator.pushNamed(context, VerificationPage.id);
     }
   }
 
