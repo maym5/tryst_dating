@@ -164,23 +164,7 @@ class UserData with ChangeNotifier {
     UserImages.getImagesFromUserData();
   }
 
-  // Future<bool> uploadUserLocation() async {
-  //   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  //   User? _user = retrieveUser();
-  //   try {
-  //     await _db.collection("userData").doc(_user?.uid).update({
-  //       "latitude": UserData.location!.latitude,
-  //       "longitude": UserData.location!.longitude,
-  //     });
-  //     return true;
-  //   } catch (e) {
-  //     return false;
-  //   }
-  // }
-
   Future<void> setLocation() async {
     UserData.location = await UserData.userLocation;
-    // uploadUserLocation()
-    //     .then((value) => value ? null : throw ("couldn't upload location"));
   }
 }
