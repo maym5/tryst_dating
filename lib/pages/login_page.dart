@@ -111,7 +111,8 @@ class _LoginPageState extends State<LoginPage> {
         }
       } else {
         if (result is User && result.emailVerified) {
-          await UserData().setLocation();
+          // TODO: change here
+          // await UserData().setLocation();
           await UserData().getUserData();
           await PushNotificationService.initialize();
           Navigator.pushNamed(context, HomePage.id);

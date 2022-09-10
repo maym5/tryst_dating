@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/animations/fade_in_animation.dart';
@@ -5,6 +6,7 @@ import 'package:rendezvous_beta_v3/animations/text_fade_in.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/pages/home_page.dart';
 import 'package:rendezvous_beta_v3/pages/intro_page.dart';
+import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
 import 'package:rendezvous_beta_v3/pages/verification_page.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 
@@ -24,18 +26,30 @@ class _LoadingPageState extends State<LoadingPage> {
 
   Future load() async {
     await Future.delayed(const Duration(seconds: 4));
+    FirebaseFirestore _db = FirebaseFirestore.instance;
     final User? currentUser = _auth.currentUser;
     if (currentUser != null && currentUser.emailVerified) {
       setState(() => _showIndicator = true);
-      await UserData().setLocation();
-      await UserData().getUserData();
-      setState(() => _showIndicator = false);
-      Navigator.pushNamed(context, HomePage.id);
+      _db.collection("userData").doc(currentUser.uid)
+          .get()
+          .then(
+              (doc) async {
+                if (doc.exists) {
+                  // TODO: change here
+                  // await UserData().setLocation();
+                  await UserData().getUserData();
+                  setState(() => _showIndicator = false);
+                  Navigator.pushNamed(context, HomePage.id);
+                } else {
+                  Navigator.pushNamed(context, UserEditPage.id);
+                }
+              });
     } else if (currentUser == null) {
       Navigator.pushNamed(context, IntroPage.id);
-    }
-    else {
+    } else if (!currentUser.emailVerified) {
       Navigator.pushNamed(context, VerificationPage.id);
+    } else {
+      Navigator.pushNamed(context, IntroPage.id);
     }
   }
 

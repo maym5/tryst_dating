@@ -22,7 +22,8 @@ class DiscoverService {
     return uids;
   }
 
-  Set<QueryDocumentSnapshot> peopleInArea(QuerySnapshot lat, QuerySnapshot long) {
+  Set<QueryDocumentSnapshot> peopleInArea(
+      QuerySnapshot lat, QuerySnapshot long) {
     final Set<QueryDocumentSnapshot> result = {};
     final List<QueryDocumentSnapshot> _latDocs = lat.docs;
     final Set<String> _longUIDs = getQueryUID(long);
@@ -37,13 +38,36 @@ class DiscoverService {
     return result;
   }
 
+  // String isRebeccaInSet(Set<String> uids, String setTag) {
+  //   // TODO: delete this
+  //   const String rebecca = "yb4DGHUek1TvmDXLRvlFqCB9fD02";
+  //   for (String uid in uids) {
+  //     if (uid == rebecca) {
+  //       return "rebecca in $setTag";
+  //     }
+  //   }
+  //   return "rebecca not in $setTag";
+  // }
+  //
+  // String isRebeccaInArea(
+  //     Set<QueryDocumentSnapshot> areaMatches) {
+  //   const String rebecca = "yb4DGHUek1TvmDXLRvlFqCB9fD02";
+  //   for (QueryDocumentSnapshot doc in areaMatches) {
+  //     if (doc.exists) {
+  //       final Map<String, dynamic> _data = doc.data() as Map<String, dynamic>;
+  //       if (_data["uid"] == rebecca) {
+  //         return "Becca in area";
+  //       }
+  //     }
+  //   } return "Becca gone";
+  // }
+
   Stream<List<QueryDocumentSnapshot<Map>>> get discoverStream async* {
     // this does it all now
     List<QueryDocumentSnapshot<Map>> discover = [];
     FirebaseFirestore _db = FirebaseFirestore.instance;
     final discoverRef = _db.collection("userData");
     final Map<String, double> _searchRadius = _userSearchRect;
-
     final QuerySnapshot withinLat = await discoverRef
         .where("latitude", isGreaterThan: _searchRadius["minLat"])
         .where("latitude", isLessThan: _searchRadius["maxLat"])
@@ -53,7 +77,10 @@ class DiscoverService {
         .where("longitude", isGreaterThan: _searchRadius["minLon"])
         .where("longitude", isLessThan: _searchRadius["maxLon"])
         .get();
-    final Set<QueryDocumentSnapshot> areaMatch = peopleInArea(withinLat, withinLong);
+    final Set<QueryDocumentSnapshot> areaMatch =
+        peopleInArea(withinLat, withinLong);
+
+    // print(areaMatch);
 
     final QuerySnapshot dateMatches = await discoverRef
         .where("dates", arrayContainsAny: currentUserData["dates"])
@@ -97,8 +124,7 @@ class DiscoverService {
     for (QueryDocumentSnapshot doc in areaMatch) {
       final Map _data = doc.data() as Map;
       final _uid = _data["uid"];
-      if (
-      dateMatchesUID.contains(_uid) &&
+      if (dateMatchesUID.contains(_uid) &&
           ageMatchUID.contains(_uid) &&
           genderMatchUID.contains(_uid) &&
           (maxPriceUID.contains(_uid) || minPriceUID.contains(_uid)) &&
