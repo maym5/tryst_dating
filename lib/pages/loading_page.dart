@@ -35,8 +35,6 @@ class _LoadingPageState extends State<LoadingPage> {
           .then(
               (doc) async {
                 if (doc.exists) {
-                  // TODO: change here
-                  // await UserData().setLocation();
                   await UserData().getUserData();
                   setState(() => _showIndicator = false);
                   Navigator.pushNamed(context, HomePage.id);

@@ -159,28 +159,28 @@ class UserData with ChangeNotifier {
     final DocumentSnapshot snapshot =
         await _fireStore.collection("userData").doc(_user?.uid).get();
     final Map<String, dynamic> _data = snapshot.data() as Map<String, dynamic>;
-    UserData.location = await userLocation;
+    setLocation();
     fromJson(_data);
     UserImages.getImagesFromUserData();
   }
 
-  // Future<bool> uploadUserLocation() async {
-  //   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  //   User? _user = retrieveUser();
-  //   try {
-  //     await _db.collection("userData").doc(_user?.uid).update({
-  //       "latitude": UserData.location!.latitude,
-  //       "longitude": UserData.location!.longitude,
-  //     });
-  //     return true;
-  //   } catch (e) {
-  //     return false;
-  //   }
-  // }
+  Future<bool> uploadUserLocation() async {
+    final FirebaseFirestore _db = FirebaseFirestore.instance;
+    User? _user = retrieveUser();
+    try {
+      await _db.collection("userData").doc(_user?.uid).update({
+        "latitude": UserData.location!.latitude,
+        "longitude": UserData.location!.longitude,
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
   Future<void> setLocation() async {
     UserData.location = await UserData.userLocation;
-    // uploadUserLocation()
-    //     .then((value) => value ? null : throw ("couldn't upload location"));
+    uploadUserLocation()
+        .then((value) => value ? null : throw ("couldn't upload location"));
   }
 }
