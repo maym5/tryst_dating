@@ -38,30 +38,6 @@ class DiscoverService {
     return result;
   }
 
-  // String isRebeccaInSet(Set<String> uids, String setTag) {
-  //   // TODO: delete this
-  //   const String rebecca = "yb4DGHUek1TvmDXLRvlFqCB9fD02";
-  //   for (String uid in uids) {
-  //     if (uid == rebecca) {
-  //       return "rebecca in $setTag";
-  //     }
-  //   }
-  //   return "rebecca not in $setTag";
-  // }
-  //
-  // String isRebeccaInArea(
-  //     Set<QueryDocumentSnapshot> areaMatches) {
-  //   const String rebecca = "yb4DGHUek1TvmDXLRvlFqCB9fD02";
-  //   for (QueryDocumentSnapshot doc in areaMatches) {
-  //     if (doc.exists) {
-  //       final Map<String, dynamic> _data = doc.data() as Map<String, dynamic>;
-  //       if (_data["uid"] == rebecca) {
-  //         return "Becca in area";
-  //       }
-  //     }
-  //   } return "Becca gone";
-  // }
-
   Stream<List<QueryDocumentSnapshot<Map>>> get discoverStream async* {
     // this does it all now
     List<QueryDocumentSnapshot<Map>> discover = [];
@@ -80,7 +56,6 @@ class DiscoverService {
     final Set<QueryDocumentSnapshot> areaMatch =
         peopleInArea(withinLat, withinLong);
 
-    // print(areaMatch);
 
     final QuerySnapshot dateMatches = await discoverRef
         .where("dates", arrayContainsAny: currentUserData["dates"])
