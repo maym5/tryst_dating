@@ -80,8 +80,6 @@ class DiscoverService {
     final Set<QueryDocumentSnapshot> areaMatch =
         peopleInArea(withinLat, withinLong);
 
-    // print(areaMatch);
-
     final QuerySnapshot dateMatches = await discoverRef
         .where("dates", arrayContainsAny: currentUserData["dates"])
         .get();
@@ -141,20 +139,24 @@ class DiscoverService {
   }
 
   Map<String, double> get _userSearchRect {
-    final double _radius = UserData.maxDistance! /
-        3958.8; // the radius of earth in miles is 3958.8
-    final double _minLat = UserData.location!.latitude - _radius;
-    final double _maxLat = UserData.location!.latitude + _radius;
-    final double _deltaLon =
-        asin(sin(_radius) / cos(UserData.location!.latitude));
-    final _minLon = UserData.location!.longitude - _deltaLon;
-    final _maxLon = UserData.location!.longitude + _deltaLon;
-    return {
-      "minLat": _minLat,
-      "maxLat": _maxLat,
-      "minLon": _minLon,
-      "maxLon": _maxLon
-    };
+    try {
+      final double _radius = UserData.maxDistance! /
+          3958.8; // the radius of earth in miles is 3958.8
+      final double _minLat = UserData.location!.latitude - _radius;
+      final double _maxLat = UserData.location!.latitude + _radius;
+      final double _deltaLon =
+      asin(sin(_radius) / cos(UserData.location!.latitude));
+      final _minLon = UserData.location!.longitude - _deltaLon;
+      final _maxLon = UserData.location!.longitude + _deltaLon;
+      return {
+        "minLat": _minLat,
+        "maxLat": _maxLat,
+        "minLon": _minLon,
+        "maxLon": _maxLon
+      };
+    } catch(e) {
+      return {};
+    }
   }
 
   Future<bool> youMatchTheirPreferences(String uid) async {
