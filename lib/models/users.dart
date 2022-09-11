@@ -160,7 +160,7 @@ class UserData with ChangeNotifier {
         await _fireStore.collection("userData").doc(_user?.uid).get();
     final Map<String, dynamic> _data = snapshot.data() as Map<String, dynamic>;
     fromJson(_data);
-    setLocation();
+    await setLocation();
     UserImages.getImagesFromUserData();
   }
 

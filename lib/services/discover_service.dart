@@ -3,6 +3,7 @@ import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import '../models/users.dart';
 import 'dart:math';
 
+
 class DiscoverService {
   DiscoverService();
   final Map<String, dynamic> currentUserData = UserData.toJson();
@@ -38,30 +39,6 @@ class DiscoverService {
     return result;
   }
 
-  // String isRebeccaInSet(Set<String> uids, String setTag) {
-  //   // TODO: delete this
-  //   const String rebecca = "yb4DGHUek1TvmDXLRvlFqCB9fD02";
-  //   for (String uid in uids) {
-  //     if (uid == rebecca) {
-  //       return "rebecca in $setTag";
-  //     }
-  //   }
-  //   return "rebecca not in $setTag";
-  // }
-  //
-  // String isRebeccaInArea(
-  //     Set<QueryDocumentSnapshot> areaMatches) {
-  //   const String rebecca = "yb4DGHUek1TvmDXLRvlFqCB9fD02";
-  //   for (QueryDocumentSnapshot doc in areaMatches) {
-  //     if (doc.exists) {
-  //       final Map<String, dynamic> _data = doc.data() as Map<String, dynamic>;
-  //       if (_data["uid"] == rebecca) {
-  //         return "Becca in area";
-  //       }
-  //     }
-  //   } return "Becca gone";
-  // }
-
   Stream<List<QueryDocumentSnapshot<Map>>> get discoverStream async* {
     // this does it all now
     List<QueryDocumentSnapshot<Map>> discover = [];
@@ -69,16 +46,17 @@ class DiscoverService {
     final discoverRef = _db.collection("userData");
     final Map<String, double> _searchRadius = _userSearchRect;
     final QuerySnapshot withinLat = await discoverRef
-        .where("latitude", isGreaterThan: _searchRadius["minLat"])
-        .where("latitude", isLessThan: _searchRadius["maxLat"])
+        .where("latitude", isGreaterThanOrEqualTo: _searchRadius["minLat"])
+        .where("latitude", isLessThanOrEqualTo: _searchRadius["maxLat"])
         .get();
 
     final QuerySnapshot withinLong = await discoverRef
-        .where("longitude", isGreaterThan: _searchRadius["minLon"])
-        .where("longitude", isLessThan: _searchRadius["maxLon"])
+        .where("longitude", isGreaterThanOrEqualTo: _searchRadius["minLon"])
+        .where("longitude", isLessThanOrEqualTo: _searchRadius["maxLon"])
         .get();
     final Set<QueryDocumentSnapshot> areaMatch =
         peopleInArea(withinLat, withinLong);
+
 
     final QuerySnapshot dateMatches = await discoverRef
         .where("dates", arrayContainsAny: currentUserData["dates"])
@@ -146,8 +124,8 @@ class DiscoverService {
       final double _maxLat = UserData.location!.latitude + _radius;
       final double _deltaLon =
       asin(sin(_radius) / cos(UserData.location!.latitude));
-      final _minLon = UserData.location!.longitude - _deltaLon;
-      final _maxLon = UserData.location!.longitude + _deltaLon;
+      final _minLon = UserData.location!.longitude -  _deltaLon.abs();
+      final _maxLon = UserData.location!.longitude + _deltaLon.abs();
       return {
         "minLat": _minLat,
         "maxLat": _maxLat,
@@ -155,7 +133,12 @@ class DiscoverService {
         "maxLon": _maxLon
       };
     } catch(e) {
-      return {};
+      return {
+        "minLat": 0.0,
+        "maxLat": 0.0,
+        "minLon": 0.0,
+        "maxLon": 0.0,
+      };
     }
   }
 
