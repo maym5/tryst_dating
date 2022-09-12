@@ -68,6 +68,7 @@ class _DiscoverViewState extends State<DiscoverView> {
           name: widget.data.name,
           age: widget.data.age,
           dateTypes: widget.data.dates,
+          // these can get the axe
           onDragStart: _onDragStart,
           onDragUpdate: _onDragUpdate,
           onDragEnd: _onDragEnd,

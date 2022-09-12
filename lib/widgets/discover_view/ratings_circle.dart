@@ -56,3 +56,43 @@ class RatingsCircle extends StatelessWidget {
     );
   }
 }
+
+class VerticalRatingSlider extends StatefulWidget {
+  const VerticalRatingSlider({Key? key, required this.onChanged}) : super(key: key);
+  final void Function(double) onChanged;
+
+  @override
+  State<VerticalRatingSlider> createState() => _VerticalRatingSliderState();
+}
+
+class _VerticalRatingSliderState extends State<VerticalRatingSlider> {
+  late double _userRating;
+
+  @override
+  void initState() {
+    _userRating = 5;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      height: 800,
+      width: 200,
+      child: Slider(
+        value: _userRating,
+        min: 0,
+        max: 10,
+        onChanged: (rating) {
+          setState(() => _userRating = rating);
+          widget.onChanged(rating);
+        },
+        inactiveColor: Colors.white10,
+        activeColor: Colors.black54,
+        thumbColor: Colors.white24,
+      ),
+    );
+  }
+}
+

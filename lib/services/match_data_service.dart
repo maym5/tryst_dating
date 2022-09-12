@@ -19,11 +19,13 @@ class MatchDataService {
   }
 
   Stream<QuerySnapshot> get likeStream async* {
+    // TODO: test this change
     yield* _db
         .collection("userData")
         .doc(AuthenticationService.currentUserUID)
         .collection("matches")
         .where("match", isEqualTo: false)
+        .where("otherUserRating", isNull: false)
         .snapshots();
   }
 
@@ -102,7 +104,7 @@ class MatchDataService {
         "dateType": dateType,
         "dateTime": dateTime,
         "userRating": userRating,
-        "venueID" : venueID,
+        "venueID": venueID,
         "seen": true,
         "agreedToDate": [AuthenticationService.currentUserUID]
       });
@@ -117,7 +119,7 @@ class MatchDataService {
         "dateType": dateType,
         "dateTime": dateTime,
         "otherUserRating": userRating,
-        "venueID" : venueID,
+        "venueID": venueID,
         "seen": true,
         "agreedToDate": [AuthenticationService.currentUserUID]
       });
@@ -176,7 +178,7 @@ class MatchDataService {
         "agreedToDate": [AuthenticationService.currentUserUID]
       });
       return true;
-    } catch(e) {
+    } catch (e) {
       return false;
     }
   }
@@ -202,31 +204,33 @@ class MatchDataService {
     }
   }
 
-  static Future<bool> rescheduleDate({required String otherUserUID, required DateTime dateTime}) async {
+  static Future<bool> rescheduleDate(
+      {required String otherUserUID, required DateTime dateTime}) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
     try {
       await db
           .collection("userData")
           .doc(AuthenticationService.currentUserUID)
           .collection("matches")
-          .doc(otherUserUID).update({
-        "agreedToDate" : [AuthenticationService.currentUserUID],
-        "dateTime" : dateTime,
+          .doc(otherUserUID)
+          .update({
+        "agreedToDate": [AuthenticationService.currentUserUID],
+        "dateTime": dateTime,
       });
       await db
           .collection("userData")
           .doc(otherUserUID)
           .collection("matches")
-          .doc(AuthenticationService.currentUserUID).update({
-        "agreedToDate" : [AuthenticationService.currentUserUID],
-        "dateTime" : dateTime,
+          .doc(AuthenticationService.currentUserUID)
+          .update({
+        "agreedToDate": [AuthenticationService.currentUserUID],
+        "dateTime": dateTime,
       });
       return true;
-    } catch(e) {
+    } catch (e) {
       return false;
     }
   }
-
 }
 
 class DateData {
@@ -240,8 +244,7 @@ class DateData {
       this.dateType,
       this.dateTypes,
       this.agreedToDate,
-        this.venueID
-      });
+      this.venueID});
   final String name;
   final int? age;
   final String? image;
