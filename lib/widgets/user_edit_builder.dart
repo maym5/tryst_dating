@@ -29,7 +29,7 @@ class UserEditBuilder extends StatelessWidget {
       "https://app.termly.io/document/privacy-policy/72d5eaea-f908-415a-902b-357902e9cf33");
 
   Widget get _version => Text(
-        "version 1.0.0+5",
+        "version 1.0.1+1",
         style: kTextStyle.copyWith(fontSize: 12),
       );
 

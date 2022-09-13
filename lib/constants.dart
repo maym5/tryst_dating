@@ -29,8 +29,13 @@ final kOffWhite = Colors.white.withOpacity(0.8);
 
 final kTextStyle = TextStyle(
   color: Colors.white.withOpacity(0.6),
-  fontFamily: 'Kanit',
   fontSize: 25,
+);
+
+final kRatingStyle = TextStyle(
+  color: Colors.white.withOpacity(0.6),
+  fontSize: 25,
+  fontFamily: "Kanit"
 );
 
 final kGreyWithAlpha = Colors.grey.withAlpha(50);

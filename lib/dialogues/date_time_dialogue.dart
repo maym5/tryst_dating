@@ -61,8 +61,7 @@ class DateTimeDialogue extends StatelessWidget {
       await showCupertinoModalPopup(
           context: context,
           builder: (context) => Center(
-                child: Container(
-                  color: Colors.white,
+                child: SizedBox(
                   height: 300,
                   width: 300,
                   child: Column(
@@ -73,6 +72,8 @@ class DateTimeDialogue extends StatelessWidget {
                         width: 300,
                         child: CupertinoDatePicker(
                             use24hFormat: true,
+                            initialDateTime: DateTime.now(),
+                            backgroundColor: Colors.black,
                             maximumYear: 3000,
                             minimumYear: 2000,
                             mode: CupertinoDatePickerMode.date,
@@ -92,8 +93,7 @@ class DateTimeDialogue extends StatelessWidget {
       await showCupertinoModalPopup(
           context: context,
           builder: (context) => Center(
-                child: Container(
-                    color: Colors.white,
+                child: SizedBox(
                     height: 300,
                     width: 300,
                     child: Column(
@@ -104,6 +104,7 @@ class DateTimeDialogue extends StatelessWidget {
                           width: 300,
                           child: CupertinoDatePicker(
                               minuteInterval: 5,
+                              backgroundColor: Colors.black,
                               initialDateTime: now.add(Duration(minutes: 5 - now.minute % 5)),
                               mode: CupertinoDatePickerMode.time,
                               onDateTimeChanged: (dateTime) {
