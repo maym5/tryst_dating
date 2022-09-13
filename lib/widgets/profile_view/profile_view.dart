@@ -75,13 +75,16 @@ class ProfileView extends StatefulWidget {
       required this.bio,
       required this.name,
       required this.age,
-      required this.dateTypes})
+      required this.dateTypes,
+        this.onExpanded
+      })
       : super(key: key);
   final List<String> userPhotos;
   final String name;
   final int age;
   final String bio;
   final List<String> dateTypes;
+  final void Function(bool)? onExpanded;
 
   @override
   _ProfileViewState createState() => _ProfileViewState();
@@ -130,6 +133,9 @@ class _ProfileViewState extends State<ProfileView> {
 
   void _onExpand(bool expanded) {
     setState(() => _expanded = expanded);
+    if (widget.onExpanded != null) {
+      widget.onExpanded!(expanded);
+    }
   }
 
   @override

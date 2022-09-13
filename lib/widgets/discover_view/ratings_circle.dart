@@ -144,9 +144,61 @@ class _VerticalRatingSliderState extends State<VerticalRatingSlider> {
   }
 }
 
-class RatingStack extends StatefulWidget {
-  const RatingStack({Key? key, required this.onChanged}) : super(key: key);
+class HorizontalRatingSlider extends StatefulWidget {
+  const HorizontalRatingSlider({Key? key, required this.onChanged, required this.onChangeStart, required this.onChangeEnd,required this.visible }) : super(key: key);
   final void Function(double) onChanged;
+  final void Function(double) onChangeStart;
+  final void Function(double) onChangeEnd;
+  final bool visible;
+
+  @override
+  State<HorizontalRatingSlider> createState() => _HorizontalRatingSliderState();
+}
+
+class _HorizontalRatingSliderState extends State<HorizontalRatingSlider> {
+  late double _userRating;
+
+  @override
+  void initState() {
+    _userRating = 5;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Visibility(
+      visible: widget.visible,
+      child: Align(
+        alignment: const Alignment(0, 0.45),
+        child: Container(
+          alignment: Alignment.center,
+          height: 100,
+          width: double.infinity,
+          child: Slider(
+            value: _userRating,
+            min: 0,
+            max: 10,
+            onChanged: (rating) {
+              setState(() => _userRating = rating);
+              widget.onChanged(rating);
+            },
+            onChangeEnd: widget.onChangeEnd,
+            onChangeStart: widget.onChangeStart,
+            inactiveColor: Colors.white10,
+            activeColor: Colors.black54,
+            thumbColor: Colors.white24,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+class RatingStack extends StatefulWidget {
+  const RatingStack({Key? key, required this.onChanged, required this.visible}) : super(key: key);
+  final void Function(double) onChanged;
+  final bool visible;
 
   @override
   State<RatingStack> createState() => _RatingStackState();
@@ -190,7 +242,8 @@ class _RatingStackState extends State<RatingStack> {
             userRating: _userRating,
             visible: _visible
         ),
-        VerticalRatingSlider(
+        HorizontalRatingSlider(
+          visible: widget.visible,
             onChanged: _onChanged,
             onChangeStart: _onChangeStart,
           onChangeEnd: _onChangeEnd,

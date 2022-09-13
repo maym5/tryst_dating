@@ -18,7 +18,7 @@ class DiscoverView extends StatefulWidget {
 
 class _DiscoverViewState extends State<DiscoverView> {
   // late double _userRating;
-  // late bool _visible;
+  late bool _visible;
   // final double _dragRadius = 20;
 
   // void _onDragStart(DragStartDetails details) {
@@ -51,10 +51,16 @@ class _DiscoverViewState extends State<DiscoverView> {
   //   });
   // }
 
+  void _onExpanded(bool expanded) {
+    setState(() {
+      _visible = !expanded;
+    });
+  }
+
   @override
   void initState() {
     // _userRating = 5.0;
-    // _visible = false;
+    _visible = true;
     super.initState();
   }
 
@@ -68,8 +74,9 @@ class _DiscoverViewState extends State<DiscoverView> {
           name: widget.data.name,
           age: widget.data.age,
           dateTypes: widget.data.dates,
+          onExpanded: _onExpanded,
         ),
-        RatingStack(onChanged: widget.onDragUpdate),
+        RatingStack(onChanged: widget.onDragUpdate, visible: _visible),
       ],
     );
   }

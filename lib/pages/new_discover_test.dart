@@ -12,7 +12,7 @@ class TestDiscoverPage extends StatelessWidget {
       21,
       ["https://firebasestorage.googleapis.com/v0/b/rendezvous-beta-v3.appspot.com/o/images%2Fyb4DGHUek1TvmDXLRvlFqCB9fD02%2F16627498187789570?alt=media&token=e2fcb33f-6c91-4f98-8f1f-bf969960d886"],
       ["bar"],
-      "this has been a test",
+      "this has been a test blah blah blah blah blah blah blah blah blah blah",
       "yb4DGHUek1TvmDXLRvlFqCB9fD02");
 
   @override
