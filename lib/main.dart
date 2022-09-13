@@ -6,7 +6,6 @@ import 'package:rendezvous_beta_v3/pages/intro_page.dart';
 import 'package:rendezvous_beta_v3/pages/loading_page.dart';
 import 'package:rendezvous_beta_v3/pages/login_page.dart';
 import 'package:rendezvous_beta_v3/pages/match_page.dart';
-import 'package:rendezvous_beta_v3/pages/new_discover_test.dart';
 import 'package:rendezvous_beta_v3/pages/sign_up_page.dart';
 import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
 import 'package:rendezvous_beta_v3/pages/verification_page.dart';
@@ -30,7 +29,7 @@ class Rendezvous extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.dark(),
-      initialRoute: TestDiscoverPage.id,
+      initialRoute: LoadingPage.id,
       routes: <String, WidgetBuilder> {
         IntroPage.id : (BuildContext context) => const IntroPage(),
         LoadingPage.id : (BuildContext context) => const LoadingPage(),
@@ -42,7 +41,6 @@ class Rendezvous extends StatelessWidget {
         SignUpPage.id : (BuildContext context) => const SignUpPage(),
         LoginPage.id : (BuildContext context) => const LoginPage(),
         DiscoverPage.id : (BuildContext context) => const DiscoverPage(),
-        TestDiscoverPage.id : (BuildContext context) => const TestDiscoverPage(),
       },
     );
   }

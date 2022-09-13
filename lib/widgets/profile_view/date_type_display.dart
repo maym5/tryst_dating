@@ -23,7 +23,7 @@ class DateTypeDisplay extends StatelessWidget {
 
   double get _heightFactor {
     int numberOfRows = (titles.length / 3).ceil();
-    return 0.1 + (.1 * numberOfRows);
+    return 0.1 + (.04 * numberOfRows);
   }
 
   @override
@@ -31,7 +31,7 @@ class DateTypeDisplay extends StatelessWidget {
     return Align(
       alignment: kUserInfoAlignment,
       child: FractionallySizedBox(
-        widthFactor: 0.8,
+        widthFactor: 0.7,
         heightFactor: _heightFactor,
         child: GridView.builder(
           physics: const NeverScrollableScrollPhysics(),

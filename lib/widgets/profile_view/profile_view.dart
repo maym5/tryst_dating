@@ -150,6 +150,8 @@ class _ProfileViewState extends State<ProfileView> {
           onTapUp: _onTapUp,
         ),
         ProfileInfo(
+          tapDown: _onTapDown,
+          tapUp: _onTapUp,
           age: widget.age,
           name: widget.name,
           bio: widget.bio,

@@ -13,7 +13,8 @@ class ProfileInfo extends StatelessWidget {
       required this.bio,
       required this.onExpand,
       required this.activeIndex,
-      required this.dateTypes})
+      required this.dateTypes, required this.tapUp, required this.tapDown,
+      })
       : super(key: key);
   final String name;
   final int age;
@@ -21,6 +22,8 @@ class ProfileInfo extends StatelessWidget {
   final void Function(bool) onExpand;
   final int activeIndex;
   final List<String> dateTypes;
+  final void Function(TapUpDetails) tapUp;
+  final void Function(TapDownDetails) tapDown;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +43,11 @@ class ProfileInfo extends StatelessWidget {
         ),
       );
     } else if (activeIndex == 1) {
-      return DateTypeDisplay(dateTypes: dateTypes);
+      return GestureDetector(
+          child: DateTypeDisplay(dateTypes: dateTypes),
+        onTapUp: tapUp,
+        onTapDown: tapDown,
+      );
     } return Container();
   }
 }

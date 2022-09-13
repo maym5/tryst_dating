@@ -169,7 +169,7 @@ class _HorizontalRatingSliderState extends State<HorizontalRatingSlider> {
     return Visibility(
       visible: widget.visible,
       child: Align(
-        alignment: const Alignment(0, 0.45),
+        alignment: const Alignment(0, 0.4),
         child: Container(
           alignment: Alignment.center,
           height: 100,
@@ -185,8 +185,8 @@ class _HorizontalRatingSliderState extends State<HorizontalRatingSlider> {
             onChangeEnd: widget.onChangeEnd,
             onChangeStart: widget.onChangeStart,
             inactiveColor: Colors.white10,
-            activeColor: Colors.black54,
-            thumbColor: Colors.white24,
+            activeColor: Colors.redAccent.withOpacity(0.5),
+            thumbColor: Colors.grey,
           ),
         ),
       ),

@@ -6,14 +6,12 @@ const kNameTextStyle = TextStyle(
   color: Colors.white,
   fontSize: 35.0,
   fontWeight: FontWeight.w400,
-  fontFamily: 'Kanit',
 );
 
 const kAgeTextStyle = TextStyle(
   color: Colors.white,
   fontSize: 30.0,
   fontWeight: FontWeight.w200,
-  fontFamily: 'Kanit',
 );
 
 const kExpandTextAnimationDuration = Duration(milliseconds: 200);
@@ -22,7 +20,6 @@ const kBioTextStyle = TextStyle(
   color: Colors.white,
   fontSize: 23.0,
   fontWeight: FontWeight.w300,
-  fontFamily: 'Kanit',
   inherit: false,
 );
 
@@ -90,14 +87,14 @@ const kWarningTextStyle = TextStyle(
   fontFamily: 'Kanit',
 );
 
-const kDateTypeContainerDecoration = BoxDecoration(
-    borderRadius: BorderRadius.all(Radius.circular(25)),
-    color: kDarkTransparent);
+final kDateTypeContainerDecoration = BoxDecoration(
+    borderRadius: const BorderRadius.all(Radius.circular(50)),
+    color: Colors.black54.withOpacity(0.5));
 
 const kDateTypeGridDelegate = SliverGridDelegateWithFixedCrossAxisCount(
-    childAspectRatio: 1.4,
-    mainAxisSpacing: 10,
-    crossAxisSpacing: 10,
+    childAspectRatio: 2,
+    mainAxisSpacing: 2,
+    crossAxisSpacing: 2,
     crossAxisCount: 3);
 
 const kRatingCircleGradient = LinearGradient(
