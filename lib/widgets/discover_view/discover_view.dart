@@ -17,44 +17,44 @@ class DiscoverView extends StatefulWidget {
 }
 
 class _DiscoverViewState extends State<DiscoverView> {
-  late double _userRating;
-  late bool _visible;
-  final double _dragRadius = 20;
+  // late double _userRating;
+  // late bool _visible;
+  // final double _dragRadius = 20;
 
-  void _onDragStart(DragStartDetails details) {
-    setState(() {
-      _visible = true;
-    });
-  }
-
-  void _onDragUpdate(DragUpdateDetails details) {
-    double userDragDistance = details.delta.distance;
-    double userDragDirection = details.delta.dx;
-    bool safeToDrag = (_userRating +
-                (userDragDirection.sign * (userDragDistance / _dragRadius))) <=
-            10 &&
-        _userRating +
-                (userDragDirection.sign * (userDragDistance / _dragRadius)) >=
-            0;
-    if (safeToDrag) {
-      setState(() {
-        _userRating +=
-            (userDragDirection.sign * (userDragDistance / _dragRadius));
-      });
-    }
-    widget.onDragUpdate(_userRating);
-  }
-
-  void _onDragEnd(DragEndDetails details) {
-    setState(() {
-      _visible = false;
-    });
-  }
+  // void _onDragStart(DragStartDetails details) {
+  //   setState(() {
+  //     _visible = true;
+  //   });
+  // }
+  //
+  // void _onDragUpdate(DragUpdateDetails details) {
+  //   double userDragDistance = details.delta.distance;
+  //   double userDragDirection = details.delta.dx;
+  //   bool safeToDrag = (_userRating +
+  //               (userDragDirection.sign * (userDragDistance / _dragRadius))) <=
+  //           10 &&
+  //       _userRating +
+  //               (userDragDirection.sign * (userDragDistance / _dragRadius)) >=
+  //           0;
+  //   if (safeToDrag) {
+  //     setState(() {
+  //       _userRating +=
+  //           (userDragDirection.sign * (userDragDistance / _dragRadius));
+  //     });
+  //   }
+  //   widget.onDragUpdate(_userRating);
+  // }
+  //
+  // void _onDragEnd(DragEndDetails details) {
+  //   setState(() {
+  //     _visible = false;
+  //   });
+  // }
 
   @override
   void initState() {
-    _userRating = 5.0;
-    _visible = false;
+    // _userRating = 5.0;
+    // _visible = false;
     super.initState();
   }
 
@@ -68,16 +68,10 @@ class _DiscoverViewState extends State<DiscoverView> {
           name: widget.data.name,
           age: widget.data.age,
           dateTypes: widget.data.dates,
-          // these can get the axe
-          onDragStart: _onDragStart,
-          onDragUpdate: _onDragUpdate,
-          onDragEnd: _onDragEnd,
         ),
-        RatingsCircle(
-          visible: _visible,
-          userRating: _userRating,
-        ),
+        RatingStack(onChanged: widget.onDragUpdate),
       ],
     );
   }
 }
+

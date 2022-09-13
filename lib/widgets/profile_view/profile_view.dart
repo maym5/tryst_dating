@@ -75,19 +75,13 @@ class ProfileView extends StatefulWidget {
       required this.bio,
       required this.name,
       required this.age,
-      required this.dateTypes,
-      this.onDragStart,
-      this.onDragUpdate,
-      this.onDragEnd})
+      required this.dateTypes})
       : super(key: key);
   final List<String> userPhotos;
   final String name;
   final int age;
   final String bio;
   final List<String> dateTypes;
-  final void Function(DragStartDetails)? onDragStart;
-  final void Function(DragUpdateDetails)? onDragUpdate;
-  final void Function(DragEndDetails)? onDragEnd;
 
   @override
   _ProfileViewState createState() => _ProfileViewState();
@@ -148,9 +142,6 @@ class _ProfileViewState extends State<ProfileView> {
           activeIndex: _index,
           onTapDown: _onTapDown,
           onTapUp: _onTapUp,
-          onDragStart: widget.onDragStart,
-          onDragUpdate: widget.onDragUpdate,
-          onDragEnd: widget.onDragEnd,
         ),
         ProfileInfo(
           age: widget.age,

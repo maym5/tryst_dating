@@ -10,21 +10,13 @@ class ImageBackground extends StatefulWidget {
       required this.userPhotos,
       required this.activeIndex,
       required this.onTapDown,
-      required this.onTapUp,
-      this.onDragStart,
-      this.onDragUpdate,
-      this.onDragCancel,
-      this.onDragEnd})
+      required this.onTapUp,})
       : super(key: key);
   final bool isExpanded;
   final List<String> userPhotos;
   final int activeIndex;
   final void Function(TapDownDetails) onTapDown;
   final void Function(TapUpDetails) onTapUp;
-  final void Function(DragStartDetails)? onDragStart;
-  final void Function(DragUpdateDetails)? onDragUpdate;
-  final void Function()? onDragCancel;
-  final void Function(DragEndDetails)? onDragEnd;
 
   @override
   _ImageBackgroundState createState() => _ImageBackgroundState();
@@ -84,10 +76,6 @@ class _ImageBackgroundState extends State<ImageBackground> {
     return GestureDetector(
       onTapDown: widget.onTapDown,
       onTapUp: widget.onTapUp,
-      onHorizontalDragStart: widget.onDragStart,
-      onHorizontalDragUpdate: widget.onDragUpdate,
-      onHorizontalDragCancel: widget.onDragCancel,
-      onHorizontalDragEnd: widget.onDragEnd,
       child: applyImageGradient(imageStack),
     );
   }

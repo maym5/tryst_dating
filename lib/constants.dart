@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 
 const kTileBackGroundColor = Colors.white10;
-// Color(0xFF001631);
-// Color(0xFF1F1B24)
 
 const kNameTextStyle = TextStyle(
   color: Colors.white,
   fontSize: 35.0,
   fontWeight: FontWeight.w400,
-  fontFamily: 'Raleway',
+  fontFamily: 'Kanit',
 );
 
 const kAgeTextStyle = TextStyle(
   color: Colors.white,
   fontSize: 30.0,
   fontWeight: FontWeight.w200,
-  fontFamily: 'Raleway',
+  fontFamily: 'Kanit',
 );
 
 const kExpandTextAnimationDuration = Duration(milliseconds: 200);
@@ -24,7 +22,7 @@ const kBioTextStyle = TextStyle(
   color: Colors.white,
   fontSize: 23.0,
   fontWeight: FontWeight.w300,
-  fontFamily: 'Raleway',
+  fontFamily: 'Kanit',
   inherit: false,
 );
 
@@ -34,6 +32,7 @@ final kOffWhite = Colors.white.withOpacity(0.8);
 
 final kTextStyle = TextStyle(
   color: Colors.white.withOpacity(0.6),
+  fontFamily: 'Kanit',
   fontSize: 25,
 );
 
@@ -88,6 +87,7 @@ const kActiveColor = Colors.redAccent;
 const kWarningTextStyle = TextStyle(
   fontSize: 18,
   color: kActiveColor,
+  fontFamily: 'Kanit',
 );
 
 const kDateTypeContainerDecoration = BoxDecoration(
@@ -195,6 +195,7 @@ const kWelcomePageDecoration = BoxDecoration(
 
 const kHyperLinkTextStyle = TextStyle(
     decoration: TextDecoration.underline,
+    fontFamily: 'Kanit',
     color: Colors.redAccent,
     fontSize: 13);
 
