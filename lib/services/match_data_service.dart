@@ -19,7 +19,6 @@ class MatchDataService {
   }
 
   Stream<QuerySnapshot> get likeStream async* {
-    // TODO: test this change
     yield* _db
         .collection("userData")
         .doc(AuthenticationService.currentUserUID)
