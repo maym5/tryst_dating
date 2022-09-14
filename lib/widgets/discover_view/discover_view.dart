@@ -7,7 +7,7 @@ class DiscoverView extends StatefulWidget {
   const DiscoverView(
       {Key? key,
       required this.data,
-      required this.onDragUpdate,})
+      required this.onDragUpdate})
       : super(key: key);
   final DiscoverData data;
   final void Function(double) onDragUpdate;

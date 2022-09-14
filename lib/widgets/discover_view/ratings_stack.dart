@@ -2,32 +2,33 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../constants.dart';
 
+final GlobalKey key = GlobalKey();
 
 class RatingDisplay extends StatelessWidget {
-  const RatingDisplay({Key? key, required this.userRating, required this.visible}) : super(key: key);
+  const RatingDisplay(
+      {Key? key, required this.userRating, required this.visible})
+      : super(key: key);
   final bool visible;
   final double userRating;
 
   Text get _displayedRating => Text(
-    userRating.toStringAsFixed(1),
-    style: kRatingStyle.copyWith(fontSize: 90),
-  );
+        userRating.toStringAsFixed(1),
+        style: kRatingStyle.copyWith(fontSize: 90),
+      );
 
   Widget _opacityAnimation({required Widget child}) => AnimatedOpacity(
-    opacity: visible ? 1.0 : 0.0,
-    duration: visible
-        ? const Duration(milliseconds: 200)
-        : const Duration(milliseconds: 1500),
-    child: child,
-  );
+        opacity: visible ? 1.0 : 0.0,
+        duration: visible
+            ? const Duration(milliseconds: 200)
+            : const Duration(milliseconds: 1500),
+        child: child,
+      );
 
-  Widget _filter({required Widget child}) =>  BackdropFilter(
-    filter: ImageFilter.blur(
-        sigmaX: visible ? 10 : 0,
-        sigmaY: visible ? 10 : 0
-    ),
-    child: child,
-  );
+  Widget _filter({required Widget child}) => BackdropFilter(
+        filter: ImageFilter.blur(
+            sigmaX: visible ? 10 : 0, sigmaY: visible ? 10 : 0),
+        child: child,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +39,13 @@ class RatingDisplay extends StatelessWidget {
   }
 }
 
-
-
 class VerticalRatingSlider extends StatefulWidget {
-  const VerticalRatingSlider({Key? key, required this.onChanged, required this.onChangeEnd, required this.onChangeStart}) : super(key: key);
+  const VerticalRatingSlider(
+      {Key? key,
+      required this.onChanged,
+      required this.onChangeEnd,
+      required this.onChangeStart})
+      : super(key: key);
   final void Function(double) onChanged;
   final void Function(double) onChangeStart;
   final void Function(double) onChangeEnd;
@@ -90,7 +94,13 @@ class _VerticalRatingSliderState extends State<VerticalRatingSlider> {
 }
 
 class HorizontalRatingSlider extends StatefulWidget {
-  const HorizontalRatingSlider({Key? key, required this.onChanged, required this.onChangeStart, required this.onChangeEnd,required this.visible }) : super(key: key);
+  const HorizontalRatingSlider(
+      {Key? key,
+      required this.onChanged,
+      required this.onChangeStart,
+      required this.onChangeEnd,
+      required this.visible})
+      : super(key: key);
   final void Function(double) onChanged;
   final void Function(double) onChangeStart;
   final void Function(double) onChangeEnd;
@@ -139,9 +149,12 @@ class _HorizontalRatingSliderState extends State<HorizontalRatingSlider> {
   }
 }
 
-
 class RatingStack extends StatefulWidget {
-  const RatingStack({Key? key, required this.onChanged, required this.visible}) : super(key: key);
+  const RatingStack(
+      {Key? key,
+      required this.onChanged,
+      required this.visible,})
+      : super(key: key);
   final void Function(double) onChanged;
   final bool visible;
 
@@ -156,7 +169,7 @@ class _RatingStackState extends State<RatingStack> {
   @override
   void initState() {
     _visible = false;
-    _userRating= 5.0;
+    _userRating = 5.0;
     super.initState();
   }
 
@@ -179,23 +192,20 @@ class _RatingStackState extends State<RatingStack> {
     });
   }
 
+  Widget get _ratingsSlider => HorizontalRatingSlider(
+          visible: widget.visible,
+          onChanged: _onChanged,
+          onChangeStart: _onChangeStart,
+          onChangeEnd: _onChangeEnd,
+        );
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        RatingDisplay(
-            userRating: _userRating,
-            visible: _visible
-        ),
-        HorizontalRatingSlider(
-          visible: widget.visible,
-            onChanged: _onChanged,
-            onChangeStart: _onChangeStart,
-          onChangeEnd: _onChangeEnd,
-        )
+        RatingDisplay(userRating: _userRating, visible: _visible),
+        _ratingsSlider
       ],
     );
   }
 }
-
-

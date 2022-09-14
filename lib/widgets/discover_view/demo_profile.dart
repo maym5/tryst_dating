@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/animations/slide_animation.dart';
 import 'package:rendezvous_beta_v3/animations/slide_up.dart';
@@ -14,11 +13,12 @@ class DemoProfile extends StatefulWidget {
 }
 
 class _DemoProfileState extends State<DemoProfile> {
-
   DiscoverData get _data => DiscoverData(
       "Fake McFakerson",
       22,
-      ["https://firebasestorage.googleapis.com/v0/b/rendezvous-beta-v3.appspot.com/o/images%2Fdemo_image%2Ffake_image.jpeg?alt=media&token=db24ad7e-40c4-4a08-b5da-7580ab602961"],
+      [
+        "https://firebasestorage.googleapis.com/v0/b/rendezvous-beta-v3.appspot.com/o/images%2Fdemo_image%2Ffake_image.jpeg?alt=media&token=db24ad7e-40c4-4a08-b5da-7580ab602961"
+      ],
       ["bar"],
       "I'm a fake person for this demo",
       "007");
@@ -88,9 +88,14 @@ class _DemoOverlayState extends State<DemoOverlay> {
             children: [
               _complete
                   ? const SlideUp(
-                      child: Icon(Icons.back_hand, color: Colors.white70, size: 65,))
+                      child: Icon(
+                      Icons.back_hand,
+                      color: Colors.white70,
+                      size: 65,
+                    ))
                   : SlideAnimation(
-                      child: const Icon(Icons.back_hand, color: Colors.white70, size: 65),
+                      child: const Icon(Icons.back_hand,
+                          color: Colors.white70, size: 65),
                       complete: _onComplete),
               const SizedBox(
                 height: 20,
@@ -98,7 +103,7 @@ class _DemoOverlayState extends State<DemoOverlay> {
               Text(
                   _complete
                       ? "Swipe up to see the next profile"
-                      : "Hold down and swipe right to increase rating, swipe left to decrease rating",
+                      : "Move the slider right to increase your rating, move slider to the left decrease rating",
                   softWrap: true,
                   textAlign: TextAlign.center,
                   style: kTextStyle),
