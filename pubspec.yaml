@@ -49,7 +49,6 @@ dependencies:
   dio: ^4.0.6
   firebase_messaging: ^12.0.1
   url_launcher: ^6.1.5
-  showcaseview: ^1.1.8
 
 dev_dependencies:
   flutter_test:
