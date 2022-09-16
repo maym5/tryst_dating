@@ -133,7 +133,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   Widget build(BuildContext context) {
     return PageBackground(
       body: StreamBuilder(
-        stream: DiscoverService().discoverStream,
+        stream: _discoverStream,
         builder: (context,
             AsyncSnapshot<List<QueryDocumentSnapshot<Map>>> snapshot) {
           if (snapshot.hasData && !snapshot.hasError) {
