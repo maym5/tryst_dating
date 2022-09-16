@@ -125,7 +125,9 @@ class CustomBottomSheet extends StatelessWidget {
       required this.titleTwo,
       required this.onTileOneTap,
         this.tileColor,
-      required this.onTileTwoTap})
+      required this.onTileTwoTap,
+        this.popTileTwo = true
+      })
       : super(key: key);
   final IconData iconOne;
   final IconData iconTwo;
@@ -135,6 +137,7 @@ class CustomBottomSheet extends StatelessWidget {
   final void Function() onTileOneTap;
   final void Function() onTileTwoTap;
   final Color? tileColor;
+  final bool popTileTwo;
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +164,7 @@ class CustomBottomSheet extends StatelessWidget {
             title: Text(titleTwo, style: kTextStyle.copyWith(fontSize: 15)),
             onTap: () {
               onTileTwoTap();
-              Navigator.pop(context);
+              popTileTwo ? Navigator.pop(context) : null;
             },
           )
         ],

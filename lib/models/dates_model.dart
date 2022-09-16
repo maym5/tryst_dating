@@ -40,7 +40,6 @@ class DatesModel {
 
   Future<Map> get venueData async {
     final List<String> _commonDates = await commonDates;
-    print(_commonDates);
     for (String date in _commonDates) {
       final Map _venue = await GooglePlacesService(venueType: date).venue;
       if (_venue["status"] == "ok") {
@@ -69,7 +68,6 @@ class DatesModel {
 
   Future<void> getDate(BuildContext context,
       {double? userRating, bool pickAnother = false}) async {
-    print("funct called");
     try {
       final Map _venueData = await venueData;
       final Map _matchData = await matchData;
@@ -119,8 +117,7 @@ class DatesModel {
             pageBuilder: (context, animation, _) =>
                 ErrorDialogue(animation: animation));
       }
-    } catch (e, stack) {
-      print("$e : $stack");
+    } catch (e) {
       await MatchDataService.createMatch(
           otherUserUID: discoverData != null
               ? discoverData!.uid
@@ -132,21 +129,21 @@ class DatesModel {
 
   Future<void> rescheduleDate(BuildContext context,
       {bool pickAnother = false}) async {
-    print("here");
     if (dateData != null && dateData?.venueID != null) {
       final Map _venueData =
           await GooglePlacesService().venueFromId(dateData!.venueID!);
       final Map _matchData = await matchData;
-      if (_venueData["venue"]["status"] == "ok") {
+      if (_venueData["status"] == "ok") {
         await DateTimeDialogue(setDateTime: setDateTime).buildCalendarDialogue(
             context,
-            venueName: _venueData["venue"]["name"],
+            pickAnother: pickAnother,
+            venueName: _venueData["name"],
             matchName: _matchData["name"],
-            openHours: _venueData["venue"]["weekdayText"],
-            initialDialogue: false);
+            openHours: _venueData["weekdayText"],
+            initialDialogue: pickAnother);
         if (_dateTime != null &&
             await GooglePlacesService.checkDateTime(
-                _dateTime!, _venueData["venue"])) {
+                _dateTime!, _venueData)) {
           await MatchDataService.rescheduleDate(
                   otherUserUID: dateData != null
                       ? dateData!.matchID
@@ -155,11 +152,11 @@ class DatesModel {
               .then((value) => showGeneralDialog(
                   context: context,
                   pageBuilder: (context, animation, _) => value
-                      ? CongratsDialogue(
+                      ? ConfirmDialogue(
                           animation: animation,
-                          venueName: _venueData["venue"]["name"],
+                          venueName: _venueData["name"],
                           matchName: _matchData["name"],
-                          openHours: _venueData["venue"]["weekdayText"],
+                          dateTime: _dateTime!,
                         )
                       : ErrorDialogue(animation: animation)));
         } else if (_dateTime == null) {
@@ -168,8 +165,9 @@ class DatesModel {
               pageBuilder: (context, animation, _) =>
                   CancelDialogue(animation: animation));
         } else if (!await GooglePlacesService.checkDateTime(
-            _dateTime!, _venueData["venue"])) {
-          getDate(context, pickAnother: true);
+            _dateTime!, _venueData)) {
+          _dateTime = null;
+          rescheduleDate(context, pickAnother: true);
         }
       } else {
         showGeneralDialog(

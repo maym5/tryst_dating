@@ -65,12 +65,6 @@ class _DateCardState extends State<DateCard>
             Expanded(child: _circleAvatar, flex: 1,)
           ],
         ),
-        // _circleAvatar,
-        // _thereIsADate ? DateInfo(
-        //   venue: widget.data.venue!,
-        //   dateTime: widget.data.dateTime!,
-        //   dateType: widget.data.dateType!,
-        // ): Container(),
         _canTap ? _tapText : Container()
       ],
     );
@@ -408,14 +402,13 @@ class DetailsBottomSheet extends StatelessWidget {
         iconTwo: Icons.calendar_today,
         titleOne: "Delete this date",
         titleTwo: "Reschedule this date",
+        popTileTwo: false,
         onTileOneTap: () async {
           await DatesModel(dateData: data).deleteData(context);
         },
         onTileTwoTap: () async {
           if (data.venueID != null) {
             await DatesModel(dateData: data).rescheduleDate(context);
-          } else {
-            // print("venueID null");
           }
         });
   }

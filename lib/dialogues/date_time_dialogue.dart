@@ -57,7 +57,7 @@ class DateTimeDialogue extends StatelessWidget {
     DateTime? picked;
     TimeOfDay? pickedTime;
 
-    if (Platform.isIOS && yesOrNo == true) {
+    if (Platform.isIOS && (yesOrNo == true || initialDialogue == false)) {
       await showCupertinoModalPopup(
           context: context,
           builder: (context) => Center(

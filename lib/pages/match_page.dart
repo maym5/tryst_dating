@@ -207,6 +207,7 @@ class _DatePageState extends State<DatePage> {
                 image: _data["avatarImage"],
                 matchID: _data["matchUID"],
                 venue: _data["venue"],
+                venueID: _data["venueID"],
                 dateType: _data["dateType"],
                 dateTime: MatchDataService.convertTimeStamp(
                   _data["dateTime"],
@@ -221,6 +222,7 @@ class _DatePageState extends State<DatePage> {
                 matchID: _data["matchUID"],
                 venue: _data["venue"],
                 dateType: _data["dateType"],
+                venueID: _data["venueID"],
                 dateTime: MatchDataService.convertTimeStamp(
                   _data["dateTime"],
                 ),
@@ -235,6 +237,7 @@ class _DatePageState extends State<DatePage> {
                 matchID: _data["matchUID"],
                 venue: _data["venue"],
                 dateType: _data["dateType"],
+                venueID: _data["venueID"],
                 dateTime: MatchDataService.convertTimeStamp(_data["dateTime"]),
                 agreedToDate: _data["agreedToDate"]));
           } else {
