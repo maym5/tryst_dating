@@ -88,9 +88,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         controller: _controller,
         physics: const NeverScrollableScrollPhysics(),
         children: <Widget>[
-          UserEditPage(
-            onHomePageButtonPress: () {},
-          ),
+          UserEditPage(onHomePageButtonPress: () {}),
           DiscoverPage(firstTime: widget.firstTime),
           const MatchPage(),
         ],
