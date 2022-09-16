@@ -52,12 +52,25 @@ class _DateCardState extends State<DateCard>
     return Stack(
       children: <Widget>[
         NameAndButtons(data: widget.data),
-        _circleAvatar,
-        _thereIsADate ? DateInfo(
-          venue: widget.data.venue!,
-          dateTime: widget.data.dateTime!,
-          dateType: widget.data.dateType!,
-        ): Container(),
+        Row(
+          children: [
+            _thereIsADate ? Expanded(
+              flex: 2,
+              child: DateInfo(
+                venue: widget.data.venue!,
+                dateTime: widget.data.dateTime!,
+                dateType: widget.data.dateType!,
+              ),
+            ): Container(),
+            Expanded(child: _circleAvatar, flex: 1,)
+          ],
+        ),
+        // _circleAvatar,
+        // _thereIsADate ? DateInfo(
+        //   venue: widget.data.venue!,
+        //   dateTime: widget.data.dateTime!,
+        //   dateType: widget.data.dateType!,
+        // ): Container(),
         _canTap ? _tapText : Container()
       ],
     );
@@ -161,46 +174,48 @@ class DateInfo extends StatelessWidget {
     return dateTypeString + " date";
   }
 
-  Widget get _dateDescription => Align(
-        alignment: const Alignment(-0.85, -0.2),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 10, top: 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            textBaseline: TextBaseline.ideographic,
-            children: <Widget>[
-              Row(
-                children: [
-                  const Icon(Icons.where_to_vote,
-                      color: Colors.white, size: 18),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  Text(_dateType)
-                ],
+  Widget get _dateDescription => FittedBox(
+    fit: BoxFit.scaleDown,
+    child: Padding(
+      padding: const EdgeInsets.only(left: 10, top: 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        textBaseline: TextBaseline.ideographic,
+        children: <Widget>[
+          Row(
+            children: [
+              const Icon(Icons.where_to_vote,
+                  color: Colors.white, size: 18),
+              const SizedBox(
+                width: 5,
               ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  const Icon(Icons.add_business_rounded,
-                      color: Colors.white, size: 18),
-                  const SizedBox(width: 5),
-                  Text(venue),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  const Icon(Icons.timer, color: Colors.white, size: 18),
-                  const SizedBox(width: 5),
-                  Text(displayDate!),
-                ],
-              )
+              Text(_dateType)
             ],
           ),
-        ),
-      );
+          const SizedBox(height: 10),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.add_business_rounded,
+                  color: Colors.white, size: 18),
+              const SizedBox(width: 5),
+              Text(venue, softWrap: true,),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.timer, color: Colors.white, size: 18),
+              const SizedBox(width: 5),
+              Text(displayDate!, softWrap: true),
+            ],
+          )
+        ],
+      ),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
