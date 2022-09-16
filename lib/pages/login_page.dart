@@ -88,6 +88,7 @@ class _LoginPageState extends State<LoginPage> {
             setState(() {
               errorMessages["email"] = "Enter a valid email";
               showEmailError = true;
+
             });
             break;
           case 'user-not-found':
@@ -98,8 +99,8 @@ class _LoginPageState extends State<LoginPage> {
             break;
           case 'wrong-password':
             setState(() {
-              errorMessages["password"] = "Please enter a valid email";
-              showEmailError = true;
+              errorMessages["password"] = "Please enter a valid password";
+              showPasswordError = true;
             });
             break;
           case 'too-many-requests':
@@ -114,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
           await UserData().getUserData();
           await PushNotificationService.initialize();
           Navigator.pushNamed(context, HomePage.id);
-        } else {
+        } else if (!result.emailVerified) {
           Navigator.pushNamed(context, VerificationPage.id);
         }
       }

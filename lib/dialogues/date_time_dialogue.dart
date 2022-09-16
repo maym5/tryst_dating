@@ -42,7 +42,7 @@ class DateTimeDialogue extends StatelessWidget {
             context: context,
             pageBuilder: (context, animation, _) => pickAnother
                 ? PickAnotherDayDialogue(
-                    animation: animation, venueName: venueName, openHours: openHours)
+                    animation: animation, venueName: venueName, openHours: openHours, setDateTime: setDateTime, matchName: matchName, )
                 : CongratsDialogue(
                     openHours: openHours,
                     animation: animation,

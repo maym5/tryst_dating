@@ -103,6 +103,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   }
 
   Future<bool> get matchExists async {
+    // our problem could be here
     DocumentSnapshot _matchSnapShot = await _db
         .collection("userData")
         .doc(AuthenticationService.currentUserUID)
@@ -113,6 +114,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   }
 
   Future<void> get date async {
+    // other problem here
     await DatesModel(discoverData: _currentDiscoverData)
         .getDate(context, userRating: _userRating);
   }

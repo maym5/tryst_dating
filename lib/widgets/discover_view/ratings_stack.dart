@@ -177,13 +177,13 @@ class _RatingStackState extends State<RatingStack> {
     setState(() {
       _userRating = rating;
     });
+    widget.onChanged(rating);
   }
 
   void _onChangeStart(double rating) {
     setState(() {
       _visible = true;
     });
-    widget.onChanged(rating);
   }
 
   void _onChangeEnd(double rating) {

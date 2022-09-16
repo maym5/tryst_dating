@@ -101,7 +101,7 @@ class DatesModel {
                           animation: animation,
                           matchName: _matchData["name"])
                       : ErrorDialogue(animation: animation)));
-        } else if (_dateTime == null) {
+        } else if (_dateTime == null && pickAnother == false) {
           showGeneralDialog(
               context: context,
               pageBuilder: (context, animation, _) =>

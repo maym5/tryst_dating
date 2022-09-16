@@ -13,16 +13,16 @@ export const sendChat = functions.firestore
         const querySnapshot = await db.collection("userData")
             .doc(message.target).collection("tokens").get();
 
-        const targetSnapshot = await db.collection("userData")
-            .doc(message.target).get();
+        const senderSnapshot = await db.collection("userData")
+            .doc(message.sender).get();
 
-        const targetData = targetSnapshot?.data();
+        const senderData = senderSnapshot?.data();
 
         const tokens = querySnapshot.docs.map((snap) => snap.id);
 
         const payload: admin.messaging.MessagingPayload = {
           notification: {
-            title: targetData?.name,
+            title: senderData?.name,
             body: message.message,
             clickAction: "FLUTTER_NOTIFICATION_CLICK",
           },

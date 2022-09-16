@@ -55,6 +55,7 @@ class MatchDataService {
         "matchUID": currentDiscoverUID,
         "match": false,
         "userRating": userRating,
+        "otherUserRating" : null,
         "name": name,
         "avatarImage": image,
         "age": age,

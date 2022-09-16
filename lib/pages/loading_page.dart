@@ -9,7 +9,6 @@ import 'package:rendezvous_beta_v3/pages/intro_page.dart';
 import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
 import 'package:rendezvous_beta_v3/pages/verification_page.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
-
 import '../models/users.dart';
 
 class LoadingPage extends StatefulWidget {
@@ -62,7 +61,7 @@ class _LoadingPageState extends State<LoadingPage> {
       : Container();
 
   Widget get _logo => Image.asset(
-    "assets/images/rendezvous_logo.png",
+    "assets/images/tryst_logo.png",
     height: 300,
     width: 300,
   );
