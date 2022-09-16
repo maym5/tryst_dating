@@ -29,8 +29,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   late Map<String, dynamic> _displayedDoc;
   late Map<String, dynamic> _currentDoc;
-  final Stream<List<QueryDocumentSnapshot<Map>>> _discoverStream =
-      DiscoverService().discoverStream;
+  late final Stream<List<QueryDocumentSnapshot<Map>>> _discoverStream;
   DiscoverData get _displayedDiscoverData =>
       DiscoverData.getDiscoverData(_displayedDoc);
   DiscoverData get _currentDiscoverData =>
@@ -51,6 +50,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
   @override
   void initState() {
     _animation = ValueNotifier(0);
+    _discoverStream =
+        DiscoverService().discoverStream;
     _pageController = PageController(
       viewportFraction: 1,
     )..addListener(_onScroll);
