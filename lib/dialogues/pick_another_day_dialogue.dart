@@ -12,13 +12,15 @@ class PickAnotherDayDialogue extends StatelessWidget {
       required this.venueName,
       required this.openHours,
       required this.setDateTime,
-      required this.matchName})
+      required this.matchName,
+      required this.setYesOrNo})
       : super(key: key);
   final Animation<double> animation;
   final String venueName;
   final List openHours;
   final void Function(DateTime, TimeOfDay) setDateTime;
   final String matchName;
+  final void Function(bool) setYesOrNo;
 
   Widget get _openText {
     final List<Text> children = [];
@@ -49,14 +51,15 @@ class PickAnotherDayDialogue extends StatelessWidget {
           GradientButton(
             title: "Pick a time!",
             onPressed: () {
+              setYesOrNo(true);
               Navigator.pop(context);
-              DateTimeDialogue(setDateTime: setDateTime).buildCalendarDialogue(
-                  context,
-                  pickAnother: false,
-                  initialDialogue: false,
-                  venueName: venueName,
-                  matchName: matchName,
-                  openHours: openHours);
+              // DateTimeDialogue(setDateTime: setDateTime).buildCalendarDialogue(
+              //     context,
+              //     pickAnother: false,
+              //     initialDialogue: false,
+              //     venueName: venueName,
+              //     matchName: matchName,
+              //     openHours: openHours);
               // put the dialogue here
             },
           ),
@@ -64,6 +67,7 @@ class PickAnotherDayDialogue extends StatelessWidget {
           GradientButton(
             title: "Nah, I'll pass",
             onPressed: () {
+              setYesOrNo(false);
               Navigator.pop(context);
             },
           )

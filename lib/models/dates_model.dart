@@ -40,6 +40,7 @@ class DatesModel {
 
   Future<Map> get venueData async {
     final List<String> _commonDates = await commonDates;
+    print(_commonDates);
     for (String date in _commonDates) {
       final Map _venue = await GooglePlacesService(venueType: date).venue;
       if (_venue["status"] == "ok") {
@@ -68,6 +69,7 @@ class DatesModel {
 
   Future<void> getDate(BuildContext context,
       {double? userRating, bool pickAnother = false}) async {
+    print("funct called");
     try {
       final Map _venueData = await venueData;
       final Map _matchData = await matchData;
@@ -101,7 +103,7 @@ class DatesModel {
                           animation: animation,
                           matchName: _matchData["name"])
                       : ErrorDialogue(animation: animation)));
-        } else if (_dateTime == null && pickAnother == false) {
+        } else if (_dateTime == null) {
           showGeneralDialog(
               context: context,
               pageBuilder: (context, animation, _) =>
@@ -117,7 +119,8 @@ class DatesModel {
             pageBuilder: (context, animation, _) =>
                 ErrorDialogue(animation: animation));
       }
-    } catch (e) {
+    } catch (e, stack) {
+      print("$e : $stack");
       await MatchDataService.createMatch(
           otherUserUID: discoverData != null
               ? discoverData!.uid

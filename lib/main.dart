@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:rendezvous_beta_v3/pages/dialogue_test_page.dart';
 import 'package:rendezvous_beta_v3/pages/discover_page.dart';
 import 'package:rendezvous_beta_v3/pages/home_page.dart';
 import 'package:rendezvous_beta_v3/pages/intro_page.dart';
@@ -41,6 +42,7 @@ class Rendezvous extends StatelessWidget {
         SignUpPage.id : (BuildContext context) => const SignUpPage(),
         LoginPage.id : (BuildContext context) => const LoginPage(),
         DiscoverPage.id : (BuildContext context) => const DiscoverPage(),
+        DialogueTestPage.id : (BuildContext context) => const DialogueTestPage(),
       },
     );
   }
