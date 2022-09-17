@@ -18,16 +18,19 @@ Widget buildPopUpDialogue(Animation<double> animation, BuildContext context, {re
       child: AlertDialog(
         contentPadding: const EdgeInsets.all(0),
         content: Container(
-          height: height ?? 250,
-          width: 120,
+          height: height ?? 300,
+          width: 140,
           decoration: const BoxDecoration(
             color: kPopUpColor,
             borderRadius: BorderRadius.all(Radius.circular(20)),
           ),
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: children
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: children
+              ),
             ),
           ),
         ),

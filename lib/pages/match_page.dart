@@ -232,7 +232,7 @@ class _DatePageState extends State<DatePage> {
                 ),
                 agreedToDate: _data["agreedToDate"]));
           } else if (MatchDataService.convertTimeStamp(_data["dateTime"])
-                  .isBefore(DateTime.now()) &&
+                  .isBefore(DateTime.now().add(const Duration(seconds: 5))) &&
               _agreedToDate.length == 2) {
             pastDates.add(DateData(
                 name: _data["name"],
@@ -245,7 +245,6 @@ class _DatePageState extends State<DatePage> {
                 dateTime: MatchDataService.convertTimeStamp(_data["dateTime"]),
                 agreedToDate: _data["agreedToDate"]));
           } else {
-            // could be weird behavior since we don't await
             MatchDataService.deleteDate(otherUserUID: _data["matchUID"]);
           }
         }

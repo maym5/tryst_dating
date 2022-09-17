@@ -42,7 +42,13 @@ class DateTimeDialogue extends StatelessWidget {
             context: context,
             pageBuilder: (context, animation, _) => pickAnother
                 ? PickAnotherDayDialogue(
-                    animation: animation, venueName: venueName, openHours: openHours, setDateTime: setDateTime, matchName: matchName, setYesOrNo: _setYesOrNo,)
+                    animation: animation,
+                    venueName: venueName,
+                    openHours: openHours,
+                    setDateTime: setDateTime,
+                    matchName: matchName,
+                    setYesOrNo: _setYesOrNo,
+                  )
                 : CongratsDialogue(
                     openHours: openHours,
                     animation: animation,
@@ -54,8 +60,11 @@ class DateTimeDialogue extends StatelessWidget {
 
     final DateTime now = DateTime.now();
 
-    DateTime? picked;
-    TimeOfDay? pickedTime;
+    DateTime? picked = now;
+    TimeOfDay? pickedTime =  TimeOfDay(
+        hour: now.hour,
+        minute: now.minute
+    );
 
     if (Platform.isIOS && (yesOrNo == true || initialDialogue == false)) {
       await showCupertinoModalPopup(
@@ -105,7 +114,8 @@ class DateTimeDialogue extends StatelessWidget {
                           child: CupertinoDatePicker(
                               minuteInterval: 5,
                               backgroundColor: Colors.black,
-                              initialDateTime: now.add(Duration(minutes: 5 - now.minute % 5)),
+                              initialDateTime: now
+                                  .add(Duration(minutes: 5 - now.minute % 5)),
                               mode: CupertinoDatePickerMode.time,
                               onDateTimeChanged: (dateTime) {
                                 pickedTime = TimeOfDay(
@@ -157,10 +167,7 @@ class DateTimeDialogue extends StatelessWidget {
           },
           initialTime: TimeOfDay.now());
     }
-
-    if (pickedTime != null && picked != null) {
-      setDateTime(picked!, pickedTime!);
-    }
+    setDateTime(picked!, pickedTime!);
   }
 
   @override
@@ -175,7 +182,8 @@ class CongratsDialogue extends StatelessWidget {
       required this.animation,
       required this.venueName,
       required this.matchName,
-      required this.openHours, this.yesOrNo})
+      required this.openHours,
+      this.yesOrNo})
       : super(key: key);
   final Animation<double> animation;
   final String matchName;
