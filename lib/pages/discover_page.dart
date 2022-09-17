@@ -83,13 +83,19 @@ class _DiscoverPageState extends State<DiscoverPage> {
       );
 
   Widget get noDataMessage => Center(
-        child: Text(
-          "You've seen everyone in your area! We just launched so check in later or try increasing your search distance to keep rating",
-          textAlign: TextAlign.center,
-          style: kTextStyle,
-          softWrap: true,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.error_outlined, size: 60, color: Colors.white.withOpacity(0.6),),
+            const SizedBox(height: 15,),
+            Text(
+            "You've seen everyone in your area! We just launched so check in later or try increasing your search distance to keep rating",
+            textAlign: TextAlign.center,
+            style: kTextStyle,
+            softWrap: true,
+          ),]
         ),
-      );
+  );
 
   Widget get errorMessage => Center(
         child: Text("There has been an error, try restarting the app",

@@ -32,6 +32,8 @@ class _LikesPageState extends State<LikesPage> {
         ]),
       );
 
+
+
   Widget get _errorMessage => Container(
         alignment: Alignment.center,
         height: MediaQuery.of(context).size.height,
@@ -125,10 +127,12 @@ class DatePage extends StatefulWidget {
 class _DatePageState extends State<DatePage> {
   final Stream<QuerySnapshot> _datesStream = MatchDataService().dateData;
 
-  Widget get _emptyMessage => Container(
-        alignment: Alignment.center,
-        height: MediaQuery.of(context).size.height,
-        child: const Text("Such empty, get swiping!"),
+  Widget get _emptyMessage => Column(
+        children: [
+          Image.asset("assets/images/such_empty.png"),
+          const SizedBox(height: 15,),
+          Text("Such empty, get rating!", style: kTextStyle),
+        ]
       );
 
   Widget get _errorMessage => Container(
