@@ -31,12 +31,14 @@ class _UserEditPageState extends State<UserEditPage>{
   void onButtonPress() async {
     if (UserData.canCreateUser) {
       setState(() => showSpinners = true);
-      await UserData().uploadUserData(context);
+      final bool success = await UserData().uploadUserData(context);
       setState(() => showSpinners = false);
-      if (widget.onHomePageButtonPress != null) {
-        widget.onHomePageButtonPress!();
-      } else {
-        Navigator.pushNamed(context, UserProfile.id);
+      if (success) {
+        if (widget.onHomePageButtonPress != null) {
+          widget.onHomePageButtonPress!();
+        } else {
+          Navigator.pushNamed(context, UserProfile.id);
+        }
       }
     } else {
       setState(() {

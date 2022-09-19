@@ -84,7 +84,7 @@ class UserData with ChangeNotifier {
     return auth.currentUser;
   }
 
-  Future<void> uploadUserData(BuildContext context) async {
+  Future<bool> uploadUserData(BuildContext context) async {
     final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
     User? _user = retrieveUser();
     if (_user != null) {
@@ -94,13 +94,15 @@ class UserData with ChangeNotifier {
         _fireStore.collection("userData").doc(_user.uid).set(_userData);
         await setLocation();
         await uploadTokenData();
+        return true;
       } catch (e) {
         showGeneralDialog(
             context: context,
             pageBuilder: (context, animation, _) =>
                 ErrorDialogue(animation: animation));
+        return false;
       }
-    }
+    } return false;
   }
 
   static bool get canCreateUser {
