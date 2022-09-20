@@ -3,6 +3,7 @@ import 'package:rendezvous_beta_v3/animations/slide_animation.dart';
 import 'package:rendezvous_beta_v3/animations/slide_up.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/services/discover_service.dart';
+import '../../models/users.dart';
 import 'discover_view.dart';
 
 class DemoProfile extends StatefulWidget {
@@ -31,10 +32,11 @@ class _DemoProfileState extends State<DemoProfile> {
     super.initState();
   }
 
-  void _setHasInteracted() {
+  void _setHasInteracted() async {
     setState(() {
       _hasInteracted = true;
     });
+    await UserData().updateFirstTime();
   }
 
   @override

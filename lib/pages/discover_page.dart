@@ -149,7 +149,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   if (_userRating > 5 && await matchExists) {
                     await date;
                   } else {
-                    await createNewMatch;
+                    if (!widget.firstTime || page - 1 != 0) {
+                      await createNewMatch;
+                    }
                   }
                   if (page < snapshot.data!.length) {
                     _updateCurrentDiscoverData(page, snapshot);

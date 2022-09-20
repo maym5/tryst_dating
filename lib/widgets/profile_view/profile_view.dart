@@ -32,7 +32,7 @@ class UserProfile extends StatelessWidget {
               title: "Discover",
               gradient: kButtonGradient,
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage(firstTime: true,)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
               },
             ),
           ],

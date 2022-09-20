@@ -22,6 +22,7 @@ class UserData with ChangeNotifier {
   static List<String> imageURLs = [];
   static Position? location;
   static Map<String, dynamic>? tokenData;
+  static bool firstTime = true;
 
   UserData();
 
@@ -40,6 +41,7 @@ class UserData with ChangeNotifier {
       "maxPrice": maxPrice,
       'imageURLs': imageURLs,
       "uid": AuthenticationService.currentUserUID,
+      "firstTime": firstTime
     };
   }
 
@@ -77,6 +79,7 @@ class UserData with ChangeNotifier {
     maxAge = incomingData["maxAge"];
     minAge = incomingData["minAge"];
     imageURLs = DiscoverData.listToListOfStrings(incomingData["imageURLs"]);
+    firstTime = incomingData["firstTime"];
   }
 
   User? retrieveUser({FirebaseAuth? auth}) {
@@ -102,7 +105,8 @@ class UserData with ChangeNotifier {
                 ErrorDialogue(animation: animation));
         return false;
       }
-    } return false;
+    }
+    return false;
   }
 
   static bool get canCreateUser {
@@ -184,5 +188,19 @@ class UserData with ChangeNotifier {
     UserData.location = await UserData.userLocation;
     uploadUserLocation()
         .then((value) => value ? null : throw ("couldn't upload location"));
+  }
+
+  Future<bool> updateFirstTime() async {
+    final FirebaseFirestore _db = FirebaseFirestore.instance;
+    firstTime = false;
+    try {
+      await _db
+          .collection("userData")
+          .doc(AuthenticationService.currentUser!.uid)
+          .update({"firstTime": firstTime});
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

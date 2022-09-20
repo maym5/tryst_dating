@@ -1,16 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/pages/discover_page.dart';
 import 'package:rendezvous_beta_v3/pages/match_page.dart';
 import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
+import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 
 class HomePage extends StatefulWidget {
   static const id = "home_page";
-  const HomePage({Key? key, this.initialPage = 1, this.firstTime = false}) : super(key: key);
+  const HomePage({Key? key, this.initialPage = 1}) : super(key: key);
   final int initialPage;
-  final bool firstTime;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -19,6 +20,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late final PageController _controller;
   late int _currentPage;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   Widget get _floatingActionButton => FloatingActionButton(
         onPressed: () {
@@ -68,10 +70,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.initState();
   }
 
+
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  Future<bool> get _firstTime async {
+    print("called");
+    final DocumentSnapshot _data = await _db.collection("userData").doc(AuthenticationService.currentUser!.uid).get();
+    final Map _map = _data.data() as Map;
+    if (_data.exists && _map["firstTime"] != null && _map["firstTime"] == true) {
+      return true;
+    } return false;
   }
 
   @override
@@ -89,7 +101,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         physics: const NeverScrollableScrollPhysics(),
         children: <Widget>[
           UserEditPage(onHomePageButtonPress: () {}),
-          DiscoverPage(firstTime: widget.firstTime),
+          FutureBuilder(
+            initialData: false,
+            future: _firstTime,
+            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) => DiscoverPage(firstTime: snapshot.data)),
           const MatchPage(),
         ],
       ),
