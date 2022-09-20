@@ -181,10 +181,13 @@ class UserData with ChangeNotifier {
     final FirebaseFirestore _db = FirebaseFirestore.instance;
     User? _user = retrieveUser();
     try {
-      await _db.collection("userData").doc(_user?.uid).update({
-        "latitude": UserData.location!.latitude,
-        "longitude": UserData.location!.longitude,
-      });
+      // remove this as soon as possible
+      if (_user?.uid != "s6ULZ0L7iKXPgPss1KnKO3Mk4ca2") {
+        await _db.collection("userData").doc(_user?.uid).update({
+          "latitude": UserData.location!.latitude,
+          "longitude": UserData.location!.longitude,
+        });
+      }
       return true;
     } catch (e) {
       return false;

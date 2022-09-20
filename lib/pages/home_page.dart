@@ -78,7 +78,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<bool> get _firstTime async {
-    print("called");
     final DocumentSnapshot _data = await _db.collection("userData").doc(AuthenticationService.currentUser!.uid).get();
     final Map _map = _data.data() as Map;
     if (_data.exists && _map["firstTime"] != null && _map["firstTime"] == true) {

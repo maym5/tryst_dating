@@ -51,7 +51,6 @@ class UserProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(UserData.imageURLs);
     return PageBackground(
       body: Stack(
         children: <Widget>[
