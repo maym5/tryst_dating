@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:rendezvous_beta_v3/pages/user_edit_page.dart';
 import 'package:rendezvous_beta_v3/pages/verification_page.dart';
 import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import 'package:rendezvous_beta_v3/services/push_notifications_service.dart';
@@ -36,6 +37,7 @@ class _LoginPageState extends State<LoginPage> {
   TextInputField get _emailField => TextInputField(
         title: "Email",
         controller: emailController,
+        autofillHints: const [AutofillHints.email],
         onChanged: (email) {
           setState(() {
             if (email == "") {
@@ -51,6 +53,7 @@ class _LoginPageState extends State<LoginPage> {
 
   TextInputField get _passwordField => TextInputField(
         title: "Password",
+        autofillHints: const [AutofillHints.password],
         controller: passwordController,
         obscureText: true,
         onChanged: (password) {
@@ -111,12 +114,14 @@ class _LoginPageState extends State<LoginPage> {
             break;
         }
       } else {
-        if (result is User && result.emailVerified) {
+        if (result is User && result.emailVerified && await UserData().canGetUserData()) {
           await UserData().getUserData();
           await PushNotificationService.initialize();
           Navigator.pushNamed(context, HomePage.id);
         } else if (!result.emailVerified) {
           Navigator.pushNamed(context, VerificationPage.id);
+        } else {
+          Navigator.pushNamed(context, UserEditPage.id);
         }
       }
     } else if (loginInputs['password'] == "") {

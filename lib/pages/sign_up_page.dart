@@ -16,7 +16,6 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-
   Map<String, String?> errorMessages = {
     "email": null,
     "password": null,
@@ -30,9 +29,9 @@ class _SignUpPageState extends State<SignUpPage> {
   };
 
   Map<String, bool> errors = {
-    "email" : false,
-    "password" : false,
-    "confirm" : false,
+    "email": false,
+    "password": false,
+    "confirm": false,
   };
 
   late bool _showSpinner;
@@ -45,6 +44,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   TextInputField get emailField => TextInputField(
         title: "Email",
+        autofillHints: const [AutofillHints.email],
         controller: emailController,
         onChanged: (email) {
           userInputs["email"] = email;
@@ -56,6 +56,7 @@ class _SignUpPageState extends State<SignUpPage> {
   TextInputField get passwordField => TextInputField(
         title: "Password",
         controller: passwordController,
+        autofillHints: const [AutofillHints.password],
         obscureText: true,
         onChanged: (password) {
           userInputs["password"] = password;
@@ -67,6 +68,7 @@ class _SignUpPageState extends State<SignUpPage> {
   TextInputField get confirmField => TextInputField(
         title: "Confirm Password",
         controller: confirmController,
+        autofillHints: const [AutofillHints.password],
         obscureText: true,
         onChanged: (confirm) {
           if (confirm == "") {
@@ -80,15 +82,15 @@ class _SignUpPageState extends State<SignUpPage> {
       );
 
   PreferredSizeWidget get _appBar => PreferredSize(
-    preferredSize: const Size(double.infinity, 30),
-    child: AppBar(
-      backgroundColor: Colors.transparent,
+        preferredSize: const Size(double.infinity, 30),
+        child: AppBar(
+          backgroundColor: Colors.transparent,
           leading: BackButton(
             color: Colors.redAccent,
             onPressed: _navigateBack,
           ),
         ),
-  );
+      );
 
   void _handleRegistration() async {
     if (!passwordsDontMatch) {
@@ -99,7 +101,7 @@ class _SignUpPageState extends State<SignUpPage> {
         emailController.text = userInputs["email"]!;
         passwordController.text = userInputs["password"]!;
         confirmController.text = userInputs["confirm"]!;
-         var result = await AuthenticationService().onEmailAndPasswordSignUp(
+        var result = await AuthenticationService().onEmailAndPasswordSignUp(
             userInputs["email"]!, userInputs["password"]!);
         setState(() => _showSpinner = false);
         if (result is String) {
@@ -190,7 +192,11 @@ class _SignUpPageState extends State<SignUpPage> {
             child: Column(
               // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Image.asset("assets/images/sign_up.png", height: 250, width: double.infinity,),
+                Image.asset(
+                  "assets/images/sign_up.png",
+                  height: 250,
+                  width: double.infinity,
+                ),
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[emailField, passwordField, confirmField],
