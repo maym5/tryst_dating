@@ -163,7 +163,7 @@ class UserData with ChangeNotifier {
     final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
     User? _user = retrieveUser();
     final DocumentSnapshot snapshot = await _fireStore.collection("userData").doc(_user?.uid).get();
-    return snapshot.exists;
+    return snapshot.exists && snapshot.data() != null;
   }
 
   Future<void> getUserData() async {

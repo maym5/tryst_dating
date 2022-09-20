@@ -136,6 +136,93 @@ class _DiscoverPageState extends State<DiscoverPage> {
         dateTypes: _currentDiscoverData.dates);
   }
 
+  Widget _pageViewBuilder(BuildContext context, AsyncSnapshot<List<QueryDocumentSnapshot<Map>>> snapshot) {
+    return PageView.builder(
+        onPageChanged: (int page) async {
+          if (_userRating > 5 && await matchExists) {
+            await date;
+          } else {
+            if (!widget.firstTime || page - 1 != 0) {
+              await createNewMatch;
+            }
+          }
+          if (page < snapshot.data!.length) {
+            _updateCurrentDiscoverData(page, snapshot);
+          } else {
+            setState(
+                    () => _physics = const NeverScrollableScrollPhysics());
+          }
+        },
+        controller: _pageController,
+        physics: _physics,
+        scrollDirection: Axis.vertical,
+        itemCount: widget.firstTime
+            ? snapshot.data!.length + 2
+            : snapshot.data!.length + 1,
+        itemBuilder: (context, index) {
+          if (index < snapshot.data!.length && !widget.firstTime) {
+            _displayedDoc =
+            snapshot.data![index].data() as Map<String, dynamic>;
+            if (index == 0) {
+              _currentDoc =
+              snapshot.data![0].data() as Map<String, dynamic>;
+            }
+            return Stack(
+              children: [
+                DiscoverView(
+                  data: _displayedDiscoverData,
+                  onDragUpdate: setUserRating,
+                ),
+                Center(
+                  child: LikeWidget(
+                    animation: _animation,
+                    userRating: _userRating,
+                  ),
+                ),
+              ],
+            );
+          } else if (widget.firstTime) {
+            if (index == 0) {
+              return const DemoProfile();
+            } else {
+              if (index < snapshot.data!.length) {
+                _displayedDoc = snapshot.data![index - 1].data()
+                as Map<String, dynamic>;
+                if (index == 1) {
+                  _currentDoc =
+                  snapshot.data![0].data() as Map<String, dynamic>;
+                }
+                return Stack(
+                  children: [
+                    DiscoverView(
+                      data: _displayedDiscoverData,
+                      onDragUpdate: setUserRating,
+                    ),
+                    Center(
+                      child: LikeWidget(
+                        animation: _animation,
+                        userRating: _userRating,
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return noDataMessage;
+              }
+            }
+          } else {
+            return noDataMessage;
+          }
+        });
+  }
+
+  Widget _demoPageView(Widget message) {
+    return PageView(
+      scrollDirection: Axis.vertical,
+      children: [const DemoProfile(), message],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return PageBackground(
@@ -144,99 +231,17 @@ class _DiscoverPageState extends State<DiscoverPage> {
         builder: (context,
             AsyncSnapshot<List<QueryDocumentSnapshot<Map>>> snapshot) {
           if (snapshot.hasData && !snapshot.hasError) {
-            return PageView.builder(
-                onPageChanged: (int page) async {
-                  if (_userRating > 5 && await matchExists) {
-                    await date;
-                  } else {
-                    if (!widget.firstTime || page - 1 != 0) {
-                      await createNewMatch;
-                    }
-                  }
-                  if (page < snapshot.data!.length) {
-                    _updateCurrentDiscoverData(page, snapshot);
-                  } else {
-                    setState(
-                        () => _physics = const NeverScrollableScrollPhysics());
-                  }
-                },
-                controller: _pageController,
-                physics: _physics,
-                scrollDirection: Axis.vertical,
-                itemCount: widget.firstTime
-                    ? snapshot.data!.length + 2
-                    : snapshot.data!.length + 1,
-                itemBuilder: (context, index) {
-                  if (index < snapshot.data!.length && !widget.firstTime) {
-                    _displayedDoc =
-                        snapshot.data![index].data() as Map<String, dynamic>;
-                    if (index == 0) {
-                      _currentDoc =
-                          snapshot.data![0].data() as Map<String, dynamic>;
-                    }
-                    return Stack(
-                      children: [
-                        DiscoverView(
-                          data: _displayedDiscoverData,
-                          onDragUpdate: setUserRating,
-                        ),
-                        Center(
-                          child: LikeWidget(
-                            animation: _animation,
-                            userRating: _userRating,
-                          ),
-                        ),
-                      ],
-                    );
-                  } else if (widget.firstTime) {
-                    if (index == 0) {
-                      return const DemoProfile();
-                    } else {
-                      if (index < snapshot.data!.length) {
-                        _displayedDoc = snapshot.data![index - 1].data()
-                            as Map<String, dynamic>;
-                        if (index == 1) {
-                          _currentDoc =
-                              snapshot.data![0].data() as Map<String, dynamic>;
-                        }
-                        return Stack(
-                          children: [
-                            DiscoverView(
-                              data: _displayedDiscoverData,
-                              onDragUpdate: setUserRating,
-                            ),
-                            Center(
-                              child: LikeWidget(
-                                animation: _animation,
-                                userRating: _userRating,
-                              ),
-                            ),
-                          ],
-                        );
-                      } else {
-                        return noDataMessage;
-                      }
-                    }
-                  } else {
-                    return noDataMessage;
-                  }
-                });
+            return _pageViewBuilder(context, snapshot);
           } else if (snapshot.connectionState == ConnectionState.waiting) {
             return waitingAnimation;
           } else if (!snapshot.hasData) {
             if (widget.firstTime) {
-              return PageView(
-                scrollDirection: Axis.vertical,
-                children: [const DemoProfile(), noDataMessage],
-              );
+              return _demoPageView(noDataMessage);
             }
             return noDataMessage;
           } else {
             if (widget.firstTime) {
-              return PageView(
-                scrollDirection: Axis.vertical,
-                children: [const DemoProfile(), errorMessage],
-              );
+              return _demoPageView(errorMessage);
             }
             return errorMessage;
           }

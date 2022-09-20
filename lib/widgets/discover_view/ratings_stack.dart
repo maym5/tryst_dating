@@ -2,8 +2,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../constants.dart';
 
-final GlobalKey key = GlobalKey();
-
 class RatingDisplay extends StatelessWidget {
   const RatingDisplay(
       {Key? key, required this.userRating, required this.visible})
@@ -130,6 +128,7 @@ class _HorizontalRatingSliderState extends State<HorizontalRatingSlider> {
           height: 100,
           width: double.infinity,
           child: Slider(
+            autofocus: true,
             value: _userRating,
             min: 0,
             max: 10,
