@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rendezvous_beta_v3/constants.dart';
 import 'package:rendezvous_beta_v3/services/match_data_service.dart';
-import 'package:rendezvous_beta_v3/widgets/match_card.dart';
+import 'package:rendezvous_beta_v3/widgets/date_card.dart';
 import 'package:rendezvous_beta_v3/widgets/match_tile.dart';
 import 'package:rendezvous_beta_v3/widgets/page_background.dart';
 

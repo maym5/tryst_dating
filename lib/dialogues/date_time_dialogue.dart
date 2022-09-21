@@ -10,7 +10,7 @@ import '../constants.dart';
 class DateTimeDialogue extends StatelessWidget {
   DateTimeDialogue({Key? key, required this.setDateTime}) : super(key: key);
   final void Function(DateTime date, TimeOfDay time) setDateTime;
-  bool yesOrNo = false;
+  bool acceptedDate = false;
 
   bool _decideWhichDaysToEnable(DateTime day) {
     // if it is after yesterday: okay
@@ -26,7 +26,7 @@ class DateTimeDialogue extends StatelessWidget {
   }
 
   void _setYesOrNo(bool input) {
-    yesOrNo = input;
+    acceptedDate = input;
   }
 
   Future<void> buildCalendarDialogue(
@@ -66,7 +66,7 @@ class DateTimeDialogue extends StatelessWidget {
         minute: now.minute
     );
 
-    if (Platform.isIOS && (yesOrNo == true || initialDialogue == false)) {
+    if (Platform.isIOS && (acceptedDate == true || initialDialogue == false)) {
       await showCupertinoModalPopup(
           context: context,
           builder: (context) => Center(
@@ -131,7 +131,7 @@ class DateTimeDialogue extends StatelessWidget {
                       ],
                     )),
               ));
-    } else if (Platform.isAndroid && yesOrNo == true) {
+    } else if (Platform.isAndroid && acceptedDate == true) {
       picked = await showDatePicker(
           selectableDayPredicate: _decideWhichDaysToEnable,
           helpText: "Pick a day for the date",

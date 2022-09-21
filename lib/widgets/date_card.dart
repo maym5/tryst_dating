@@ -35,18 +35,21 @@ class _DateCardState extends State<DateCard>
         ),
       );
 
-  Widget get _tapText => Align(
-        alignment: Alignment.bottomLeft,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-          child: Text(
-            "Tap to ask out!",
-            style: kTextStyle.copyWith(color: Colors.redAccent, fontSize: 18),
-          ),
-        ),
-      );
+  // Widget get _tapText => Align(
+  //       alignment: Alignment.bottomLeft,
+  //       child: Padding(
+  //         padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+  //         child: Text(
+  //           "Tap to agree to Date!",
+  //           style: kTextStyle.copyWith(color: Colors.redAccent, fontSize: 18),
+  //         ),
+  //       ),
+  //     );
 
-  bool get _thereIsADate => widget.data.venue != null &&  widget.data.dateTime != null && widget.data.dateType != null;
+  bool get _thereIsADate =>
+      widget.data.venue != null &&
+      widget.data.dateTime != null &&
+      widget.data.dateType != null;
 
   Widget get ui {
     return Stack(
@@ -54,18 +57,24 @@ class _DateCardState extends State<DateCard>
         NameAndButtons(data: widget.data),
         Row(
           children: [
-            _thereIsADate ? Expanded(
-              flex: 2,
-              child: DateInfo(
-                venue: widget.data.venue!,
-                dateTime: widget.data.dateTime!,
-                dateType: widget.data.dateType!,
-              ),
-            ): Container(),
-            Expanded(child: _circleAvatar, flex: 1,)
+            _thereIsADate
+                ? Expanded(
+                    flex: 2,
+                    child: DateInfo(
+                      venue: widget.data.venue!,
+                      dateTime: widget.data.dateTime!,
+                      dateType: widget.data.dateType!,
+                      canTap: _canTap,
+                    ),
+                  )
+                : Container(),
+            Expanded(
+              child: _circleAvatar,
+              flex: 1,
+            )
           ],
         ),
-        _canTap ? _tapText : Container()
+        // _canTap ? _tapText : Container()
       ],
     );
   }
@@ -74,8 +83,10 @@ class _DateCardState extends State<DateCard>
   void initState() {
     _controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 200));
-    _canTap = widget.data.agreedToDate != null ? !widget.data.agreedToDate!
-        .contains(AuthenticationService.currentUserUID) : false;
+    _canTap = widget.data.agreedToDate != null
+        ? !widget.data.agreedToDate!
+            .contains(AuthenticationService.currentUserUID)
+        : false;
     super.initState();
   }
 
@@ -103,7 +114,10 @@ class _DateCardState extends State<DateCard>
       child: BounceAnimation(
         controller: _controller,
         child: Opacity(
-          opacity: widget.data.agreedToDate == null || widget.data.agreedToDate!.length == 2 ? 1 : 0.5,
+          opacity: widget.data.agreedToDate == null ||
+                  widget.data.agreedToDate!.length == 2
+              ? 1
+              : 0.5,
           child: SizedBox(
             height: 175,
             child: TileCard(
@@ -118,10 +132,7 @@ class _DateCardState extends State<DateCard>
 }
 
 class MatchName extends StatelessWidget {
-  const MatchName(
-      {Key? key,
-      required this.name,
-      this.dateType})
+  const MatchName({Key? key, required this.name, this.dateType})
       : super(key: key);
   final String name;
   final String? dateType;
@@ -143,12 +154,15 @@ class DateInfo extends StatelessWidget {
       {Key? key,
       required this.venue,
       required this.dateTime,
-      required this.dateType})
+      required this.dateType,
+        required this.canTap
+      })
       : super(key: key);
   final String venue;
   final String dateType;
   final DateTime dateTime;
   final DateFormat formatter = DateFormat('EEEE, d MMMM, h:mm a');
+  final bool canTap;
 
   String? get displayDate =>
       formatter.format(DateTime.parse(dateTime.toString()));
@@ -169,47 +183,63 @@ class DateInfo extends StatelessWidget {
   }
 
   Widget get _dateDescription => FittedBox(
-    fit: BoxFit.scaleDown,
-    child: Padding(
-      padding: const EdgeInsets.only(left: 10, top: 20),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        textBaseline: TextBaseline.ideographic,
-        children: <Widget>[
-          Row(
-            children: [
-              const Icon(Icons.where_to_vote,
-                  color: Colors.white, size: 18),
-              const SizedBox(
-                width: 5,
+        fit: BoxFit.scaleDown,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 10, top: 40),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            textBaseline: TextBaseline.ideographic,
+            children: <Widget>[
+              Row(
+                children: [
+                  const Icon(Icons.where_to_vote,
+                      color: Colors.white, size: 18),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Text(_dateType)
+                ],
               ),
-              Text(_dateType)
+              const SizedBox(height: 10),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.add_business_rounded,
+                      color: Colors.white, size: 18),
+                  const SizedBox(width: 5),
+                  Text(
+                    venue,
+                    softWrap: true,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.timer, color: Colors.white, size: 18),
+                  const SizedBox(width: 5),
+                  Text(displayDate!, softWrap: true),
+                ],
+              ),
+              const SizedBox(height: 5,),
+              Visibility(
+                maintainState: true,
+                maintainSemantics: true,
+                maintainAnimation: true,
+                maintainSize: true,
+                visible: canTap,
+                child: Text(
+                  "Tap to agree to date!",
+                  style: kTextStyle.copyWith(
+                      color: Colors.redAccent, fontSize: 16, fontFamily: "Kanit"),
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.add_business_rounded,
-                  color: Colors.white, size: 18),
-              const SizedBox(width: 5),
-              Text(venue, softWrap: true,),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.timer, color: Colors.white, size: 18),
-              const SizedBox(width: 5),
-              Text(displayDate!, softWrap: true),
-            ],
-          )
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -243,8 +273,7 @@ class _DateOptionsBarState extends State<DateOptionsBar> {
   void _onDetailsTap() {
     showModalBottomSheet(
         context: context,
-        builder: (context) =>
-            DetailsBottomSheet(data: widget.data));
+        builder: (context) => DetailsBottomSheet(data: widget.data));
   }
 
   Widget get _messageButton => GestureDetector(
@@ -390,14 +419,13 @@ class NameAndButtons extends StatelessWidget {
 }
 
 class DetailsBottomSheet extends StatelessWidget {
-  const DetailsBottomSheet({Key? key, required this.data})
-      : super(key: key);
+  const DetailsBottomSheet({Key? key, required this.data}) : super(key: key);
   final DateData data;
 
   @override
   Widget build(BuildContext context) {
     return CustomBottomSheet(
-      tileColor: kPopUpColor,
+        tileColor: kPopUpColor,
         iconOne: Icons.delete,
         iconTwo: Icons.calendar_today,
         titleOne: "Delete this date",
