@@ -14,7 +14,7 @@ class LikesPage extends StatefulWidget {
 }
 
 class _LikesPageState extends State<LikesPage> {
-  final Stream<QuerySnapshot> _likesStream = MatchDataService().likeStream;
+  late final Stream<List<DocumentSnapshot>> _likesStream;
 
   Widget get _noLikesMessage => Padding(
         padding: const EdgeInsets.only(top: 25),
@@ -61,12 +61,11 @@ class _LikesPageState extends State<LikesPage> {
       );
 
   Widget _likeBuilder(
-      BuildContext context, AsyncSnapshot<QuerySnapshot> likeSnapshot) {
+      BuildContext context, AsyncSnapshot<List<DocumentSnapshot>> likeSnapshot) {
     if (likeSnapshot.hasData &&
-        !likeSnapshot.hasError &&
-        likeSnapshot.data?.size != 0) {
+        !likeSnapshot.hasError) {
       final List<DateData> matchData = [];
-      for (DocumentSnapshot doc in likeSnapshot.data!.docs) {
+      for (DocumentSnapshot doc in likeSnapshot.data!) {
         if (doc.exists && doc.data() != null) {
           final Map _data = doc.data() as Map;
           matchData.add(DateData(
@@ -77,6 +76,7 @@ class _LikesPageState extends State<LikesPage> {
               dateTypes: _data["dateTypes"]));
         }
       }
+      print(matchData.length);
       return GridView.builder(
         itemCount: matchData.length,
         itemBuilder: (BuildContext context, int index) =>
@@ -87,7 +87,7 @@ class _LikesPageState extends State<LikesPage> {
             mainAxisSpacing: 16.0,
             crossAxisSpacing: 8.0),
       );
-    } else if (!likeSnapshot.hasData || likeSnapshot.data?.size == 0) {
+    } else if (!likeSnapshot.hasData || likeSnapshot.data!.isEmpty) {
       return _noLikesMessage;
     } else {
       return _errorMessage;
@@ -95,13 +95,19 @@ class _LikesPageState extends State<LikesPage> {
   }
 
   @override
+  void initState() {
+    _likesStream = MatchDataService().likeStream;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 15),
-      child: StreamBuilder<QuerySnapshot>(
+      child: StreamBuilder<List<DocumentSnapshot>>(
           stream: _likesStream,
           builder: (BuildContext context,
-              AsyncSnapshot<QuerySnapshot> likeSnapshot) {
+              AsyncSnapshot<List<DocumentSnapshot>> likeSnapshot) {
             switch (likeSnapshot.connectionState) {
               case ConnectionState.none:
                 return _noInternet;

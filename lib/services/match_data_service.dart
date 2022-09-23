@@ -18,14 +18,37 @@ class MatchDataService {
     }
   }
 
-  Stream<QuerySnapshot> get likeStream async* {
-    yield* _db
+  List<String> getUids(QuerySnapshot snapshot) {
+    final List<String> result = [];
+    for (DocumentSnapshot doc in snapshot.docs) {
+      if (doc.exists && doc.data() != null) {
+        final Map data = doc.data() as Map;
+        result.add(data["matchUID"]);
+      }
+    } return result;
+  }
+
+  Stream<List<DocumentSnapshot>> get likeStream async* {
+    List<DocumentSnapshot> result = [];
+    final QuerySnapshot _match = await _db
         .collection("userData")
         .doc(AuthenticationService.currentUserUID)
         .collection("matches")
-        .where("match", isEqualTo: false)
-        .where("otherUserRating", isNull: false)
-        .snapshots();
+        .where("match", isEqualTo: false).get();
+    final QuerySnapshot _otherUserRating = await _db
+        .collection("userData")
+        .doc(AuthenticationService.currentUserUID)
+        .collection("matches")
+        .where("otherUserRating", isNull: false).get();
+    final List<String> _otherUserUid = getUids(_otherUserRating);
+    for (DocumentSnapshot doc in _match.docs) {
+      if (doc.exists && doc.data() != null) {
+        final Map _data = doc.data() as Map;
+        if (_otherUserUid.contains(_data["matchUID"])) {
+          result.add(doc);
+        }
+      }
+    } yield result;
   }
 
   Stream<QuerySnapshot> get dateData async* {

@@ -44,51 +44,42 @@ class DiscoverService {
     FirebaseFirestore _db = FirebaseFirestore.instance;
     final discoverRef = _db.collection("userData");
     final Map<String, double> _searchRadius = _userSearchRect;
-    print(_searchRadius);
     final QuerySnapshot withinLat = await discoverRef
         .where("latitude", isGreaterThanOrEqualTo: _searchRadius["minLat"])
         .where("latitude", isLessThanOrEqualTo: _searchRadius["maxLat"])
         .get();
-    print("lat: ${withinLat.size}");
 
     final QuerySnapshot withinLong = await discoverRef
         .where("longitude", isGreaterThanOrEqualTo: _searchRadius["minLon"])
         .where("longitude", isLessThanOrEqualTo: _searchRadius["maxLon"])
         .get();
-    print("long: ${withinLong.size}");
     final Set<QueryDocumentSnapshot> areaMatch =
         peopleInArea(withinLat, withinLong);
-    print(areaMatch.length);
 
     final QuerySnapshot dateMatches = await discoverRef
         .where("dates", arrayContainsAny: currentUserData["dates"])
         .get();
     final Set<String> dateMatchesUID = getQueryUID(dateMatches);
-    print("dates: ${dateMatchesUID.contains("review_account1")}");
 
     final ageMatch = await discoverRef
         .where("age", isGreaterThanOrEqualTo: currentUserData["minAge"])
         .where("age", isLessThanOrEqualTo: currentUserData["maxAge"])
         .get();
     final Set<String> ageMatchUID = getQueryUID(ageMatch);
-    print("age: ${ageMatchUID.contains("review_account1")}");
 
     final gender = await discoverRef
         .where("gender", whereIn: currentUserData["prefGender"])
         .get();
     final Set<String> genderMatchUID = getQueryUID(gender);
-    print("gender: ${genderMatchUID.contains("review_account1")}");
 
     final maxPrice = await discoverRef
         .where("maxPrice", isLessThanOrEqualTo: currentUserData["maxPrice"])
         .get();
     final Set<String> maxPriceUID = getQueryUID(maxPrice);
-    print("maxPrice: ${maxPriceUID.contains("review_account1")}");
     final minPrice = await discoverRef
         .where("minPrice", isLessThanOrEqualTo: currentUserData["maxPrice"])
         .get();
     final Set<String> minPriceUID = getQueryUID(minPrice);
-    print("minPrice: ${minPriceUID.contains("review_account1")}");
 
     final alreadySeen = await discoverRef
         .doc(AuthenticationService.currentUserUID)
@@ -97,10 +88,9 @@ class DiscoverService {
         .get();
     final Set<String> alreadySeenUID =
         getQueryUID(alreadySeen, matchData: true);
-    print("alreadySeen: ${alreadySeenUID.contains("review_account1")}");
 
     final inAgeRange = await discoverRef
-        .where("age", isGreaterThan: currentUserData["minAge"])
+        .where("age", isGreaterThanOrEqualTo: currentUserData["minAge"])
         .where("age", isLessThanOrEqualTo: currentUserData["maxAge"])
         .get();
     final Set<String> inAgeRangeUID = getQueryUID(inAgeRange);
