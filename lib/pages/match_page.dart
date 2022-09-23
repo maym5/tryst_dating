@@ -76,7 +76,6 @@ class _LikesPageState extends State<LikesPage> {
               dateTypes: _data["dateTypes"]));
         }
       }
-      print(matchData.length);
       return GridView.builder(
         itemCount: matchData.length,
         itemBuilder: (BuildContext context, int index) =>
