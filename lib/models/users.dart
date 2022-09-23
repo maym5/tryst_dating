@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rendezvous_beta_v3/dialogues/error_dialogue.dart';
 import 'package:rendezvous_beta_v3/models/user_images.dart';
 import 'package:rendezvous_beta_v3/services/authentication_service.dart';
+import '../constants.dart';
 import '../services/discover_service.dart';
 
 class UserData with ChangeNotifier {
@@ -182,12 +183,10 @@ class UserData with ChangeNotifier {
     User? _user = retrieveUser();
     try {
       // remove this as soon as possible
-      if (_user?.uid != "s6ULZ0L7iKXPgPss1KnKO3Mk4ca2") {
         await _db.collection("userData").doc(_user?.uid).update({
           "latitude": UserData.location!.latitude,
           "longitude": UserData.location!.longitude,
         });
-      }
       return true;
     } catch (e) {
       return false;
@@ -195,9 +194,22 @@ class UserData with ChangeNotifier {
   }
 
   Future<void> setLocation() async {
-    UserData.location = await UserData.userLocation;
-    uploadUserLocation()
-        .then((value) => value ? null : throw ("couldn't upload location"));
+    if (AuthenticationService.currentUserUID != kAppleReviewUid) {
+      UserData.location = await UserData.userLocation;
+      uploadUserLocation()
+          .then((value) => value ? null : throw ("couldn't upload location"));
+    } else {
+      UserData.location = Position(
+          latitude: 40.7831,
+          longitude: 73.9712,
+          timestamp: DateTime.now(),
+          accuracy: 1,
+          altitude: 0,
+          heading: 1,
+          speed: 1,
+          speedAccuracy: 1
+      );
+    }
   }
 
   Future<bool> updateFirstTime() async {

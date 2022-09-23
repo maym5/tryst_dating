@@ -49,7 +49,9 @@ class _DemoProfileState extends State<DemoProfile> {
             _setHasInteracted();
           },
         ),
-        !_hasInteracted ? DemoOverlay(onInteraction: _setHasInteracted) : Container(),
+        !_hasInteracted
+            ? DemoOverlay(onInteraction: _setHasInteracted)
+            : Container(),
       ],
     );
   }

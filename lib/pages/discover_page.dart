@@ -42,6 +42,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
       _previousPage = _pageController.page!.toInt();
     } else if (_pageController.page! - _previousPage >= 0.3) {
       _animation.value = 0;
+    } else if (_pageController.page! - _previousPage < 0) {
+      _pageController.animateToPage(_previousPage,
+          duration: const Duration(milliseconds: 200), curve: Curves.bounceIn);
     } else {
       _animation.value = (_pageController.page! - _previousPage);
     }
@@ -50,8 +53,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   @override
   void initState() {
     _animation = ValueNotifier(0);
-    _discoverStream =
-        DiscoverService().discoverStream;
+    _discoverStream = DiscoverService().discoverStream;
     _pageController = PageController(
       viewportFraction: 1,
     )..addListener(_onScroll);
@@ -83,19 +85,23 @@ class _DiscoverPageState extends State<DiscoverPage> {
       );
 
   Widget get noDataMessage => Center(
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.error_outlined, size: 60, color: Colors.white.withOpacity(0.6),),
-            const SizedBox(height: 15,),
-            Text(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Icon(
+            Icons.error_outlined,
+            size: 60,
+            color: Colors.white.withOpacity(0.6),
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          Text(
             "You've seen everyone in your area! We just launched so check in later or try increasing your search distance to keep rating",
             textAlign: TextAlign.center,
             style: kTextStyle,
             softWrap: true,
-          ),]
-        ),
-  );
+          ),
+        ]),
+      );
 
   Widget get errorMessage => Center(
         child: Text("There has been an error, try restarting the app",
@@ -136,7 +142,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
         dateTypes: _currentDiscoverData.dates);
   }
 
-  Widget _pageViewBuilder(BuildContext context, AsyncSnapshot<List<QueryDocumentSnapshot<Map>>> snapshot) {
+  Widget _pageViewBuilder(BuildContext context,
+      AsyncSnapshot<List<QueryDocumentSnapshot<Map>>> snapshot) {
     return PageView.builder(
         onPageChanged: (int page) async {
           if (_userRating > 5 && await matchExists) {
@@ -149,8 +156,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
           if (page < snapshot.data!.length) {
             _updateCurrentDiscoverData(page, snapshot);
           } else {
-            setState(
-                    () => _physics = const NeverScrollableScrollPhysics());
+            setState(() => _physics = const NeverScrollableScrollPhysics());
           }
         },
         controller: _pageController,
@@ -162,10 +168,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
         itemBuilder: (context, index) {
           if (index < snapshot.data!.length && !widget.firstTime) {
             _displayedDoc =
-            snapshot.data![index].data() as Map<String, dynamic>;
+                snapshot.data![index].data() as Map<String, dynamic>;
             if (index == 0) {
-              _currentDoc =
-              snapshot.data![0].data() as Map<String, dynamic>;
+              _currentDoc = snapshot.data![0].data() as Map<String, dynamic>;
             }
             return Stack(
               children: [
@@ -186,11 +191,11 @@ class _DiscoverPageState extends State<DiscoverPage> {
               return const DemoProfile();
             } else {
               if (index < snapshot.data!.length) {
-                _displayedDoc = snapshot.data![index - 1].data()
-                as Map<String, dynamic>;
+                _displayedDoc =
+                    snapshot.data![index - 1].data() as Map<String, dynamic>;
                 if (index == 1) {
                   _currentDoc =
-                  snapshot.data![0].data() as Map<String, dynamic>;
+                      snapshot.data![0].data() as Map<String, dynamic>;
                 }
                 return Stack(
                   children: [

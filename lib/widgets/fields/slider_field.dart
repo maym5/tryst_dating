@@ -49,9 +49,6 @@ class PreferredAgeSlider extends StatelessWidget {
       : super(key: key);
   final bool showError;
 
-  // int get _min => UserData.minAge ?? 22;
-  // int get _max => UserData.maxAge ?? 25;
-
   RangeValues? get _initialValues => UserData.minAge != null &&
           UserData.maxAge != null
       ? RangeValues(UserData.minAge!.toDouble(), UserData.maxAge!.toDouble())
@@ -108,8 +105,10 @@ class _SliderFieldState extends State<SliderField>
 
   Color get _activeColor => _hasMoved ? kActiveColor : kInactiveColor;
 
+  String get _plus => _sliderValue.round() == widget.max ? "+" : "";
+
   String get _displayedValue =>
-      _sliderValue.round().toString() + ' ' + widget.units;
+      _sliderValue.round().toString() + _plus + ' ' + widget.units;
 
   @override
   void initState() {
@@ -196,8 +195,10 @@ class _RangeSliderFieldState extends State<RangeSliderField>
 
   Color get _activeColor => _hasMoved ? kActiveColor : kInactiveColor;
 
+  String get _plus => _values.end.round() == widget.max ? "+" : "";
+
   String get _displayedValue =>
-      _values.start.round().toString() + "-" + _values.end.round().toString();
+      _values.start.round().toString() + "-" + _values.end.round().toString() + _plus;
 
   @override
   void initState() {

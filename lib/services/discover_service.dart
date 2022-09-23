@@ -3,7 +3,6 @@ import 'package:rendezvous_beta_v3/services/authentication_service.dart';
 import '../models/users.dart';
 import 'dart:math';
 
-
 class DiscoverService {
   DiscoverService();
   final Map<String, dynamic> currentUserData = UserData.toJson();
@@ -45,48 +44,51 @@ class DiscoverService {
     FirebaseFirestore _db = FirebaseFirestore.instance;
     final discoverRef = _db.collection("userData");
     final Map<String, double> _searchRadius = _userSearchRect;
+    print(_searchRadius);
     final QuerySnapshot withinLat = await discoverRef
         .where("latitude", isGreaterThanOrEqualTo: _searchRadius["minLat"])
         .where("latitude", isLessThanOrEqualTo: _searchRadius["maxLat"])
         .get();
+    print("lat: ${withinLat.size}");
 
     final QuerySnapshot withinLong = await discoverRef
         .where("longitude", isGreaterThanOrEqualTo: _searchRadius["minLon"])
         .where("longitude", isLessThanOrEqualTo: _searchRadius["maxLon"])
         .get();
+    print("long: ${withinLong.size}");
     final Set<QueryDocumentSnapshot> areaMatch =
         peopleInArea(withinLat, withinLong);
-
+    print(areaMatch.length);
 
     final QuerySnapshot dateMatches = await discoverRef
         .where("dates", arrayContainsAny: currentUserData["dates"])
         .get();
     final Set<String> dateMatchesUID = getQueryUID(dateMatches);
+    print("dates: ${dateMatchesUID.contains("review_account1")}");
 
     final ageMatch = await discoverRef
         .where("age", isGreaterThanOrEqualTo: currentUserData["minAge"])
         .where("age", isLessThanOrEqualTo: currentUserData["maxAge"])
         .get();
     final Set<String> ageMatchUID = getQueryUID(ageMatch);
+    print("age: ${ageMatchUID.contains("review_account1")}");
 
     final gender = await discoverRef
         .where("gender", whereIn: currentUserData["prefGender"])
         .get();
     final Set<String> genderMatchUID = getQueryUID(gender);
+    print("gender: ${genderMatchUID.contains("review_account1")}");
 
     final maxPrice = await discoverRef
         .where("maxPrice", isLessThanOrEqualTo: currentUserData["maxPrice"])
         .get();
     final Set<String> maxPriceUID = getQueryUID(maxPrice);
+    print("maxPrice: ${maxPriceUID.contains("review_account1")}");
     final minPrice = await discoverRef
         .where("minPrice", isLessThanOrEqualTo: currentUserData["maxPrice"])
         .get();
     final Set<String> minPriceUID = getQueryUID(minPrice);
-
-    final notYou = await discoverRef
-        .where("uid", isNotEqualTo: currentUserData["uid"])
-        .get();
-    final Set<String> notYouUID = getQueryUID(notYou);
+    print("minPrice: ${minPriceUID.contains("review_account1")}");
 
     final alreadySeen = await discoverRef
         .doc(AuthenticationService.currentUserUID)
@@ -95,23 +97,33 @@ class DiscoverService {
         .get();
     final Set<String> alreadySeenUID =
         getQueryUID(alreadySeen, matchData: true);
+    print("alreadySeen: ${alreadySeenUID.contains("review_account1")}");
+
+    final inAgeRange = await discoverRef
+        .where("age", isGreaterThan: currentUserData["minAge"])
+        .where("age", isLessThanOrEqualTo: currentUserData["maxAge"])
+        .get();
+    final Set<String> inAgeRangeUID = getQueryUID(inAgeRange);
+    
+    final matchTheirPref = await discoverRef.where("prefGender", arrayContains: currentUserData["gender"]).get();
+    final Set<String> matchTheirPrefUID = getQueryUID(matchTheirPref);
 
     // check that they aren't matched
     for (QueryDocumentSnapshot doc in areaMatch) {
       final Map _data = doc.data() as Map;
       final _uid = _data["uid"];
-      if (dateMatchesUID.contains(_uid) &&
+      if (_uid != AuthenticationService.currentUserUID &&
+          dateMatchesUID.contains(_uid) &&
           ageMatchUID.contains(_uid) &&
           genderMatchUID.contains(_uid) &&
           (maxPriceUID.contains(_uid) || minPriceUID.contains(_uid)) &&
-          notYouUID.contains(_uid) &&
+          inAgeRangeUID.contains(_uid) &&
+          matchTheirPrefUID.contains(_uid) &&
           !alreadySeenUID.contains(_uid)) {
         final QueryDocumentSnapshot<Map> result =
             doc as QueryDocumentSnapshot<Map>;
-        if (await youMatchTheirPreferences(_uid)) {
-          discover.add(result);
-          yield discover;
-        }
+        discover.add(result);
+        yield discover;
       }
     }
   }
@@ -123,8 +135,8 @@ class DiscoverService {
       final double _minLat = UserData.location!.latitude - _radius;
       final double _maxLat = UserData.location!.latitude + _radius;
       final double _deltaLon =
-      asin(sin(_radius) / cos(UserData.location!.latitude));
-      final _minLon = UserData.location!.longitude -  _deltaLon.abs();
+          asin(sin(_radius) / cos(UserData.location!.latitude));
+      final _minLon = UserData.location!.longitude - _deltaLon.abs();
       final _maxLon = UserData.location!.longitude + _deltaLon.abs();
       return {
         "minLat": _minLat,
@@ -132,7 +144,7 @@ class DiscoverService {
         "minLon": _minLon,
         "maxLon": _maxLon
       };
-    } catch(e) {
+    } catch (e) {
       return {
         "minLat": 0.0,
         "maxLat": 0.0,
@@ -140,20 +152,6 @@ class DiscoverService {
         "maxLon": 0.0,
       };
     }
-  }
-
-  Future<bool> youMatchTheirPreferences(String uid) async {
-    FirebaseFirestore _db = FirebaseFirestore.instance;
-    final DocumentSnapshot snapshot =
-        await _db.collection("userData").doc(uid).get();
-    final Map<String, dynamic> _data = snapshot.data() as Map<String, dynamic>;
-    final List _prefGender = _data["prefGender"] as List;
-    if (currentUserData["age"] >= _data["minAge"] &&
-        currentUserData["age"] <= _data["maxAge"] &&
-        _prefGender.contains(currentUserData["gender"])) {
-      return true;
-    }
-    return false;
   }
 }
 

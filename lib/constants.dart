@@ -14,6 +14,8 @@ const kAgeTextStyle = TextStyle(
   fontWeight: FontWeight.w200,
 );
 
+const kAppleReviewUid = "s6ULZ0L7iKXPgPss1KnKO3Mk4ca2";
+
 const kExpandTextAnimationDuration = Duration(milliseconds: 200);
 
 const kBioTextStyle = TextStyle(
