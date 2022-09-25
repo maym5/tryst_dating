@@ -63,7 +63,7 @@ class _LikesPageState extends State<LikesPage> {
   Widget _likeBuilder(
       BuildContext context, AsyncSnapshot<List<DocumentSnapshot>> likeSnapshot) {
     if (likeSnapshot.hasData &&
-        !likeSnapshot.hasError) {
+        !likeSnapshot.hasError && likeSnapshot.data!.isNotEmpty) {
       final List<DateData> matchData = [];
       for (DocumentSnapshot doc in likeSnapshot.data!) {
         if (doc.exists && doc.data() != null) {
