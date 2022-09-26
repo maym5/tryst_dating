@@ -97,7 +97,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           setState(() => _currentPage = page);
         },
         controller: _controller,
-        physics: const NeverScrollableScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         children: <Widget>[
           UserEditPage(onHomePageButtonPress: () {}),
           FutureBuilder(

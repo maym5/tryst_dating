@@ -14,7 +14,7 @@ class LikesPage extends StatefulWidget {
 }
 
 class _LikesPageState extends State<LikesPage> {
-  late final Stream<List<DocumentSnapshot>> _likesStream;
+  late Stream<List<DocumentSnapshot>> _likesStream;
 
   Widget get _noLikesMessage => Padding(
         padding: const EdgeInsets.only(top: 25),
@@ -79,7 +79,7 @@ class _LikesPageState extends State<LikesPage> {
       return GridView.builder(
         itemCount: matchData.length,
         itemBuilder: (BuildContext context, int index) =>
-            MatchTile(data: matchData[index]),
+            MatchTile(data: matchData[index], onTap: _onTap),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             childAspectRatio: 0.8,
             crossAxisCount: 2,
@@ -97,6 +97,10 @@ class _LikesPageState extends State<LikesPage> {
   void initState() {
     _likesStream = MatchDataService().likeStream;
     super.initState();
+  }
+
+  void _onTap() {
+    setState(() => _likesStream = MatchDataService().likeStream);
   }
 
   @override

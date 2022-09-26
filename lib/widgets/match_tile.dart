@@ -5,8 +5,9 @@ import 'package:rendezvous_beta_v3/services/match_data_service.dart';
 import 'package:rendezvous_beta_v3/widgets/profile_view/profile_info.dart';
 
 class MatchTile extends StatefulWidget {
-  const MatchTile({Key? key, required this.data}) : super(key: key);
+  const MatchTile({Key? key, required this.data, this.onTap}) : super(key: key);
   final DateData data;
+  final void Function()? onTap;
 
   @override
   State<MatchTile> createState() => _MatchTileState();
@@ -22,7 +23,10 @@ class _MatchTileState extends State<MatchTile> with TickerProviderStateMixin {
 
   void _onTapUp(TapUpDetails details) async {
     _controller.reverse();
-    DatesModel(dateData: widget.data).getDate(context);
+    await DatesModel(dateData: widget.data).getDate(context);
+    if (widget.onTap != null) {
+      widget.onTap!();
+    }
   }
 
   Widget get _nameAndAge => Align(

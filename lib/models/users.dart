@@ -201,7 +201,7 @@ class UserData with ChangeNotifier {
     } else {
       UserData.location = Position(
           latitude: 40.7831,
-          longitude: 73.9712,
+          longitude: -73.9712,
           timestamp: DateTime.now(),
           accuracy: 1,
           altitude: 0,

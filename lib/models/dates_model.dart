@@ -68,7 +68,9 @@ class DatesModel {
 
   Future<void> getDate(BuildContext context,
       {double? userRating, bool pickAnother = false}) async {
+    print("called");
     try {
+      print("tryed");
       final Map _venueData = await venueData;
       final Map _matchData = await matchData;
       if (_venueData["venue"]["status"] == "ok") {
@@ -118,6 +120,7 @@ class DatesModel {
                 ErrorDialogue(animation: animation));
       }
     } catch (e) {
+      print(e);
       await MatchDataService.createMatch(
           otherUserUID: discoverData != null
               ? discoverData!.uid

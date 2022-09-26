@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import '../models/users.dart';
+import 'dart:math';
 
 class GooglePlacesService {
   GooglePlacesService({this.venueType});
@@ -25,6 +26,7 @@ class GooglePlacesService {
       final _venueData = _venues.data;
       final List results = _venueData["results"];
       if (results.isNotEmpty) {
+        print(results.length);
         return results;
       }
       return [];
@@ -36,13 +38,13 @@ class GooglePlacesService {
   Future<String> get venueId async {
     List _venues = await venues;
     if (_venues.isNotEmpty) {
-      // results are returned ranked by prominence, so we grab the first one
-      return _venues[0]["place_id"];
+      return _venues[Random().nextInt(_venues.length)]["place_id"];
     }
     throw "No venues found";
   }
 
   Future<Map> get venue async {
+    print("called venue");
     String _fields = "fields=name%2Copening_hours";
     try {
       String _id = await venueId;
@@ -51,6 +53,7 @@ class GooglePlacesService {
       final Response result = await dio.get(_path);
       final _data = result.data;
       if (result.statusCode! >= 200 && result.statusCode! < 300) {
+        print(_data);
         return {
           "name": _data["result"]["name"],
           "id" : _id,
@@ -62,6 +65,7 @@ class GooglePlacesService {
         return {"status": "HTML error"};
       }
     } catch (e) {
+      print("venue: $e");
       return {"status": e};
     }
   }

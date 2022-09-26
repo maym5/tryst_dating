@@ -40,6 +40,7 @@ class PageBackground extends StatelessWidget {
           child: Scaffold(
               backgroundColor: Colors.transparent,
               extendBody: extendBodyBehindAppBar,
+              resizeToAvoidBottomInset: false,
               appBar: appBar,
               bottomNavigationBar: bottomAppBar,
               floatingActionButton: floatingActionButton,
