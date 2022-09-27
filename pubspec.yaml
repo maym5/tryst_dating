@@ -54,6 +54,12 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  flutter_native_splash: ^2.2.10+1
+
+flutter_native_splash:
+  image: assets/images/tryst_logo.png
+  color: "#100328"
+
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
