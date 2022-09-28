@@ -1,4 +1,4 @@
-# rendezvous_beta_v3
+# tryst_dating
 
 A dating app that allows its users to rate potential matches and generates a date idea every time users match. Built with the flutter sdk, the app uses 
 firebase for its back-end, and the google places API provides venue-level data for date suggestions. For those reading this, thanks for checking out 
